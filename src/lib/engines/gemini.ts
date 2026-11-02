@@ -7,12 +7,13 @@ export class GeminiAdapter implements EngineAdapter {
 
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY!;
-    if (!this.apiKey) {
-      throw new Error('GEMINI_API_KEY is not set');
-    }
+    // API key validated at runtime
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
+    if (!this.apiKey) {
+      throw new Error("API key not set");
+    }
     const response = await fetch(`${this.baseUrl}?key=${this.apiKey}`, {
       method: 'POST',
       headers: {

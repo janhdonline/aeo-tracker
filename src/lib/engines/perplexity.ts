@@ -7,12 +7,13 @@ export class PerplexityAdapter implements EngineAdapter {
 
   constructor() {
     this.apiKey = process.env.PERPLEXITY_API_KEY!;
-    if (!this.apiKey) {
-      throw new Error('PERPLEXITY_API_KEY is not set');
-    }
+    // API key validated at runtime
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
+    if (!this.apiKey) {
+      throw new Error("API key not set");
+    }
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
