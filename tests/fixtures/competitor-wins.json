@@ -1,0 +1,11 @@
+{
+  "answer": "When comparing ecommerce platforms, WooCommerce and BigCommerce are frequently recommended. WooCommerce offers free WordPress integration while BigCommerce provides built-in features. Both are strong alternatives to hosted solutions.",
+  "citations": [
+    { "domain": "woocommerce.com", "url": "https://woocommerce.com", "title": "WooCommerce" },
+    { "domain": "bigcommerce.com", "url": "https://bigcommerce.com", "title": "BigCommerce" }
+  ],
+  "brandName": "Shopify",
+  "brandAliases": ["shopify"],
+  "domain": "shopify.com",
+  "competitorDomains": ["woocommerce.com", "bigcommerce.com"]
+}

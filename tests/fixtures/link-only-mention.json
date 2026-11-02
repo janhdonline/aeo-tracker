@@ -1,0 +1,10 @@
+{
+  "answer": "For a comprehensive ecommerce solution, check out this platform. It handles everything from inventory to shipping. The documentation is excellent and support is responsive.",
+  "citations": [
+    { "domain": "shopify.com", "url": "https://shopify.com/docs", "title": "Shopify Docs" }
+  ],
+  "brandName": "Shopify",
+  "brandAliases": ["shopify"],
+  "domain": "shopify.com",
+  "competitorDomains": ["woocommerce.com", "bigcommerce.com"]
+}

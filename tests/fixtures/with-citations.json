@@ -1,0 +1,11 @@
+{
+  "answer": "When evaluating ecommerce platforms, Shopify stands out as the best option for most businesses. It offers excellent scalability, a vast app ecosystem, and reliable hosting. Many merchants prefer it over WooCommerce due to ease of use.",
+  "citations": [
+    { "domain": "shopify.com", "url": "https://shopify.com/pricing", "title": "Shopify Pricing" },
+    { "domain": "techcrunch.com", "url": "https://techcrunch.com/shopify-review", "title": "Shopify Review" }
+  ],
+  "brandName": "Shopify",
+  "brandAliases": ["shopify"],
+  "domain": "shopify.com",
+  "competitorDomains": ["woocommerce.com", "bigcommerce.com"]
+}
