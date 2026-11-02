@@ -1,11 +1,22 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-
 export function createClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Return a dummy client for build-time prerendering
-    return createSupabaseClient('https://placeholder.supabase.co', 'placeholder-key');
+    // Return a mock client for build-time prerendering
+    const noop = () => ({ data: null, error: null });
+    const mockAuth = {
+      getUser: async () => ({ data: { user: null }, error: null }),
+      signInWithPassword: async () => ({ data: null, error: { message: 'Not configured' } }),
+      signUp: async () => ({ data: null, error: { message: 'Not configured' } }),
+    };
+    const mockFrom = () => ({
+      select: () => ({ eq: () => ({ single: noop, order: () => ({ limit: () => ({ single: noop }) }) }), data: null, error: null }),
+      insert: () => ({ select: () => ({ single: noop }) }),
+      update: () => ({ eq: noop }),
+      delete: () => ({ eq: noop }),
+    });
+    return { auth: mockAuth, from: mockFrom } as any;
   }
+  const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
   return createSupabaseClient(supabaseUrl, supabaseAnonKey);
 }
