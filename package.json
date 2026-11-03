@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && npx opennextjs-cloudflare build",
+    "build": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run"
@@ -18,6 +18,7 @@
     "resend": "^6.37.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "1.14.6",
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -28,6 +29,12 @@
     "tailwindcss": "^3.4.0",
     "typescript": "^5",
     "vite": "^8.3.5",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "wrangler": "^4.156.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "esbuild@0.25.4": true,
+    "workerd@1.20261102.1": true
   }
 }
