@@ -15,7 +15,6 @@ export default function Home() {
     }
   }, [router]);
 
-export default function Home() {
   const [domain, setDomain] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
