@@ -12,6 +12,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
+    console.log('Sign In clicked');
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -32,6 +33,7 @@ export default function LoginPage() {
   };
 
   const handleSignUp = async (e?: React.FormEvent | React.MouseEvent) => {
+    console.log('Sign Up clicked');
     if (e) e.preventDefault();
     setLoading(true);
     setError(null);
