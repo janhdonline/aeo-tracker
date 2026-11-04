@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PerplexityAdapter } from '@/lib/engines/perplexity';
+import { GeminiAdapter } from '@/lib/engines/gemini';
 import { detectMentions } from '@/lib/parser';
 import { calculateVisibilityScore } from '@/lib/scoring';
 import { generatePrompts } from '@/lib/prompts';
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'domain is required' }, { status: 400 });
     }
     
-    const adapter = new PerplexityAdapter();
+    const adapter = new GeminiAdapter();
     const keyword = `best ${domain} alternatives`;
     const prompts = generatePrompts(keyword).slice(0, 5);
     
