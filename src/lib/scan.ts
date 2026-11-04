@@ -381,26 +381,24 @@ export async function runScan(projectId: string): Promise<ScanResult> {
     throw new Error('Project not found');
   }
   
-  const { data: scanRun } = await adminClient
+  const { data: scanRun, error: insertError } = await adminClient
     .from('scan_runs')
     .insert({
       project_id: projectId,
-      status: 'pending',
+      status: 'running',
+      started_at: new Date().toISOString(),
+      total_queries: 0,
+      api_cost_usd: 0,
     })
     .select()
     .single();
     
-  if (!scanRun) {
-    throw new Error('Failed to create scan run');
+  if (insertError || !scanRun) {
+    console.error('scan:insert-run failed', insertError);
+    throw new Error(insertError?.message || 'Failed to create scan run');
   }
   
-  // Mark as running
-  await adminClient
-    .from('scan_runs')
-    .update({ status: 'running', started_at: new Date().toISOString() })
-    .eq('id', scanRun.id);
-  
-  // Process first chunk
+  // (status already running)
   const result = await processChunk(scanRun.id);
   
   return {
