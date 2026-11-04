@@ -17,6 +17,6 @@ export function createClient() {
     });
     return { auth: mockAuth, from: mockFrom } as any;
   }
-  const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
-  return createSupabaseClient(supabaseUrl, supabaseAnonKey);
+  const { createBrowserClient } = require('@supabase/ssr');
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
 }
