@@ -38,8 +38,11 @@ export async function POST(request: NextRequest) {
       const userEmail = data.data?.attributes?.user_email;
 
       let plan = 'free';
-      if (variantId === process.env.LEMONSQUEEZY_STARTER_VARIANT_ID) plan = 'starter';
-      else if (variantId === process.env.LEMONSQUEEZY_PRO_VARIANT_ID) plan = 'pro';
+      if (String(variantId) === process.env.LEMONSQUEEZY_STARTER_VARIANT_ID) plan = 'starter';
+      else if (String(variantId) === process.env.LEMONSQUEEZY_PRO_VARIANT_ID) plan = 'pro';
+
+      console.log('Variant ID received:', variantId);
+      console.log('Determined plan:', plan);
 
       console.log('Service Key exists?', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
@@ -63,6 +66,8 @@ export async function POST(request: NextRequest) {
         console.warn('Webhook: no profile found for email', userEmail);
         return NextResponse.json({ received: true });
       }
+
+      console.log('Upserting plan:', plan);
 
       const { data: updated, error } = await supabase
         .from('profiles')
