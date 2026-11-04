@@ -32,10 +32,13 @@ export async function POST(request: NextRequest) {
     const data = JSON.parse(body);
     const eventName = data.meta?.event_name;
 
+    console.log('Payload attributes:', JSON.stringify(data?.data?.attributes ?? {}, null, 2));
+
     if (eventName === 'subscription_created' || eventName === 'subscription_updated') {
       const customerId = data.data?.attributes?.customer_id;
-      const variantId = data.data?.attributes?.variant_id;
-      const userEmail = data.data?.attributes?.user_email;
+      const attributes = data.data?.attributes ?? {};
+      const variantId = attributes.variant_id ?? attributes.first_subscription_item?.variant_id;
+      const userEmail = attributes.user_email;
 
       let plan = 'free';
       if (String(variantId) === process.env.LEMONSQUEEZY_STARTER_VARIANT_ID) plan = 'starter';
