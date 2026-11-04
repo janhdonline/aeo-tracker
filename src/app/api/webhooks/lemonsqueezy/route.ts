@@ -64,20 +64,24 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true });
       }
 
-      const { error, count } = await supabase
+      const { data: updated, error, count } = await supabase
         .from('profiles')
-        .update({
-          plan,
-          lemonsqueezy_customer_id: customerId?.toString(),
-        })
-        .eq('id', profile.id);
+        .upsert(
+          {
+            id: profile.id,
+            email: userEmail,
+            plan,
+            lemonsqueezy_customer_id: customerId?.toString(),
+          },
+          { onConflict: 'id' }
+        )
+        .select();
+
+      console.log('DB Result:', { data: updated, error, count });
 
       if (error) {
-        console.error('Webhook DB update error:', error.message, error.details);
-        return NextResponse.json({ error: 'DB update failed' }, { status: 500 });
-      }
-      if (!count) {
-        console.warn('Webhook: update affected 0 rows for', profile.id);
+        console.error('Webhook DB upsert error:', error.message, error.details);
+        return NextResponse.json({ error: 'DB upsert failed' }, { status: 500 });
       }
     }
 
