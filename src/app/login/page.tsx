@@ -31,7 +31,8 @@ export default function LoginPage() {
     }
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) e.preventDefault();
     setLoading(true);
     setError(null);
     console.log('signUp attempt', { email, password });
