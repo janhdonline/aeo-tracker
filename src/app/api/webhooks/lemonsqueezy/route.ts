@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET!;
-    
-    // Use Web Crypto API (compatible with Cloudflare Workers)
+
     const encoder = new TextEncoder();
     const key = await crypto.subtle.importKey(
       'raw',
@@ -35,31 +34,21 @@ export async function POST(request: NextRequest) {
 
     if (eventName === 'subscription_created' || eventName === 'subscription_updated') {
       const customerId = data.data?.attributes?.customer_id;
-      const status = data.data?.attributes?.status;
       const variantId = data.data?.attributes?.variant_id;
       const userEmail = data.data?.attributes?.user_email;
 
       let plan = 'free';
-      let keywordsLimit = 10;
-      let engines = ['gemini'];
-      let frequency = 'monthly';
+      if (variantId === process.env.LEMONSQUEEZY_STARTER_VARIANT_ID) plan = 'starter';
+      else if (variantId === process.env.LEMONSQUEEZY_PRO_VARIANT_ID) plan = 'pro';
 
-      if (variantId === process.env.LEMONSQUEEZY_STARTER_VARIANT_ID) {
-        plan = 'starter';
-        keywordsLimit = 50;
-        engines = ['gemini', 'perplexity', 'openai'];
-        frequency = 'weekly';
-      } else if (variantId === process.env.LEMONSQUEEZY_PRO_VARIANT_ID) {
-        plan = 'pro';
-        keywordsLimit = 150;
-        engines = ['gemini', 'perplexity', 'openai', 'grok'];
-        frequency = 'weekly';
-      }
+      console.log('Service Key exists?', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-      const adminClient = createAdminClient();
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
 
-      // Match user by email (Lemon Squeezy provides user_email)
-      const { data: profile, error: findError } = await adminClient
+      const { data: profile, error: findError } = await supabase
         .from('profiles')
         .select('id')
         .eq('email', userEmail)
@@ -75,7 +64,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true });
       }
 
-      const { error, count } = await adminClient
+      const { error, count } = await supabase
         .from('profiles')
         .update({
           plan,
@@ -98,3 +87,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }
+EOF
+echo done
