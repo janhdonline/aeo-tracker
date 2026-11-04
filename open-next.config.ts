@@ -1,9 +1,11 @@
-// default open-next.config.ts file created by @opennextjs/cloudflare
+// open-next.config.ts — OpenNext Cloudflare configuration
 import { defineCloudflareConfig } from "@opennextjs/cloudflare/config";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
 
 const config = defineCloudflareConfig({
-	incrementalCache: r2IncrementalCache,
+	// Use the dummy (in-memory) incremental cache instead of R2.
+	// R2 requires a payment method on Cloudflare even for the free tier,
+	// so we avoid it entirely.
+	incrementalCache: "dummy",
 });
 
 // Prevent infinite recursion: OpenNext runs `npm run build` by default,
