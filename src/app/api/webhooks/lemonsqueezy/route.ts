@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true });
       }
 
-      const { data: updated, error, count } = await supabase
+      const { data: updated, error } = await supabase
         .from('profiles')
         .upsert(
           {
@@ -77,11 +77,16 @@ export async function POST(request: NextRequest) {
         )
         .select();
 
-      console.log('DB Result:', { data: updated, error, count });
+      console.log('DB Result:', { data: updated, error });
 
       if (error) {
-        console.error('Webhook DB upsert error:', error.message, error.details);
-        return NextResponse.json({ error: 'DB upsert failed' }, { status: 500 });
+        console.error('Webhook DB update error:', error.message, error.details);
+        return NextResponse.json({ error: 'DB update failed' }, { status: 500 });
+      }
+
+      if (!updated || updated.length === 0) {
+        console.warn('Webhook: upsert affected 0 rows for', profile.id);
+        return NextResponse.json({ error: 'DB upsert returned no rows' }, { status: 500 });
       }
     }
 
@@ -92,4 +97,3 @@ export async function POST(request: NextRequest) {
   }
 }
 EOF
-echo done
