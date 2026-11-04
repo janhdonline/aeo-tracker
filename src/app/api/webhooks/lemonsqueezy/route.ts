@@ -80,9 +80,6 @@ export async function POST(request: NextRequest) {
         .update({
           plan,
           lemonsqueezy_customer_id: customerId?.toString(),
-          plan_keywords_limit: keywordsLimit,
-          plan_engines: engines,
-          plan_run_frequency: frequency,
         })
         .eq('id', profile.id);
 
