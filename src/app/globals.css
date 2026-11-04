@@ -5,31 +5,134 @@
 @layer base {
   :root {
     --background: #ffffff;
-    --foreground: #0f172a;
-    --accent: #eb9d2a;
-    --surface: #f8fafc;
+    --foreground: #111827;
+    --surface: #f9fafb;
+    --accent: #10b981;
+  }
+
+  html {
+    scroll-padding-top: 5rem;
   }
 
   body {
-    @apply bg-white text-slate-900 antialiased selection:bg-[#eb9d2a]/30;
-    font-family: 'Inter', sans-serif;
+    @apply bg-white text-[#111827] antialiased;
+    font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  h1, h2, h3 {
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: -0.02em;
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #111827;
+  }
+
+  :focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
   }
 }
 
 @layer utilities {
-  .text-balance { text-wrap: balance; }
-  .fade-up { opacity: 0; transform: translateY(12px); transition: opacity 500ms ease-out, transform 500ms ease-out; }
-  .fade-up.in-view { opacity: 1; transform: translateY(0); }
-  .marquee { animation: marquee 30s linear infinite; }
-  .marquee-reverse { animation: marquee 30s linear infinite reverse; }
-  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, rgba(17, 24, 39, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(17, 24, 39, 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 62% at 50% 36%, black 35%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 62% at 50% 36%, black 35%, transparent 78%);
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(rgba(17, 24, 39, 0.12) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
+  .fade-up {
+    animation: fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .fade-up-delay-1 {
+    animation-delay: 80ms;
+  }
+
+  .fade-up-delay-2 {
+    animation-delay: 160ms;
+  }
+
+  .fade-up-delay-3 {
+    animation-delay: 240ms;
+  }
+
+  .marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .marquee-reverse {
+    animation: marquee 30s linear infinite reverse;
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes soft-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.55;
+      transform: scale(0.9);
+    }
+  }
+
+  .soft-pulse {
+    animation: soft-pulse 2.4s ease-in-out infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .marquee, .marquee-reverse { animation: none; }
-    .fade-up { opacity: 1; transform: none; transition: none; }
+    html {
+      scroll-behavior: auto;
+    }
+
+    .fade-up,
+    .fade-up-delay-1,
+    .fade-up-delay-2,
+    .fade-up-delay-3,
+    .marquee,
+    .marquee-reverse,
+    .soft-pulse {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
   }
 }

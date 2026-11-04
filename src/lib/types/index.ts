@@ -132,3 +132,26 @@ export const PLAN_LIMITS: Record<PlanName, { keywords: number; engines: string[]
   starter: { keywords: 50, engines: ['gemini', 'perplexity', 'openai'], frequency: 'weekly' },
   pro: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'weekly' },
 };
+
+export interface DashboardTrendSeries {
+  label: string;
+  color: string;
+  values: number[];
+}
+
+export interface LiveDashboardData {
+  domain: string;
+  score: number;
+  webPresence: number;
+  brandSentiment: number;
+  sentimentLabel: 'Positive' | 'Neutral' | 'Negative';
+  totalQueries: number;
+  totalMentions: number;
+  mentionedQueries: number;
+  citationsCount: number;
+  promptCoverage: number;
+  promptBars: number[];
+  trends: DashboardTrendSeries[];
+  trendLabels: string[];
+  lastUpdated: string;
+}
