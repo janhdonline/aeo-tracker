@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       }
 
       const adminClient = createAdminClient();
-      await adminClient
+      const { error, count } = await adminClient
         .from('profiles')
         .update({
           plan,
@@ -66,6 +66,14 @@ export async function POST(request: NextRequest) {
           plan_run_frequency: frequency,
         })
         .eq('lemonsqueezy_customer_id', customerId?.toString());
+
+      if (error) {
+        console.error('Webhook DB update error:', error);
+        return NextResponse.json({ error: 'DB update failed' }, { status: 500 });
+      }
+      if (!count) {
+        console.warn('Webhook: no profile matched customer_id', customerId);
+      }
     }
 
     return NextResponse.json({ received: true });
