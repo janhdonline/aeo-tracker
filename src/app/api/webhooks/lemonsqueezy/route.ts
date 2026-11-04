@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       const customerId = data.data?.attributes?.customer_id;
       const status = data.data?.attributes?.status;
       const variantId = data.data?.attributes?.variant_id;
+      const userEmail = data.data?.attributes?.user_email;
 
       let plan = 'free';
       let keywordsLimit = 10;
@@ -56,6 +57,24 @@ export async function POST(request: NextRequest) {
       }
 
       const adminClient = createAdminClient();
+
+      // Match user by email (Lemon Squeezy provides user_email)
+      const { data: profile, error: findError } = await adminClient
+        .from('profiles')
+        .select('id')
+        .eq('email', userEmail)
+        .maybeSingle();
+
+      if (findError) {
+        console.error('Webhook profile lookup error:', findError.message, findError.details);
+        return NextResponse.json({ error: 'DB lookup failed' }, { status: 500 });
+      }
+
+      if (!profile) {
+        console.warn('Webhook: no profile found for email', userEmail);
+        return NextResponse.json({ received: true });
+      }
+
       const { error, count } = await adminClient
         .from('profiles')
         .update({
@@ -65,14 +84,14 @@ export async function POST(request: NextRequest) {
           plan_engines: engines,
           plan_run_frequency: frequency,
         })
-        .eq('lemonsqueezy_customer_id', customerId?.toString());
+        .eq('id', profile.id);
 
       if (error) {
-        console.error('Webhook DB update error:', error);
+        console.error('Webhook DB update error:', error.message, error.details);
         return NextResponse.json({ error: 'DB update failed' }, { status: 500 });
       }
       if (!count) {
-        console.warn('Webhook: no profile matched customer_id', customerId);
+        console.warn('Webhook: update affected 0 rows for', profile.id);
       }
     }
 
