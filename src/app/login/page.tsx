@@ -60,8 +60,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-2xl shadow-sm border border-slate-200">
+        <div>
+          <h2 className="font-display text-3xl font-bold text-center text-slate-900">AEO Visibility Tracker</h2>
+          <p className="mt-2 text-center text-slate-500">Sign in to your account</p>
+        </div>
         <div>
           <h2 className="text-3xl font-bold text-center">AEO Visibility Tracker</h2>
           <p className="mt-2 text-center text-gray-600">Sign in to your account</p>
@@ -100,7 +104,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="flex-1 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#eb9d2a] hover:bg-[#d88b1e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#eb9d2a] disabled:opacity-50 transition-all duration-200"
             >
               {loading ? 'Loading...' : 'Sign In'}
             </button>
