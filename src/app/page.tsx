@@ -4,6 +4,17 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+const prompts = [
+  "Best CRM for small business",
+  "Top project management tools",
+  "Best email marketing software",
+  "Best SEO tools 2026",
+  "Top AI writing assistants",
+  "Best accounting software",
+  "Top helpdesk tools",
+  "Best ecommerce platforms",
+];
+
 export default function Home() {
   const router = useRouter();
   useEffect(() => {
@@ -43,27 +54,29 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black">
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <main className="min-h-screen bg-white text-slate-900">
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="font-bold text-lg">AEO Visibility Tracker</span>
+          <span className="font-display font-bold text-lg">AEO Visibility Tracker</span>
           <div className="flex gap-3">
-            <a href="/login" className="text-sm font-medium px-4 py-2">Sign In</a>
-            <a href="/login" className="bg-[#eb9d2a] hover:bg-[#d88b1e] text-white font-semibold px-4 py-2 rounded-lg transition-all duration-200">Get Started</a>
+            <a href="/login" className="text-sm font-medium px-4 py-2 text-slate-600 hover:text-slate-900">Login</a>
+            <a href="/login" className="bg-[#eb9d2a] hover:bg-[#d88b1e] text-white font-semibold px-4 py-2 rounded-lg transition-all duration-200">Sign Up</a>
           </div>
         </div>
       </nav>
 
-      <section className="max-w-3xl mx-auto px-4 py-24 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">See how AI answers talk about your brand</h1>
-        <p className="mt-4 text-lg text-[#313131]">Track your visibility across Perplexity, ChatGPT, Gemini, and Grok.</p>
+      <section className="max-w-4xl mx-auto px-4 py-24 text-center">
+        <h1 className="font-display text-5xl sm:text-6xl font-bold tracking-tight">
+          See how AI answers talk about <span className="text-[#eb9d2a]">your brand</span>
+        </h1>
+        <p className="mt-4 text-lg text-slate-500">Track your visibility across ChatGPT, Gemini, Claude, Perplexity, DeepSeek, Mistral.</p>
         <form onSubmit={handleCheck} className="mt-8 flex gap-2 justify-center">
           <input
             type="text"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             placeholder="yourdomain.com"
-            className="border border-gray-300 rounded-lg px-4 py-3 w-64 shadow-sm focus:ring-2 focus:ring-[#eb9d2a] focus:outline-none"
+            className="border border-slate-300 rounded-lg px-4 py-3 w-64 shadow-sm focus:ring-2 focus:ring-[#eb9d2a] focus:outline-none"
           />
           <button
             type="submit"
@@ -75,22 +88,63 @@ export default function Home() {
         </form>
         {error && <p className="mt-4 text-red-500">{error}</p>}
         {result && (
-          <div className="mt-6 text-left border rounded-xl p-6 bg-[#eeefe9] shadow-sm">
-            <p className="font-semibold">Visibility score: {result.visibilityScore}</p>
-            <p className="text-sm text-[#313131]">{result.totalMentions} mentions across {result.totalQueries} queries</p>
+          <div className="mt-6 text-left border rounded-2xl p-6 bg-slate-50 shadow-sm">
+            <p className="font-display font-bold">Visibility score: {result.visibilityScore}</p>
+            <p className="text-sm text-slate-500">{result.totalMentions} mentions across {result.totalQueries} queries</p>
             <a href={`/report/${domain}`} className="text-[#eb9d2a] underline mt-2 inline-block">View full report</a>
           </div>
         )}
-        <div className="mt-8 flex gap-4 justify-center text-sm">
-          <a href="#pricing" className="underline">Pricing</a>
-          <a href="/report/shopify.com" className="underline">Live example report</a>
+      </section>
+
+      <section className="overflow-hidden py-8">
+        <div className="flex marquee gap-4">
+          {[...prompts, ...prompts].map((p, i) => (
+            <span key={i} className="whitespace-nowrap px-4 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm text-slate-600">{p}</span>
+          ))}
         </div>
       </section>
 
-      <section id="pricing" className="max-w-3xl mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold text-center">Pricing</h2>
-        <p className="text-center text-[#313131] mt-2">Three plans. All engines included.</p>
+      <section className="max-w-6xl mx-auto px-4 py-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: "AI answers analyzed", value: "10k+" },
+          { label: "Keywords tracked", value: "5k+" },
+          { label: "Brands monitored", value: "500+" },
+          { label: "Engines covered", value: "6" },
+        ].map((s) => (
+          <div key={s.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+            <p className="font-display text-3xl font-bold text-[#eb9d2a]">{s.value}</p>
+            <p className="text-sm text-slate-500 mt-1">{s.label}</p>
+          </div>
+        ))}
       </section>
+
+      <section className="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-3 gap-6">
+        {[
+          { title: "Track visibility", desc: "Monitor how AI engines mention your brand across keywords." },
+          { title: "Find gaps", desc: "Get actionable fix briefs to close visibility gaps." },
+          { title: "Verify fixes", desc: "Re-check after changes to confirm improvement." },
+        ].map((f) => (
+          <div key={f.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+            <h3 className="font-display text-xl font-bold">{f.title}</h3>
+            <p className="text-slate-500 mt-2">{f.desc}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="max-w-4xl mx-auto px-4 py-16 text-center">
+        <div className="rounded-2xl bg-gradient-to-r from-[#eb9d2a]/10 to-[#eb9d2a]/5 p-12 border border-slate-200">
+          <h2 className="font-display text-3xl font-bold">Start tracking your AI visibility today</h2>
+          <a href="/login" className="inline-block mt-6 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200">Get Started</a>
+        </div>
+      </section>
+
+      <footer className="border-t border-slate-200 mt-16">
+        <div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8 text-sm text-slate-500">
+          <div><p className="font-display font-bold text-slate-900">AEO Visibility Tracker</p><p className="mt-2">Track your brand in AI answers.</p></div>
+          <div><p className="font-semibold text-slate-900">Product</p><ul className="mt-2 space-y-1"><li><a href="/login" className="hover:text-[#eb9d2a]">Login</a></li><li><a href="#pricing" className="hover:text-[#eb9d2a]">Pricing</a></li></ul></div>
+          <div><p className="font-semibold text-slate-900">Legal</p><ul className="mt-2 space-y-1"><li><a href="/privacy" className="hover:text-[#eb9d2a]">Privacy</a></li><li><a href="/terms" className="hover:text-[#eb9d2a]">Terms</a></li></ul></div>
+        </div>
+      </footer>
     </main>
   );
 }

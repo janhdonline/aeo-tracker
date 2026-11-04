@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const space = Space_Grotesk({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-space" });
 
 export const metadata: Metadata = {
   title: "AEO Visibility Tracker",
@@ -16,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className={`${inter.className} min-h-full flex flex-col`}>{children}</body>
+      <body className={`${inter.variable} ${space.variable} ${inter.className} min-h-full flex flex-col bg-white text-slate-900`}>{children}</body>
     </html>
   );
 }

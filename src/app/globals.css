@@ -5,19 +5,31 @@
 @layer base {
   :root {
     --background: #ffffff;
-    --foreground: #000000;
+    --foreground: #0f172a;
     --accent: #eb9d2a;
-    --surface: #eeefe9;
+    --surface: #f8fafc;
   }
 
   body {
-    @apply bg-[var(--background)] text-[var(--foreground)] antialiased selection:bg-[#eb9d2a]/30;
+    @apply bg-white text-slate-900 antialiased selection:bg-[#eb9d2a]/30;
     font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .text-balance { text-wrap: balance; }
+  .fade-up { opacity: 0; transform: translateY(12px); transition: opacity 500ms ease-out, transform 500ms ease-out; }
+  .fade-up.in-view { opacity: 1; transform: translateY(0); }
+  .marquee { animation: marquee 30s linear infinite; }
+  .marquee-reverse { animation: marquee 30s linear infinite reverse; }
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee, .marquee-reverse { animation: none; }
+    .fade-up { opacity: 1; transform: none; transition: none; }
   }
 }
