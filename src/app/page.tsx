@@ -1,6 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+
+export default function Home() {
+  const router = useRouter();
+  useEffect(() => {
+    const supabase = createClient();
+    if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) router.push('/dashboard');
+      });
+    }
+  }, [router]);
 
 export default function Home() {
   const [domain, setDomain] = useState("");
