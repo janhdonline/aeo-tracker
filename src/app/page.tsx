@@ -70,6 +70,21 @@ export default function Home() {
           See how AI answers talk about <span className="text-[#eb9d2a]">your brand</span>
         </h1>
         <p className="mt-4 text-lg text-slate-500">Track your visibility across ChatGPT, Gemini, Claude, Perplexity, DeepSeek, Mistral.</p>
+        <div className="mt-6 flex flex-wrap gap-2 justify-center">
+          {[
+            { name: "ChatGPT", domain: "chat.openai.com" },
+            { name: "Gemini", domain: "gemini.google.com" },
+            { name: "Claude", domain: "claude.ai" },
+            { name: "Perplexity", domain: "perplexity.ai" },
+            { name: "DeepSeek", domain: "chat.deepseek.com" },
+            { name: "Mistral", domain: "mistral.ai" },
+          ].map((e, i) => (
+            <span key={e.name} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white text-sm text-slate-600" style={{ animationDelay: `${i * 80}ms` }}>
+              <img src={`https://www.google.com/s2/favicons?domain=${e.domain}&sz=64`} alt="" className="w-4 h-4" />
+              {e.name}
+            </span>
+          ))}
+        </div>
         <div className="mt-3 flex gap-2 justify-center text-xs text-slate-400">
           Try: {["shopify.com","notion.com","stripe.com"].map((d)=>(
             <button key={d} onClick={()=>setDomain(d)} className="underline hover:text-[#eb9d2a]">{d}</button>
@@ -136,11 +151,27 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="max-w-4xl mx-auto px-4 py-16 text-center">
+      <section id="pricing" className="max-w-4xl mx-auto px-4 py-16 text-center">
         <div className="rounded-2xl bg-gradient-to-r from-[#eb9d2a]/10 to-[#eb9d2a]/5 p-12 border border-slate-200">
           <h2 className="font-display text-3xl font-bold">Start tracking your AI visibility today</h2>
           <a href="/login" className="inline-block mt-6 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200">Get Started</a>
         </div>
+      </section>
+
+      <section id="faq" className="max-w-3xl mx-auto px-4 py-16">
+        <h2 className="font-display text-2xl font-bold text-center mb-6">FAQ</h2>
+        {[
+          { q: "What is AEO?", a: "Answer Engine Optimization improves your visibility in AI-generated answers." },
+          { q: "How does tracking work?", a: "We query multiple AI engines weekly and parse mentions of your brand." },
+          { q: "Which engines are covered?", a: "ChatGPT, Gemini, Claude, Perplexity, DeepSeek, and Mistral." },
+          { q: "Can I cancel anytime?", a: "Yes, subscriptions can be cancelled at any time." },
+          { q: "Is there a free tier?", a: "Yes, free plan includes basic tracking." },
+        ].map((f, i) => (
+          <details key={i} className="border border-slate-200 rounded-xl p-4 mb-3">
+            <summary className="font-display font-bold cursor-pointer">{f.q}</summary>
+            <p className="text-slate-500 mt-2">{f.a}</p>
+          </details>
+        ))}
       </section>
 
       <footer className="border-t border-slate-200 mt-16">
