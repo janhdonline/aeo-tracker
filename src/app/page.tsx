@@ -70,6 +70,11 @@ export default function Home() {
           See how AI answers talk about <span className="text-[#eb9d2a]">your brand</span>
         </h1>
         <p className="mt-4 text-lg text-slate-500">Track your visibility across ChatGPT, Gemini, Claude, Perplexity, DeepSeek, Mistral.</p>
+        <div className="mt-3 flex gap-2 justify-center text-xs text-slate-400">
+          Try: {["shopify.com","notion.com","stripe.com"].map((d)=>(
+            <button key={d} onClick={()=>setDomain(d)} className="underline hover:text-[#eb9d2a]">{d}</button>
+          ))}
+        </div>
         <form onSubmit={handleCheck} className="mt-8 flex gap-2 justify-center">
           <input
             type="text"
@@ -139,10 +144,11 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-slate-200 mt-16">
-        <div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8 text-sm text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-4 gap-8 text-sm text-slate-500">
           <div><p className="font-display font-bold text-slate-900">AEO Visibility Tracker</p><p className="mt-2">Track your brand in AI answers.</p></div>
-          <div><p className="font-semibold text-slate-900">Product</p><ul className="mt-2 space-y-1"><li><a href="/login" className="hover:text-[#eb9d2a]">Login</a></li><li><a href="#pricing" className="hover:text-[#eb9d2a]">Pricing</a></li></ul></div>
-          <div><p className="font-semibold text-slate-900">Legal</p><ul className="mt-2 space-y-1"><li><a href="/privacy" className="hover:text-[#eb9d2a]">Privacy</a></li><li><a href="/terms" className="hover:text-[#eb9d2a]">Terms</a></li></ul></div>
+          <div><p className="font-semibold text-slate-900">Product</p><ul className="mt-2 space-y-1"><li><a href="#features" className="hover:text-[#eb9d2a]">Features</a></li><li><a href="#pricing" className="hover:text-[#eb9d2a]">Pricing</a></li><li><a href="/report/shopify.com" className="hover:text-[#eb9d2a]">Example report</a></li></ul></div>
+          <div><p className="font-semibold text-slate-900">Resources</p><ul className="mt-2 space-y-1"><li><a href="#how" className="hover:text-[#eb9d2a]">How it works</a></li><li><a href="#faq" className="hover:text-[#eb9d2a]">FAQs</a></li></ul></div>
+          <div><p className="font-semibold text-slate-900">Company</p><ul className="mt-2 space-y-1"><li><a href="#" className="hover:text-[#eb9d2a]">About</a></li><li><a href="#" className="hover:text-[#eb9d2a]">Contact</a></li><li><a href="/privacy" className="hover:text-[#eb9d2a]">Privacy</a></li><li><a href="/terms" className="hover:text-[#eb9d2a]">Terms</a></li></ul></div>
         </div>
       </footer>
     </main>

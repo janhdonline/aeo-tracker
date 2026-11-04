@@ -18,55 +18,100 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
+  const projectIds = (projects || []).map((p: any) => p.id);
+  let keywordsCount = 0;
+  let lastScan: string | null = null;
+  if (projectIds.length) {
+    const { count } = await supabase
+      .from('keywords')
+      .select('id', { count: 'exact', head: true })
+      .in('project_id', projectIds)
+      .eq('active', true);
+    keywordsCount = count || 0;
+    const { data: runs } = await supabase
+      .from('scan_runs')
+      .select('started_at')
+      .in('project_id', projectIds)
+      .order('started_at', { ascending: false })
+      .limit(1);
+    lastScan = runs?.[0]?.started_at || null;
+  }
+
+  const scores = (projects || []).length
+    ? await supabase
+        .from('snapshot_scores')
+        .select('visibility_score, project_id')
+        .in('project_id', projectIds)
+    : { data: [] };
+  const avgScore = (scores.data || []).length
+    ? Math.round((scores.data as any[]).reduce((a, b) => a + (b.visibility_score || 0), 0) / (scores.data as any[]).length)
+    : 0;
+
   return (
     <div className="min-h-screen bg-white">
       <nav className="bg-white shadow-sm border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">AEO Visibility Tracker</h1>
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center gap-6">
+              <h1 className="font-display text-xl font-bold">AEO Visibility Tracker</h1>
+              <Link href="/dashboard" className="text-sm font-medium text-[#eb9d2a]">Dashboard</Link>
+              <Link href="/dashboard/projects/new" className="text-sm font-medium text-slate-600 hover:text-slate-900">New Project</Link>
             </div>
-            <div className="flex items-center">
-              <span className="text-gray-600">{user.email}</span>
+            <div className="flex items-center gap-4">
+              <span className="text-slate-600 text-sm">{user.email}</span>
+              <form action="/auth/signout" method="post">
+                <button className="text-sm text-slate-500 hover:text-slate-900">Logout</button>
+              </form>
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Projects</h2>
-            <Link
-              href="/dashboard/projects/new"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              New Project
-            </Link>
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="font-display text-2xl font-bold">Projects</h2>
+          <div className="flex gap-2">
+            <Link href="/dashboard/projects/new" className="bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-semibold">+ New Project</Link>
+            <a href="/api/export/csv" className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50">Export CSV</a>
+            <Link href="/report/shopify.com" className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50">View sample report</Link>
           </div>
-
-          {projects && projects.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project) => (
-                <Link
-                  key={project.id}
-                  href={`/dashboard/projects/${project.id}`}
-                  className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
-                >
-                  <h3 className="text-lg font-semibold">{project.domain}</h3>
-                  <p className="text-gray-600">{project.brand_name}</p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    {project.active ? 'Active' : 'Inactive'}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No projects yet. Create your first project to get started.</p>
-            </div>
-          )}
         </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: "Total Projects", value: projects?.length || 0 },
+            { label: "Keywords Tracked", value: keywordsCount },
+            { label: "Avg AEO Score", value: avgScore },
+            { label: "Last Scan", value: lastScan ? new Date(lastScan).toLocaleDateString() : "—" },
+          ].map((s) => (
+            <div key={s.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="font-display text-3xl font-bold text-slate-900">{s.value}</p>
+              <p className="text-sm text-slate-500 mt-1">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {!projects || projects.length === 0 ? (
+          <div className="text-center py-16 text-slate-500">
+            <p className="font-display text-xl font-bold text-slate-900">No projects yet</p>
+            <p className="mt-2">Create your first project to start tracking AI visibility.</p>
+            <Link href="/dashboard/projects/new" className="inline-block mt-4 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-4 py-2 rounded-lg">+ New Project</Link>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((p: any) => (
+              <div key={p.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+                <h3 className="font-display text-lg font-bold">{p.domain}</h3>
+                <p className="text-sm text-slate-500">{p.brand_name}</p>
+                <div className="flex gap-2 mt-4">
+                  <Link href={`/dashboard/projects/${p.id}`} className="text-sm text-[#eb9d2a] font-medium">View</Link>
+                  <Link href={`/dashboard/projects/${p.id}/keywords`} className="text-sm text-slate-600">Keywords</Link>
+                  <Link href={`/report/${p.domain}`} className="text-sm text-slate-600">Report</Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
