@@ -9,7 +9,7 @@ export default function Home() {
   useEffect(() => {
     const supabase = createClient();
     if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
-      supabase.auth.getSession().then(({ data }) => {
+      supabase.auth.getSession().then(({ data }: { data: { session: any } }) => {
         if (data.session) router.push('/dashboard');
       });
     }
