@@ -39,6 +39,13 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     .limit(1)
     .single();
 
+  const { data: scoreHistory } = await supabase
+    .from('snapshot_scores')
+    .select('snapshot_date, visibility_score')
+    .eq('project_id', params.id)
+    .order('snapshot_date', { ascending: true })
+    .limit(30);
+
   const { data: fixBriefs } = await supabase
     .from('fix_briefs')
     .select('*')
@@ -86,7 +93,22 @@ export default async function ProjectPage({ params }: { params: { id: string } }
             )}
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
-              <h3 className="font-display text-lg font-semibold mb-4">Keywords ({keywords?.length || 0})</h3>
+              <h3 className="font-display text-lg font-semibold mb-4">Visibility Trend</h3>
+              {scoreHistory && scoreHistory.length > 1 ? (
+                <svg viewBox="0 0 300 80" className="w-full h-20">
+                  {(() => {
+                    const vals = scoreHistory.map((s: any) => s.visibility_score || 0);
+                    const min = Math.min(...vals);
+                    const max = Math.max(...vals);
+                    const range = max - min || 1;
+                    const pts = vals.map((v, i) => `${(i / (vals.length - 1)) * 300},${80 - ((v - min) / range) * 70 - 5}`).join(' ');
+                    return <polyline points={pts} fill="none" stroke="#eb9d2a" strokeWidth="2" />;
+                  })()}
+                </svg>
+              ) : (
+                <p className="text-sm text-slate-500">Not enough data yet.</p>
+              )}
+            </div>
               <div className="flex flex-wrap gap-2">
                 {keywords?.map((kw) => (
                   <span key={kw.id} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
