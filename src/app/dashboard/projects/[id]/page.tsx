@@ -46,6 +46,28 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     .order('snapshot_date', { ascending: true })
     .limit(30);
 
+  const { data: latestRun } = await supabase
+    .from('scan_runs')
+    .select('id')
+    .eq('project_id', params.id)
+    .order('started_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  const { data: scanResults } = latestRun
+    ? await supabase
+        .from('scan_results')
+        .select('competitor_appearances (competitor_domain)')
+        .eq('scan_run_id', latestRun.id)
+    : { data: [] };
+
+  const competitorCounts: Record<string, number> = {};
+  (scanResults || []).forEach((r: any) => {
+    (r.competitor_appearances || []).forEach((c: any) => {
+      competitorCounts[c.competitor_domain] = (competitorCounts[c.competitor_domain] || 0) + 1;
+    });
+  });
+
   const { data: fixBriefs } = await supabase
     .from('fix_briefs')
     .select('*')
@@ -109,6 +131,9 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 <p className="text-sm text-slate-500">Not enough data yet.</p>
               )}
             </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+              <h3 className="font-display text-lg font-semibold mb-4">Keywords ({keywords?.length || 0})</h3>
               <div className="flex flex-wrap gap-2">
                 {keywords?.map((kw) => (
                   <span key={kw.id} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -117,6 +142,22 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 ))}
               </div>
             </div>
+
+            {Object.keys(competitorCounts).length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+                <h3 className="font-display text-lg font-semibold mb-4">Competitor Mentions</h3>
+                <div className="space-y-2">
+                  {Object.entries(competitorCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([domain, count]) => (
+                      <div key={domain} className="flex justify-between items-center">
+                        <span className="text-sm text-slate-700">{domain}</span>
+                        <span className="text-sm font-semibold text-slate-900">{count}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
 
             {fixBriefs && fixBriefs.length > 0 && (
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
