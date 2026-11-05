@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { LayoutDashboard, FileText, BarChart3, Globe } from 'lucide-react';
+import { LayoutDashboard, FileText, BarChart3, Globe, ListChecks } from 'lucide-react';
 
 interface ProjectSidebarProps {
   projectId: string;
   domain: string;
-  current?: 'overview' | 'keywords' | 'briefs' | 'report';
+  current?: 'overview' | 'keywords' | 'briefs' | 'runs' | 'report';
 }
 
 export function ProjectSidebar({ projectId, domain, current = 'overview' }: ProjectSidebarProps) {
@@ -13,6 +13,7 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
     { label: 'Overview', icon: LayoutDashboard, href: `/dashboard/projects/${projectId}`, key: 'overview' as const },
     { label: 'Keywords', icon: FileText, href: `/dashboard/projects/${projectId}/keywords`, key: 'keywords' as const },
     { label: 'Briefs', icon: BarChart3, href: `/dashboard/projects/${projectId}/briefs`, key: 'briefs' as const },
+    { label: 'Runs', icon: ListChecks, href: `/dashboard/projects/${projectId}/runs`, key: 'runs' as const },
     { label: 'Report', icon: Globe, href: `/report/${domain}`, key: 'report' as const },
   ];
 
