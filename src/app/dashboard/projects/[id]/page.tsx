@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import { RunScanButton } from './RunScanButton';
+import { ShareOfVoice } from './ShareOfVoice';
 import Link from 'next/link';
 
 export default async function ProjectPage({ params }: { params: { id: string } }) {
@@ -143,21 +144,11 @@ export default async function ProjectPage({ params }: { params: { id: string } }
               </div>
             </div>
 
-            {Object.keys(competitorCounts).length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
-                <h3 className="font-display text-lg font-semibold mb-4">Competitor Mentions</h3>
-                <div className="space-y-2">
-                  {Object.entries(competitorCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([domain, count]) => (
-                      <div key={domain} className="flex justify-between items-center">
-                        <span className="text-sm text-slate-700">{domain}</span>
-                        <span className="text-sm font-semibold text-slate-900">{count}</span>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
+            <ShareOfVoice
+              yourDomain={project.domain}
+              yourMentions={latestScore?.total_mentions || 0}
+              competitorCounts={competitorCounts}
+            />
 
             {fixBriefs && fixBriefs.length > 0 && (
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
