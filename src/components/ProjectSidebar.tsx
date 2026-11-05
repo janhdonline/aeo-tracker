@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { LayoutDashboard, FileText, BarChart3, Globe } from 'lucide-react';
 
 interface ProjectSidebarProps {

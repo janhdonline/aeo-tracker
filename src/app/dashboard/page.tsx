@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { AppShell } from '@/components/AppShell';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
