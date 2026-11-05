@@ -91,6 +91,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 <Link href={`/dashboard/projects/${params.id}/keywords`} className="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 text-sm font-medium">Keywords</Link>
                 <Link href={`/dashboard/projects/${params.id}/briefs`} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 text-sm font-medium">Briefs</Link>
                 <Link href={`/report/${project.domain}`} className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50">Report</Link>
+                <a href={`/api/export/pdf?projectId=${params.id}`} download className="border border-emerald-300 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg text-sm hover:bg-emerald-100">Export PDF</a>
               </div>
             </div>
 
