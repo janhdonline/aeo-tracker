@@ -25,6 +25,7 @@
     "@eslint/js": "^10.0.1",
     "@opennextjs/cloudflare": "1.14.6",
     "@types/node": "^22",
+    "@types/pdfmake": "^0.3.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",

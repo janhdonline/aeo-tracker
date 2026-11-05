@@ -212,16 +212,10 @@ export async function GET(request: NextRequest) {
             style: 'sectionHeader',
             margin: [0, 0, 0, 10],
           },
-          ...briefs.map((brief: any) => ({
-            text: `${brief.gap_type}`,
-            style: 'briefTitle',
-            margin: [0, 0, 0, 4],
-          }),
-          {
-            text: brief.gap_description,
-            style: 'briefDesc',
-            margin: [0, 0, 0, 8],
-          }),
+          ...briefs.flatMap((brief: any) => [
+            { text: `${brief.gap_type}`, style: 'briefTitle' },
+            { text: brief.gap_description, style: 'briefDesc', margin: [0, 0, 0, 8] },
+          ]),
         ] : [
           {
             text: 'No fix briefs generated yet.',
