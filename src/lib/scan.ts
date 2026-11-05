@@ -4,6 +4,7 @@ import { generatePrompts, getPromptVersion } from '@/lib/prompts';
 import { detectMentions, extractCompetitorMentions } from '@/lib/parser';
 import { calculateVisibilityScore, calculateShareOfVoice } from '@/lib/scoring';
 import { classifyGap, generateRecommendation, generateGapDescription } from '@/lib/briefs';
+import { sendScanCompletion } from '@/lib/email';
 import { normalizeDomain } from '@/lib/parser/citations';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { paceGeminiRequests, GEMINI_DELAY_MS } from '@/lib/pacing';
@@ -318,10 +319,11 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
   }
   
   // Generate fix briefs
+  const topGaps: string[] = [];
   for (const result of allResults || []) {
     const resultMentions = result.mentions || [];
     const hasMention = resultMentions.length > 0;
-    
+
     if (!hasMention) {
       const sourceDomains = (result.citations || []).map((c: any) => c.domain);
       const gapType = classifyGap(
@@ -331,7 +333,7 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
         sourceDomains,
         normalizeDomain(project.domain)
       );
-      
+
       const kw = keywords.find((k: any) => k.id === result.keyword_id);
       const recommendation = generateRecommendation(
         gapType,
@@ -339,13 +341,13 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
         project.competitor_domains || [],
         sourceDomains
       );
-      
+
       const gapDescription = await generateGapDescription(
         result.raw_answer,
         gapType,
         kw?.keyword || ''
       );
-      
+
       await adminClient.from('fix_briefs').insert({
         project_id: project.id,
         result_id: result.id,
@@ -354,9 +356,13 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
         recommendation,
         status: 'open',
       });
+
+      if (topGaps.length < 3) {
+        topGaps.push(`${gapType.replace(/_/g, ' ')}: ${kw?.keyword || 'general'}`);
+      }
     }
   }
-  
+
   await adminClient
     .from('scan_runs')
     .update({
@@ -364,6 +370,23 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
       finished_at: new Date().toISOString(),
     })
     .eq('id', runId);
+
+  // Notify the user by email on scan completion (best-effort, non-blocking)
+  try {
+    await sendScanCompletion({
+      projectId: project.id,
+      domain: project.domain,
+      visibilityScore,
+      shareOfVoice,
+      totalMentions: yourMentions,
+      competitorMentions: competitorMentionsCount,
+      keywordsCovered: keywordsWithMentions,
+      keywordsTotal: keywords.length,
+      topGaps,
+    });
+  } catch (emailError) {
+    console.error('Scan completion email failed (non-fatal):', emailError);
+  }
 }
 
 // Start a new scan (creates run + returns runId)
