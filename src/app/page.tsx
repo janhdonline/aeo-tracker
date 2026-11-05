@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -26,6 +27,7 @@ import {
   X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import type { LiveDashboardData } from "@/lib/types";
 import DashboardPreview from "@/components/landing/DashboardPreview";
 import ReportPreview from "@/components/landing/ReportPreview";
 import { ProgressBar, Sparkline } from "@/components/landing/Charts";
@@ -178,6 +180,60 @@ function scoreTone(score: number) {
   if (score >= 80) return "border-emerald-200 bg-emerald-50 text-emerald-700";
   if (score >= 70) return "border-blue-200 bg-blue-50 text-blue-700";
   return "border-amber-200 bg-amber-50 text-amber-700";
+}
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+function isLiveDashboardData(value: unknown): value is LiveDashboardData {
+  if (!value || typeof value !== "object") return false;
+
+  const candidate = value as Partial<LiveDashboardData>;
+  const hasValidTrends =
+    Array.isArray(candidate.trends) &&
+    candidate.trends.length > 0 &&
+    candidate.trends.every((series) => {
+      const item = series as Partial<LiveDashboardData["trends"][number]> | undefined;
+
+      return (
+        item !== undefined &&
+        typeof item.label === "string" &&
+        typeof item.color === "string" &&
+        Array.isArray(item.values) &&
+        item.values.length >= 2 &&
+        item.values.every((point) => typeof point === "number" && Number.isFinite(point))
+      );
+    });
+
+  return (
+    typeof candidate.domain === "string" &&
+    typeof candidate.score === "number" &&
+    typeof candidate.webPresence === "number" &&
+    typeof candidate.brandSentiment === "number" &&
+    typeof candidate.totalQueries === "number" &&
+    typeof candidate.totalMentions === "number" &&
+    typeof candidate.mentionedQueries === "number" &&
+    typeof candidate.citationsCount === "number" &&
+    typeof candidate.promptCoverage === "number" &&
+    typeof candidate.sentimentLabel === "string" &&
+    typeof candidate.lastUpdated === "string" &&
+    Array.isArray(candidate.promptBars) &&
+    candidate.promptBars.every((bar) => typeof bar === "number" && Number.isFinite(bar)) &&
+    Array.isArray(candidate.trendLabels) &&
+    candidate.trendLabels.every((label) => typeof label === "string") &&
+    hasValidTrends
+  );
 }
 
 function SectionBadge({
@@ -426,9 +482,11 @@ function ExamplePreview({
 export default function Home() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const prefersReducedMotion = useReducedMotion();
   const [domain, setDomain] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CheckResult | null>(null);
+  const [dashboardData, setDashboardData] = useState<LiveDashboardData | null>(null);
   const [error, setError] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -447,6 +505,7 @@ export default function Home() {
     setDomain(exampleDomain);
     setError("");
     setResult(null);
+    setDashboardData(null);
     requestAnimationFrame(() => {
       inputRef.current?.focus();
       inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -466,6 +525,7 @@ export default function Home() {
     setLoading(true);
     setError("");
     setResult(null);
+    setDashboardData(null);
 
     try {
       const response = await fetch("/api/free-check", {
@@ -485,6 +545,10 @@ export default function Home() {
         totalQueries: data.totalQueries ?? 0,
         totalMentions: data.totalMentions ?? 0,
       });
+
+      if (isLiveDashboardData(data.dashboard)) {
+        setDashboardData(data.dashboard);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
@@ -593,12 +657,22 @@ export default function Home() {
           />
 
           <div className="relative mx-auto max-w-5xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pb-20 sm:pt-24 lg:pt-28">
-            <div className="fade-up inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-[11px] font-medium text-gray-600 shadow-sm sm:text-xs">
+            <motion.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+              className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-[11px] font-medium text-gray-600 shadow-sm sm:text-xs"
+            >
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.12)]" />
               63,100+ websites analysed
-            </div>
+            </motion.div>
 
-            <h1 className="fade-up fade-up-delay-1 mx-auto mt-6 max-w-4xl text-[36px] font-semibold leading-[1.03] tracking-[-0.055em] text-[#111827] sm:text-6xl lg:text-[76px]">
+            <motion.h1
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.13 }}
+              className="mx-auto mt-6 max-w-4xl text-[36px] font-semibold leading-[1.03] tracking-[-0.055em] text-[#111827] sm:text-6xl lg:text-[76px]"
+            >
               Check your website
               <span className="mt-1 block">
                 <span className="relative inline-block">
@@ -624,105 +698,127 @@ export default function Home() {
                   </svg>
                 </span>
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="fade-up fade-up-delay-2 mx-auto mt-6 max-w-2xl text-balance text-[15px] leading-7 text-gray-500 sm:text-lg sm:leading-8">
+            <motion.p
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.21 }}
+              className="mx-auto mt-6 max-w-2xl text-balance text-[15px] leading-7 text-gray-500 sm:text-lg sm:leading-8"
+            >
               Answer Engine Optimization improves your website&apos;s visibility to AIs like
               DeepSeek
-            </p>
+            </motion.p>
 
-            <form id="analyze" onSubmit={handleAnalyze} className="fade-up fade-up-delay-3 mx-auto mt-9 max-w-2xl">
-              <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-[0_16px_50px_-24px_rgba(17,24,39,0.32)] transition-all focus-within:border-emerald-300 focus-within:ring-4 focus-within:ring-emerald-500/10 sm:flex sm:items-center">
-                <label htmlFor="website-url" className="sr-only">
-                  Website URL
-                </label>
-                <div className="flex flex-1 items-center gap-3 px-3 py-2">
-                  <Globe2 className="h-5 w-5 shrink-0 text-gray-400" strokeWidth={1.8} />
-                  <input
-                    ref={inputRef}
-                    id="website-url"
-                    name="domain"
-                    type="text"
-                    inputMode="url"
-                    autoComplete="url"
-                    spellCheck={false}
-                    value={domain}
-                    onChange={(event) => setDomain(event.target.value)}
-                    placeholder="Enter the website url"
-                    className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-gray-900 outline-none placeholder:font-normal placeholder:text-gray-400"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-gray-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70 sm:mt-0 sm:w-auto"
-                >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                  {loading ? "Analyzing..." : "Analyze"}
-                  {!loading && (
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  )}
-                </button>
-              </div>
-
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-                <span className="mr-1 text-xs font-medium text-gray-400">Examples:</span>
-                {heroExamples.map((example) => (
+            <motion.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.29 }}
+              className="mx-auto mt-9 max-w-2xl"
+            >
+              <form id="analyze" onSubmit={handleAnalyze}>
+                <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-[0_16px_50px_-24px_rgba(17,24,39,0.32)] transition-all focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/50 sm:flex sm:items-center">
+                  <label htmlFor="website-url" className="sr-only">
+                    Website URL
+                  </label>
+                  <div className="flex flex-1 items-center gap-3 px-3 py-2">
+                    <Globe2 className="h-5 w-5 shrink-0 text-gray-400" strokeWidth={1.8} />
+                    <input
+                      ref={inputRef}
+                      id="website-url"
+                      name="domain"
+                      type="text"
+                      inputMode="url"
+                      autoComplete="url"
+                      spellCheck={false}
+                      value={domain}
+                      onChange={(event) => setDomain(event.target.value)}
+                      placeholder="Enter the website url"
+                      className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-gray-900 outline-none placeholder:font-normal placeholder:text-gray-400"
+                    />
+                  </div>
                   <button
-                    key={example.name}
-                    type="button"
-                    onClick={() => pickExample(example.domain)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-gray-300 hover:text-gray-900 hover:shadow"
+                    type="submit"
+                    disabled={loading}
+                    className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-gray-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70 sm:mt-0 sm:w-auto"
                   >
-                    <BrandIcon brand={example.name} />
-                    {example.name}
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                    {loading ? "Analyzing..." : "Analyze"}
+                    {!loading && (
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    )}
                   </button>
-                ))}
-              </div>
+                </div>
 
-              <div aria-live="polite">
-                {error && (
-                  <p className="mt-4 text-xs font-medium text-red-500" role="alert">
-                    {error}
-                  </p>
-                )}
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                  <span className="mr-1 text-xs font-medium text-gray-400">Examples:</span>
+                  {heroExamples.map((example) => (
+                    <button
+                      key={example.name}
+                      type="button"
+                      onClick={() => pickExample(example.domain)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm transition-all hover:-translate-y-0.5 hover:scale-[1.02] hover:border-gray-300 hover:text-gray-900 hover:shadow"
+                    >
+                      <BrandIcon brand={example.name} />
+                      {example.name}
+                    </button>
+                  ))}
+                </div>
 
-                {result && (
-                  <div className="mx-auto mt-5 max-w-xl overflow-hidden rounded-2xl border border-emerald-200 bg-white text-left shadow-md">
-                    <div className="flex items-center gap-3 p-4">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
-                        <CheckCircle2 className="h-5 w-5" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-gray-900">Analysis complete</p>
-                        <p className="truncate text-xs text-gray-500">
-                          {result.domain} · Score{" "}
-                          <span className="font-semibold text-gray-700">{result.visibilityScore}/100</span>{" "}
-                          · {result.totalMentions} mentions across {result.totalQueries} prompts
-                        </p>
+                <div aria-live="polite">
+                  {error && (
+                    <p className="mt-4 text-xs font-medium text-red-500" role="alert">
+                      {error}
+                    </p>
+                  )}
+
+                  {result && (
+                    <div className="mx-auto mt-5 max-w-xl overflow-hidden rounded-2xl border border-emerald-200 bg-white text-left shadow-md">
+                      <div className="flex items-center gap-3 p-4">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+                          <CheckCircle2 className="h-5 w-5" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-gray-900">Analysis complete</p>
+                          <p className="truncate text-xs text-gray-500">
+                            {result.domain} · Score{" "}
+                            <span className="font-semibold text-gray-700">{result.visibilityScore}/100</span>{" "}
+                            · {result.totalMentions} mentions across {result.totalQueries} prompts
+                          </p>
+                        </div>
+                        <a
+                          href="/login"
+                          className="hidden shrink-0 items-center gap-1 rounded-lg bg-[#111827] px-3 py-2 text-[11px] font-semibold text-white hover:bg-gray-800 sm:inline-flex"
+                        >
+                          Unlock report
+                          <ArrowRight className="h-3 w-3" />
+                        </a>
+                      </div>
+                      <div className="h-1 w-full bg-gray-100">
+                        <div
+                          className="h-full bg-emerald-500 transition-[width] duration-700"
+                          style={{ width: `${Math.min(result.visibilityScore, 100)}%` }}
+                        />
                       </div>
                       <a
-                        href="/login"
-                        className="hidden shrink-0 items-center gap-1 rounded-lg bg-[#111827] px-3 py-2 text-[11px] font-semibold text-white hover:bg-gray-800 sm:inline-flex"
+                        href="#product"
+                        className="flex items-center justify-between gap-2 border-t border-emerald-100 bg-emerald-50/40 px-4 py-2 text-[10px] font-semibold text-emerald-800 transition-colors hover:bg-emerald-50"
                       >
-                        Unlock report
-                        <ArrowRight className="h-3 w-3" />
+                        Your live dashboard is ready
+                        <span className="inline-flex items-center gap-1">
+                          View dashboard
+                          <ArrowRight className="h-3 w-3" />
+                        </span>
                       </a>
                     </div>
-                    <div className="h-1 w-full bg-gray-100">
-                      <div
-                        className="h-full bg-emerald-500 transition-[width] duration-700"
-                        style={{ width: `${Math.min(result.visibilityScore, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
 
-              <p className="mt-4 text-[11px] text-gray-400">
-                Free instant scan · No credit card required
-              </p>
-            </form>
+                <p className="mt-4 text-[11px] text-gray-400">
+                  Free instant scan · No credit card required
+                </p>
+              </form>
+            </motion.div>
           </div>
         </section>
 
@@ -755,7 +851,7 @@ export default function Home() {
                 customers actually use.
               </p>
             </div>
-            <DashboardPreview />
+            <DashboardPreview data={dashboardData} isLoading={loading} />
           </div>
         </section>
 
@@ -772,13 +868,25 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 sm:mt-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+            <motion.div
+              initial={prefersReducedMotion ? false : "hidden"}
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={staggerContainer}
+              className="mt-10 grid gap-4 sm:mt-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-5"
+            >
               {features.map((feature) => {
                 const Icon = feature.icon;
                 return (
-                  <article
+                  <motion.article
                     key={feature.title}
-                    className="group flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200/80 hover:shadow-lg sm:p-6"
+                    variants={fadeUp}
+                    whileHover={
+                      prefersReducedMotion
+                        ? undefined
+                        : { y: -4, transition: { duration: 0.2, ease: "easeOut" } }
+                    }
+                    className="group flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-emerald-200/80 hover:shadow-lg sm:p-6"
                   >
                     <div className="flex items-start justify-between">
                       <span
@@ -795,10 +903,10 @@ export default function Home() {
                     <div className="mt-auto pt-5">
                       <FeatureVisual kind={feature.visual} />
                     </div>
-                  </article>
+                  </motion.article>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -1028,17 +1136,29 @@ export default function Home() {
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
               {examples.map((example) => (
-                <button
+                <motion.a
                   key={example.brand}
-                  type="button"
-                  onClick={() => pickExample(example.domain)}
-                  className="group rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg"
+                  href="#analyze"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    pickExample(example.domain);
+                  }}
+                  aria-label={`Analyze ${example.brand} AI visibility`}
+                  whileHover={
+                    prefersReducedMotion
+                      ? undefined
+                      : { scale: 1.02, y: -4, transition: { type: "spring", stiffness: 360, damping: 24 } }
+                  }
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.995 }}
+                  className="group rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-gray-300 hover:shadow-lg"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-2.5">
                       <BrandIcon brand={example.brand} className="h-7 w-7 rounded-md text-[9px]" />
                       <div className="min-w-0">
-                        <BrandWordmark brand={example.brand} />
+                        <h3 className="truncate">
+                          <BrandWordmark brand={example.brand} />
+                        </h3>
                         <p className="mt-0.5 truncate text-[10px] text-gray-400">{example.domain}</p>
                       </div>
                     </div>
@@ -1061,7 +1181,7 @@ export default function Home() {
                       <ArrowUpRight className="h-3 w-3" />
                     </span>
                   </div>
-                </button>
+                </motion.a>
               ))}
             </div>
           </div>

@@ -2,6 +2,9 @@ export const dynamic = 'force-dynamic';
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { AppShell } from '@/components/AppShell';
+import { ProjectSidebar } from '@/components/ProjectSidebar';
+import Link from 'next/link';
 import { BriefsManager } from './BriefsManager';
 
 export default async function BriefsPage({ params }: { params: { id: string } }) {
@@ -29,32 +32,19 @@ export default async function BriefsPage({ params }: { params: { id: string } })
     .order('created_at', { ascending: false });
 
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">AEO Visibility Tracker</h1>
+    <AppShell user={{ email: user.email }}>
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-6">
+          <ProjectSidebar projectId={params.id} domain={project.domain} current="briefs" />
+          <main className="flex-1 min-w-0">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-display text-2xl font-bold">Fix Briefs for {project.domain}</h2>
+              <Link href={`/dashboard/projects/${params.id}`} className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50">Back to Project</Link>
             </div>
-          </div>
+            <BriefsManager projectId={params.id} initialBriefs={briefs || []} />
+          </main>
         </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Fix Briefs for {project.domain}</h2>
-            <a
-              href={`/dashboard/projects/${params.id}`}
-              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
-            >
-              Back to Project
-            </a>
-          </div>
-
-          <BriefsManager projectId={params.id} initialBriefs={briefs || []} />
-        </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

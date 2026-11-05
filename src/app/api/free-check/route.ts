@@ -11,8 +11,26 @@ interface PromptResult {
   answer: string;
   citations: { domain: string; url: string; title: string }[];
   mentions: number;
+  mentionDetails: { positionInAnswer: number; mentionType: 'named' | 'linked' | 'implied' }[];
   sentiment: number;
   sentimentLabel: 'positive' | 'negative' | 'neutral';
+}
+
+function normalizeInputDomain(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split('/')[0]
+    .split('?')[0];
+}
+
+function brandNameFromDomain(domain: string) {
+  const base = domain.replace(/^www\./, '').split('.')[0] || domain;
+  return base
+    .replace(/[-_]+/g, ' ')
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 export async function POST(request: NextRequest) {
@@ -60,9 +78,16 @@ export async function POST(request: NextRequest) {
     if (!domain) {
       return NextResponse.json({ error: 'domain is required' }, { status: 400 });
     }
-    
+
+    const normalizedDomain = normalizeInputDomain(domain);
+
+    if (!normalizedDomain) {
+      return NextResponse.json({ error: 'Enter a valid domain to analyze' }, { status: 400 });
+    }
+
     const adapter = new GeminiAdapter();
-    const keyword = `best ${domain} alternatives`;
+    const brandName = brandNameFromDomain(normalizedDomain);
+    const keyword = `best ${brandName} alternatives`;
     const prompts = generatePrompts(keyword).slice(0, 5);
     
     let totalMentions = 0;
@@ -80,9 +105,9 @@ export async function POST(request: NextRequest) {
         const mentions = detectMentions(
           response.answerText,
           response.citations,
-          domain,
+          brandName,
           [],
-          domain
+          normalizedDomain
         );
         const sentiment = await analyzeSentiment(response.answerText);
         
@@ -91,6 +116,10 @@ export async function POST(request: NextRequest) {
           answer: response.answerText.slice(0, 500),
           citations: response.citations,
           mentions: mentions.length,
+          mentionDetails: mentions.map((mention) => ({
+            positionInAnswer: mention.positionInAnswer,
+            mentionType: mention.mentionType,
+          })),
           sentiment: sentiment.score,
           sentimentLabel: sentiment.sentiment,
         });
@@ -111,10 +140,11 @@ export async function POST(request: NextRequest) {
     
     const mentionedQueries = results.filter((result) => result.mentions > 0).length;
     const citationsCount = results.reduce((total, result) => total + result.citations.length, 0);
+    const mentionDetails = results.flatMap((result) => result.mentionDetails);
     const visibilityScore = calculateVisibilityScore({
       totalQueries,
       mentionedQueries,
-      mentions: [],
+      mentions: mentionDetails,
       yourMentions: totalMentions,
       competitorMentions: 0,
       keywordsWithMentions: mentionedQueries > 0 ? 1 : 0,
@@ -170,7 +200,7 @@ export async function POST(request: NextRequest) {
     ];
     
     const dashboard: LiveDashboardData = {
-      domain,
+      domain: normalizedDomain,
       score: visibilityScore,
       webPresence: visibilityScore,
       brandSentiment,

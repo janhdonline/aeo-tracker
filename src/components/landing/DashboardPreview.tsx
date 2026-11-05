@@ -73,7 +73,16 @@ const fallbackDashboard: LiveDashboardData = {
   lastUpdated: new Date(0).toISOString(),
 };
 
-const competitorRankings = [
+type BrandRanking = {
+  name: string;
+  domain: string;
+  score: number;
+  change: string;
+  initial: string;
+  you?: boolean;
+};
+
+const competitorRankings: BrandRanking[] = [
   { name: "Semrush", domain: "semrush.com", score: 76, change: "+1.8", initial: "S" },
   { name: "Ahrefs", domain: "ahrefs.com", score: 71, change: "+0.9", initial: "A" },
   { name: "Surfer SEO", domain: "surferseo.com", score: 64, change: "-0.6", initial: "S" },
@@ -340,7 +349,7 @@ export default function DashboardPreview({
   const chartSeries = dashboard.trends.length >= 2 ? dashboard.trends : fallbackDashboard.trends;
   const chartLabels = isLive ? dashboard.trendLabels : undefined;
   const promptBars = dashboard.promptBars.length > 0 ? dashboard.promptBars : fallbackDashboard.promptBars;
-  const rankings = [
+  const rankings: BrandRanking[] = [
     {
       name: displayBrandName,
       domain: displayDomain,
@@ -371,7 +380,7 @@ export default function DashboardPreview({
           <div className="mx-auto flex min-w-0 max-w-[430px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[10px] font-medium text-gray-500 shadow-sm">
             <Lock className="h-2.5 w-2.5 shrink-0 text-emerald-500" strokeWidth={2.4} />
             <span className="truncate">
-              app.aeochecker.com/overview{isLive ? `/${dashboard.domain}` : ""}
+              app.aeo-checker.com/overview{isLive ? `/${dashboard.domain}` : ""}
             </span>
           </div>
 

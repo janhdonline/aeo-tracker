@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { AppShell } from '@/components/AppShell';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
@@ -48,25 +49,7 @@ export default async function DashboardPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="bg-white shadow-sm border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-6">
-              <h1 className="font-display text-xl font-bold">AEO Visibility Tracker</h1>
-              <Link href="/dashboard" className="text-sm font-medium text-[#eb9d2a]">Dashboard</Link>
-              <Link href="/dashboard/projects/new" className="text-sm font-medium text-slate-600 hover:text-slate-900">New Project</Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-slate-600 text-sm">{user.email}</span>
-              <form action="/auth/signout" method="post">
-                <button className="text-sm text-slate-500 hover:text-slate-900">Logout</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <AppShell user={{ email: user.email }}>
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-display text-2xl font-bold">Projects</h2>
@@ -113,6 +96,6 @@ export default async function DashboardPage() {
           </div>
         )}
       </main>
-    </div>
+    </AppShell>
   );
 }
