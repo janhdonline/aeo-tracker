@@ -25,6 +25,12 @@ export default async function KeywordsPage({ params }: { params: { id: string } 
     redirect('/dashboard');
   }
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .single();
+
   const { data: keywords } = await supabase
     .from('keywords')
     .select('*')
@@ -41,7 +47,7 @@ export default async function KeywordsPage({ params }: { params: { id: string } 
               <h2 className="font-display text-2xl font-bold">Keywords for {project.domain}</h2>
               <Link href={`/dashboard/projects/${params.id}`} className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50">Back to Project</Link>
             </div>
-            <KeywordsManager projectId={params.id} initialKeywords={keywords || []} />
+            <KeywordsManager projectId={params.id} initialKeywords={keywords || []} plan={profile?.plan || 'free'} />
           </main>
         </div>
       </div>

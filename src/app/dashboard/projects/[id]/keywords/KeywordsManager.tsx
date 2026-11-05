@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { Search } from 'lucide-react';
 
 interface Keyword {
   id: string;
@@ -11,10 +12,17 @@ interface Keyword {
   active: boolean;
 }
 
-export function KeywordsManager({ projectId, initialKeywords }: { projectId: string; initialKeywords: Keyword[] }) {
+interface KeywordsManagerProps {
+  projectId: string;
+  initialKeywords: Keyword[];
+  plan: 'free' | 'starter' | 'pro';
+}
+
+export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsManagerProps) {
   const [keywords, setKeywords] = useState(initialKeywords);
   const [newKeyword, setNewKeyword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [discoverLoading, setDiscoverLoading] = useState(false);
   const supabase = createClient();
 
   const handleAddKeyword = async (e: React.FormEvent) => {
@@ -48,6 +56,29 @@ export function KeywordsManager({ projectId, initialKeywords }: { projectId: str
     setLoading(false);
   };
 
+  const handleDiscover = async () => {
+    setDiscoverLoading(true);
+    try {
+      const response = await fetch('/api/discover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        alert(result.error || 'Discovery failed');
+      } else if (result.keywords && result.keywords.length > 0) {
+        setKeywords([...result.keywords, ...keywords]);
+        alert(`Discovered ${result.keywords.length} new keywords!`);
+      } else {
+        alert(result.message || 'No new keywords found.');
+      }
+    } catch (error) {
+      alert('Discovery failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
+    setDiscoverLoading(false);
+  };
+
   const handleDelete = async (id: string) => {
     await supabase.from('keywords').delete().eq('id', id);
     setKeywords(keywords.filter(k => k.id !== id));
@@ -55,22 +86,32 @@ export function KeywordsManager({ projectId, initialKeywords }: { projectId: str
 
   return (
     <div>
-      <form onSubmit={handleAddKeyword} className="flex gap-2 mb-6">
-        <input
-          type="text"
-          value={newKeyword}
-          onChange={(e) => setNewKeyword(e.target.value)}
-          placeholder="Enter keyword"
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
-        />
+      <div className="flex gap-2 mb-6 items-center">
+        <form onSubmit={handleAddKeyword} className="flex gap-2 flex-1">
+          <input
+            type="text"
+            value={newKeyword}
+            onChange={(e) => setNewKeyword(e.target.value)}
+            placeholder="Enter keyword"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            Add
+          </button>
+        </form>
         <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+          onClick={handleDiscover}
+          disabled={discoverLoading}
+          className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 disabled:opacity-50"
         >
-          Add
+          <Search className="h-4 w-4" />
+          Discover Keywords
         </button>
-      </form>
+      </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">

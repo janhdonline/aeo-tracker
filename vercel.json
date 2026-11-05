@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/scan",
       "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/verify",
+      "schedule": "0 4 * * *"
     }
   ]
 }
