@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { AppShell } from '@/components/AppShell';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
@@ -66,11 +66,17 @@ export default async function DashboardPage() {
             { label: "Keywords Tracked", value: keywordsCount },
             { label: "Avg AEO Score", value: avgScore },
             { label: "Last Scan", value: lastScan ? new Date(lastScan).toLocaleDateString() : "—" },
-          ].map((s) => (
-            <div key={s.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          ].map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.35, ease: 'easeOut' }}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
               <p className="font-display text-3xl font-bold text-slate-900">{s.value}</p>
               <p className="text-sm text-slate-500 mt-1">{s.label}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -82,8 +88,15 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map((p: any) => (
-              <div key={p.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+            {projects.map((p: any, i: number) => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.05, duration: 0.4, ease: 'easeOut' }}
+                whileHover={{ y: -4 }}
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+              >
                 <h3 className="font-display text-lg font-bold">{p.domain}</h3>
                 <p className="text-sm text-slate-500">{p.brand_name}</p>
                 <div className="flex gap-2 mt-4">
@@ -91,7 +104,7 @@ export default async function DashboardPage() {
                   <Link href={`/dashboard/projects/${p.id}/keywords`} className="text-sm text-slate-600">Keywords</Link>
                   <Link href={`/report/${p.domain}`} className="text-sm text-slate-600">Report</Link>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

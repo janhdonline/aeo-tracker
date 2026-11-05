@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { LayoutDashboard, FileText, BarChart3, Globe } from 'lucide-react';
 
 interface ProjectSidebarProps {
@@ -25,14 +25,21 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
             <Link
               key={item.key}
               href={item.href}
-              className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-[#eb9d2a]/10 text-[#eb9d2a]'
+                  ? 'text-[#eb9d2a]'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
-              <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#eb9d2a]' : 'text-slate-400'}`} strokeWidth={2} />
-              {item.label}
+              {isActive && (
+                <motion.span
+                  layoutId="sidebar-active"
+                  className="absolute inset-0 rounded-lg bg-[#eb9d2a]/10"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+              <Icon className={`relative z-10 h-4 w-4 shrink-0 ${isActive ? 'text-[#eb9d2a]' : 'text-slate-400'}`} strokeWidth={2} />
+              <span className="relative z-10">{item.label}</span>
             </Link>
           );
         })}
