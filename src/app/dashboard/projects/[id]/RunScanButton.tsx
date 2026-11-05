@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { Loader2, Play } from 'lucide-react';
 
 export function RunScanButton({ projectId }: { projectId: string }) {
   const [loading, setLoading] = useState(false);
@@ -33,15 +35,37 @@ export function RunScanButton({ projectId }: { projectId: string }) {
   };
 
   return (
-    <div>
+    <motion.div
+      whileHover={{ scale: loading ? 1 : 1.02 }}
+      whileTap={{ scale: loading ? 1 : 0.98 }}
+    >
       <button
         onClick={handleRunScan}
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+        className="flex items-center gap-2 bg-[#eb9d2a] text-white px-4 py-2 rounded-lg hover:bg-[#d88b1e] disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium text-sm"
       >
-        {loading ? 'Running...' : 'Run Scan'}
+        {loading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Running...
+          </>
+        ) : (
+          <>
+            <Play className="h-4 w-4" />
+            Run Scan
+          </>
+        )}
       </button>
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-    </div>
+      {error && (
+        <motion.p
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="text-red-500 text-xs mt-1"
+        >
+          {error}
+        </motion.p>
+      )}
+    </motion.div>
   );
 }

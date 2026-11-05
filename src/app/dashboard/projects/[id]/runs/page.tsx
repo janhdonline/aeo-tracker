@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default async function RunsPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
@@ -30,6 +31,21 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
     .eq('project_id', params.id)
     .order('started_at', { ascending: false });
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0 },
+  };
+
   return (
     <AppShell user={{ email: user.email }}>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -38,10 +54,15 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
           <main className="flex-1 min-w-0">
             <div className="flex justify-between items-center mb-6">
               <h2 className="font-display text-2xl font-bold">Scan History for {project.domain}</h2>
-              <Link href={`/dashboard/projects/${params.id}`} className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50">Back to Project</Link>
+              <Link href={`/dashboard/projects/${params.id}`} className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition-colors">Back to Project</Link>
             </div>
 
-            <div className="bg-white shadow rounded-lg overflow-hidden">
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="bg-white shadow rounded-lg overflow-hidden"
+            >
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -52,8 +73,12 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {runs?.map((run) => (
-                    <tr key={run.id}>
+                  {(runs || []).map((run) => (
+                    <motion.tr
+                      key={run.id}
+                      variants={item}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(run.started_at).toLocaleString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -65,11 +90,11 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{run.total_queries}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${Number(run.api_cost_usd).toFixed(4)}</td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </motion.div>
           </main>
         </div>
       </div>
