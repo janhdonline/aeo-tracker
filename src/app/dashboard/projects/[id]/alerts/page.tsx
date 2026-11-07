@@ -112,8 +112,8 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
                       </div>
                       <p className="text-sm text-slate-800 mb-2">"{alert.quote}"</p>
                       <div className="flex gap-4 text-sm">
-                        <span className="text-red-600">Claimed: <strong>{alert.claimed_value}</strong></span>
-                        <span className="text-emerald-600">Expected: <strong>{alert.expected_value}</strong></span>
+                        <span className="text-red-600">&quot;Claimed: <strong>{alert.claimed_value}</strong></span>
+                        <span className="text-emerald-600">&quot;Expected: <strong>{alert.expected_value}</strong></span>
                       </div>
                       <p className="text-xs text-slate-500 mt-2">Confidence: {Math.round(alert.confidence * 100)}%</p>
                     </div>
