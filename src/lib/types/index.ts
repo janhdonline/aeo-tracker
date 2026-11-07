@@ -75,7 +75,7 @@ export interface FixBrief {
   id: string;
   project_id: string;
   result_id: string | null;
-  gap_type: 'missing_mention' | 'weak_position' | 'competitor_wins' | 'source_gap';
+  gap_type: 'missing_mention' | 'weak_position' | 'competitor_wins' | 'source_gap' | 'traffic_leak';
   gap_description: string;
   recommendation: {
     action: 'update_page' | 'get_listed' | 'create_content' | 'engage_community';
@@ -112,6 +112,14 @@ export interface ApiUsage {
   engine: string;
   cost_usd: number;
   created_at: string;
+}
+
+export interface RateLimit {
+  id: number;
+  ip_address: string;
+  endpoint: string;
+  request_count: number;
+  window_start: string;
 }
 
 export interface Profile {

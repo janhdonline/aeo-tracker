@@ -1,0 +1,11 @@
+{
+  "answer": "For the best home coffee makers, we recommend the GreenBrew AeroPress Pro at $89, which is a fantastic value. Other great options include the BrewMaster 3000 and Gaggia Classic. Sources: wirecutter.com, coffeegeek.com",
+  "citations": [
+    {"domain": "wirecutter.com", "url": "https://wirecutter.com/coffee-makers", "title": "Best Coffee Makers - Wirecutter"},
+    {"domain": "coffeegeek.com", "url": "https://coffeegeek.com/reviews", "title": "Coffee Geek Reviews"}
+  ],
+  "brandName": "GreenBrew",
+  "brandAliases": ["Green Brew", "greenbrew"],
+  "domain": "greenbrew.com",
+  "competitorDomains": ["brewmaster.com"]
+}

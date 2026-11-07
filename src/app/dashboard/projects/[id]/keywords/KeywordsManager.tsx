@@ -19,6 +19,12 @@ interface KeywordsManagerProps {
   plan: 'free' | 'starter' | 'pro';
 }
 
+const PLAN_LIMITS: Record<string, { keywords: number; engines: string[] }> = {
+  free: { keywords: 10, engines: ['gemini'] },
+  starter: { keywords: 50, engines: ['gemini', 'perplexity', 'openai'] },
+  pro: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'] },
+};
+
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -42,12 +48,15 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
   const [isAdding, setIsAdding] = useState(false);
   const supabase = createClient();
 
+  const planLimit = PLAN_LIMITS[plan]?.keywords || 10;
+  const canAdd = keywords.length < planLimit;
+
   const handleAddKeyword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newKeyword.trim()) return;
 
-    if (keywords.length >= 10) {
-      alert('You have reached the keyword limit for your plan. Upgrade to add more keywords.');
+    if (!canAdd) {
+      alert(`You have reached the keyword limit for your ${plan} plan (${planLimit} keywords). Upgrade to add more.`);
       return;
     }
 
@@ -110,10 +119,11 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             onChange={(e) => setNewKeyword(e.target.value)}
             placeholder="Enter keyword"
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+            disabled={!canAdd}
           />
           <motion.button
             type="submit"
-            disabled={loading || !newKeyword.trim()}
+            disabled={loading || !newKeyword.trim() || !canAdd}
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: newKeyword.trim() ? 1.02 : 1 }}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center gap-2"
@@ -132,6 +142,10 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
           <Sparkles className={`h-4 w-4 ${discoverLoading ? 'animate-spin' : ''}`} />
           Discover Keywords
         </motion.button>
+      </div>
+
+      <div className="mb-4 text-sm text-slate-600">
+        {keywords.length} / {planLimit} keywords used ({plan} plan)
       </div>
 
       <motion.div

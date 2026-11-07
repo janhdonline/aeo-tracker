@@ -1,0 +1,11 @@
+{
+  "answer": "The GreenBrew AeroPress Pro is our top pick for home brewing. GreenBrew's build quality is excellent. Some say the GreenBrew brand is overpriced, but we think it's worth it. Also check out BrewMaster and Gaggia.",
+  "citations": [
+    {"domain": "greenbrew.com", "url": "https://greenbrew.com/aeropress-pro", "title": "AeroPress Pro - GreenBrew"},
+    {"domain": "reddit.com/r/coffee", "url": "https://reddit.com/r/coffee", "title": "r/coffee"}
+  ],
+  "brandName": "GreenBrew",
+  "brandAliases": ["Green Brew"],
+  "domain": "greenbrew.com",
+  "competitorDomains": ["brewmaster.com", "gaggia.com"]
+}

@@ -41,6 +41,16 @@ export const metadata: Metadata = {
     "ChatGPT brand visibility",
     "Gemini visibility",
     "DeepSeek visibility",
+    "Perplexity SEO",
+    "AI citation tracking",
+    "share of voice AI",
+    "AI brand mentions",
+    "GPTBot optimization",
+    "ClaudeBot SEO",
+    "AI crawler audit",
+    "llms.txt generator",
+    "traffic leak detection",
+    "AI visibility score",
   ],
   alternates: {
     canonical: "/",
@@ -129,6 +139,62 @@ const softwareApplicationSchema = {
   mainEntityOfPage: siteUrl,
 };
 
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is AEO (Answer Engine Optimization)?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "AEO is the practice of optimizing your brand visibility in AI-generated answers from ChatGPT, Gemini, Perplexity, and other AI assistants. Unlike SEO which targets Google search results, AEO focuses on appearing in AI chatbot responses.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How is AEO different from SEO?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "SEO optimizes for traditional search engines (Google, Bing), while AEO optimizes for AI assistants. SEO focuses on keywords and backlinks; AEO focuses on brand mentions, citations, and authority signals that AI models use to generate answers.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Why does AI citation rate matter?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Many AI answers mention your brand but do not link to your website. This is called a traffic leak — you get brand awareness but no website visits. AEO tools help you identify and fix these gaps.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is llms.txt an SEO ranking factor?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Google has confirmed llms.txt is not an AI search ranking factor. However, it helps AI agents and IDE assistants understand your content, which can lead to better AI-driven discovery.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Which AI engines does this tool track?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We track ChatGPT, Google Gemini, Perplexity, and Grok. Each engine is queried separately and results are analyzed for brand mentions, citations, and sentiment.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I cancel my subscription anytime?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. You can cancel your Lemon Squeezy subscription at any time with no cancellation fees. Your plan remains active until the end of the billing period.",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -139,10 +205,11 @@ export default function RootLayout({
       <body className={`${inter.variable} ${inter.className} flex min-h-full flex-col bg-white text-[#111827]`}>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify([softwareApplicationSchema, faqSchema]) }}
         />
         {children}
       </body>
     </html>
   );
 }
+// Actually let me check the current state

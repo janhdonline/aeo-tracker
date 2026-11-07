@@ -1,11 +1,15 @@
 export const dynamic = 'force-dynamic';
 
+import { TrendChart } from './TrendChart';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import { RunScanButton } from './RunScanButton';
 import { ShareOfVoice } from './ShareOfVoice';
+import { AnimatedStatCard } from './AnimatedStatCard';
+import { AnimatedKeywords } from './AnimatedKeywords';
+import { AnimatedBriefsPreview } from './AnimatedBriefsPreview';
 import Link from 'next/link';
 
 export default async function ProjectPage({ params }: { params: { id: string } }) {
@@ -96,54 +100,26 @@ export default async function ProjectPage({ params }: { params: { id: string } }
             </div>
 
             {latestScore && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-4 mb-6">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                  <h3 className="text-sm font-medium text-slate-500">Visibility Score</h3>
-                  <p className="font-display text-3xl font-bold">{latestScore.visibility_score}</p>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                  <h3 className="text-sm font-medium text-slate-500">Share of Voice</h3>
-                  <p className="font-display text-3xl font-bold">{latestScore.share_of_voice_pct}%</p>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                  <h3 className="text-sm font-medium text-slate-500">Total Mentions</h3>
-                  <p className="font-display text-3xl font-bold">{latestScore.total_mentions}</p>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                  <h3 className="text-sm font-medium text-slate-500">Keywords Covered</h3>
-                  <p className="font-display text-3xl font-bold">{latestScore.keywords_covered}/{latestScore.keywords_total}</p>
-                </div>
-              </div>
+              <AnimatedStatCard
+                items={[
+                  { label: 'Visibility Score', value: latestScore.visibility_score },
+                  { label: 'Share of Voice', value: `${latestScore.share_of_voice_pct}%` },
+                  { label: 'Total Mentions', value: latestScore.total_mentions },
+                  { label: 'Keywords Covered', value: `${latestScore.keywords_covered}/${latestScore.keywords_total}` },
+                ]}
+              />
             )}
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
               <h3 className="font-display text-lg font-semibold mb-4">Visibility Trend</h3>
               {scoreHistory && scoreHistory.length > 1 ? (
-                <svg viewBox="0 0 300 80" className="w-full h-20">
-                  {(() => {
-                    const vals = scoreHistory.map((s: any) => s.visibility_score || 0);
-                    const min = Math.min(...vals);
-                    const max = Math.max(...vals);
-                    const range = max - min || 1;
-                    const pts = vals.map((v, i) => `${(i / (vals.length - 1)) * 300},${80 - ((v - min) / range) * 70 - 5}`).join(' ');
-                    return <polyline points={pts} fill="none" stroke="#eb9d2a" strokeWidth="2" />;
-                  })()}
-                </svg>
+                <TrendChart data={scoreHistory.map((s: any) => s.visibility_score || 0)} />
               ) : (
                 <p className="text-sm text-slate-500">Not enough data yet.</p>
               )}
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
-              <h3 className="font-display text-lg font-semibold mb-4">Keywords ({keywords?.length || 0})</h3>
-              <div className="flex flex-wrap gap-2">
-                {keywords?.map((kw) => (
-                  <span key={kw.id} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    {kw.keyword}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <AnimatedKeywords keywords={keywords || []} />
 
             <ShareOfVoice
               yourDomain={project.domain}
@@ -151,19 +127,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
               competitorCounts={competitorCounts}
             />
 
-            {fixBriefs && fixBriefs.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                <h3 className="font-display text-lg font-semibold mb-4">Open Fix Briefs ({fixBriefs.filter(b => b.status === 'open').length})</h3>
-                <div className="space-y-2">
-                  {fixBriefs.filter(b => b.status === 'open').slice(0, 5).map((brief) => (
-                    <div key={brief.id} className="border-l-4 border-yellow-400 pl-4 py-2">
-                      <p className="font-medium">{brief.gap_type}</p>
-                      <p className="text-sm text-slate-600">{brief.gap_description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <AnimatedBriefsPreview projectId={params.id} briefs={fixBriefs || []} />
           </main>
         </div>
       </div>

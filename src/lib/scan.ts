@@ -2,12 +2,14 @@ import { createClient } from '@/lib/supabase/server';
 import { getEngineAdapter } from '@/lib/engines';
 import { generatePrompts, getPromptVersion } from '@/lib/prompts';
 import { detectMentions, extractCompetitorMentions } from '@/lib/parser';
-import { calculateVisibilityScore, calculateShareOfVoice } from '@/lib/scoring';
+import { calculateVisibilityScore, calculateShareOfVoice, calculateDualMetrics } from '@/lib/scoring';
+import { wilsonInterval, computeConfidenceInterval, formatConfidence, shouldShowTrend } from '@/lib/statistical-sampling';
 import { classifyGap, generateRecommendation, generateGapDescription } from '@/lib/briefs';
 import { sendScanCompletion } from '@/lib/email';
 import { normalizeDomain } from '@/lib/parser/citations';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { paceGeminiRequests, GEMINI_DELAY_MS } from '@/lib/pacing';
+import { captureException, captureWarning } from '@/lib/error-monitor';
 
 export const CHUNK_SIZE = 25;
 export const STUCK_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
@@ -171,6 +173,7 @@ export async function processChunk(runId: string): Promise<ChunkResult> {
           run_id: runId,
           keyword_id: q.keyword.id,
           engine: q.engineId,
+          sample_index: (run.sample_index || 1),
           prompt_version: promptVersion,
           prompt_used: q.prompt,
           raw_answer: response.answerText,
@@ -230,6 +233,7 @@ export async function processChunk(runId: string): Promise<ChunkResult> {
       }
     } catch (error) {
       console.error('Query failed:', error);
+      captureException(error, 'scan:processChunk');
     }
     
     // Pacing for Gemini
@@ -287,6 +291,36 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
   
   const shareOfVoice = calculateShareOfVoice(yourMentions, competitorMentionsCount);
   
+  // Count queries where brand domain is cited as a source link
+  const citedQueries = new Set(
+    (allResults || [])
+      .filter((r: any) =>
+        (r.citations || []).some((c: any) =>
+          (c.domain || '').toLowerCase() === normalizeDomain(project.domain)
+        )
+      )
+      .map((r: any) => r.id)
+  ).size;
+
+  const dualMetrics = calculateDualMetrics(
+    allResults?.length || 0,
+    mentionedQueries,
+    citedQueries
+  );
+
+  // Compute confidence intervals for the visibility score
+  // Each query_result is one sample; we track how many samples we have
+  const samples: Array<{ sampleIndex: number; mentioned: boolean }> = [];
+  for (const result of allResults || []) {
+    const hasMention = (result.mentions || []).length > 0;
+    samples.push({
+      sampleIndex: result.sample_index || 1,
+      mentioned: hasMention,
+    });
+  }
+
+  const ci = computeConfidenceInterval(samples, 10);
+
   const today = new Date().toISOString().split('T')[0];
   await adminClient.from('snapshot_scores').upsert({
     project_id: project.id,
@@ -297,6 +331,12 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
     competitor_mentions: competitorMentionsCount,
     keywords_covered: keywordsWithMentions,
     keywords_total: keywords.length,
+    mention_rate: dualMetrics.mentionRate,
+    citation_rate: dualMetrics.citationRate,
+    traffic_leak: dualMetrics.trafficLeak,
+    ci_low: ci.low,
+    ci_high: ci.high,
+    effective_n: ci.effectiveN,
   }, { onConflict: 'project_id,snapshot_date' });
   
   // Source stats
@@ -360,6 +400,43 @@ async function finalizeRun(runId: string, project: any, keywords: any[], adminCl
       if (topGaps.length < 3) {
         topGaps.push(`${gapType.replace(/_/g, ' ')}: ${kw?.keyword || 'general'}`);
       }
+    }
+  }
+
+  // Traffic leak briefs: brand is named in the answer but never cited as a link.
+  // This is a separate gap type — high mention rate, low citation rate.
+  const trafficLeakResults = (allResults || []).filter((r: any) => {
+    const hasMention = (r.mentions || []).length > 0;
+    const isCited = (r.citations || []).some((c: any) =>
+      (c.domain || '').toLowerCase() === normalizeDomain(project.domain)
+    );
+    return hasMention && !isCited;
+  });
+
+  for (const result of trafficLeakResults) {
+    const kw = keywords.find((k: any) => k.id === result.keyword_id);
+    const sourceDomains = (result.citations || []).map((c: any) => c.domain);
+    const recommendation = {
+      action: 'create_content' as const,
+      target: 'your website',
+      contentHint: `Create link-worthy content for "${kw?.keyword || 'this topic'}" — comparison tables, original stats, and data pages that other sites want to cite and link to.`,
+      priority: 'medium' as const,
+    };
+    const gapDescription = await generateGapDescription(
+      result.raw_answer,
+      'traffic_leak',
+      kw?.keyword || ''
+    );
+    await adminClient.from('fix_briefs').insert({
+      project_id: project.id,
+      result_id: result.id,
+      gap_type: 'traffic_leak',
+      gap_description: gapDescription,
+      recommendation,
+      status: 'open',
+    });
+    if (topGaps.length < 3) {
+      topGaps.push(`traffic leak: ${kw?.keyword || 'general'}`);
     }
   }
 

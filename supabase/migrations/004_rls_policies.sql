@@ -1,0 +1,2 @@
+-- Migration 004b: (no-op - all RLS policies consolidated in 004_usage_source_stats_rate_limits.sql)
+-- This file exists to maintain migration number sequence.

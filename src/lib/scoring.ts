@@ -57,3 +57,49 @@ export function calculateShareOfVoice(yourMentions: number, competitorMentions: 
   if (total === 0) return 0;
   return Math.round((yourMentions / total) * 10000) / 100; // 2 decimal places
 }
+
+// --- Mention vs Citation dual-metrics (differentiator) ---
+
+export interface DualMetrics {
+  mentionRate: number;     // 0-100: queries where brand name appears
+  citationRate: number;    // 0-100: queries where brand domain is cited as a source
+  trafficLeak: boolean;    // true when mentionRate is high but citationRate is low
+}
+
+/**
+ * Calculate separate Mention Rate and Citation Rate.
+ * Mention = brand name/domain/alias appears in the answer text.
+ * Citation = brand domain appears in the answer's cited sources (links).
+ */
+export function calculateDualMetrics(
+  totalQueries: number,
+  mentionedQueries: number,
+  citedQueries: number
+): DualMetrics {
+  if (totalQueries === 0) {
+    return { mentionRate: 0, citationRate: 0, trafficLeak: false };
+  }
+
+  const mentionRate = Math.round((mentionedQueries / totalQueries) * 100);
+  const citationRate = Math.round((citedQueries / totalQueries) * 100);
+
+  // Traffic leak: brand is named but not linked.
+  // Threshold: mention rate ≥ 20pp higher than citation rate AND mention rate > 0.
+  const gap = mentionRate - citationRate;
+  const trafficLeak = mentionRate > 0 && gap >= 20;
+
+  return { mentionRate, citationRate, trafficLeak };
+}
+
+/**
+ * Estimate how much traffic is being lost: queries where brand is named
+ * but never cited as a link.
+ */
+export function estimateTrafficLeakCount(
+  totalQueries: number,
+  mentionedQueries: number,
+  citedQueries: number
+): number {
+  // Queries where brand is named but NOT cited as a source link
+  return Math.max(0, mentionedQueries - citedQueries);
+}

@@ -22,7 +22,7 @@
     "resend": "^6.37.0"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^8.57.1",
     "@opennextjs/cloudflare": "1.14.6",
     "@types/node": "^22",
     "@types/pdfmake": "^0.3.3",
