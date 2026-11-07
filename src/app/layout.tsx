@@ -123,6 +123,10 @@ const softwareApplicationSchema = {
     "AI citation and source discovery",
     "Brand sentiment analysis across AI answers",
     "Prioritized AEO action plans and one-time reports",
+    "Traffic leak detection (mention vs citation rate)",
+    "AI crawler readiness audit",
+    "llms.txt generator for AI agents",
+    "Weekly email digests with score changes",
   ],
   offers: {
     "@type": "Offer",
@@ -138,7 +142,6 @@ const softwareApplicationSchema = {
   },
   mainEntityOfPage: siteUrl,
 };
-
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -212,4 +215,3 @@ export default function RootLayout({
     </html>
   );
 }
-// Actually let me check the current state
