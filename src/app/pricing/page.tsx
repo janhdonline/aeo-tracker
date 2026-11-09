@@ -1,79 +1,179 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Check } from 'lucide-react';
+import { Check, ShieldCheck, Zap, Sparkles } from 'lucide-react';
+import { getEnv } from '@/lib/env';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Pricing — AEO Visibility Tracker',
   description: 'Simple, transparent pricing for AI visibility tracking.',
 };
 
-const plans = [
-  {
-    name: 'Free',
-    price: '$0',
-    description: 'Perfect for getting started.',
-    features: ['10 Keywords', 'Gemini Engine', 'Monthly Scans', 'Basic Report'],
-    cta: 'Get Started',
-    href: '/login',
-  },
-  {
-    name: 'Starter',
-    price: '$49',
-    description: 'Best for small brands.',
-    features: ['50 Keywords', 'Gemini + Perplexity', 'Weekly Scans', 'Fix Briefs', 'Email Digest'],
-    cta: 'Buy Starter',
-    href: `https://store.lemonsqueezy.com/buy/${process.env.LEMONSQUEEZY_STARTER_VARIANT_ID}`,
-    highlight: true,
-  },
-  {
-    name: 'Pro',
-    price: '$79',
-    description: 'For power users and agencies.',
-    features: ['150 Keywords', 'All Engines (Inc. Grok)', 'Weekly Scans', 'Fix Briefs', 'Priority Support'],
-    cta: 'Buy Pro',
-    href: `https://store.lemonsqueezy.com/buy/${process.env.LEMONSQUEEZY_PRO_VARIANT_ID}`,
-  },
-];
-
 export default function PricingPage() {
+  const starterVariant = getEnv('LEMONSQUEEZY_STARTER_VARIANT_ID') || process.env.LEMONSQUEEZY_STARTER_VARIANT_ID;
+  const proVariant = getEnv('LEMONSQUEEZY_PRO_VARIANT_ID') || process.env.LEMONSQUEEZY_PRO_VARIANT_ID;
+  const starterCustomUrl = getEnv('LEMONSQUEEZY_STARTER_URL') || process.env.LEMONSQUEEZY_STARTER_URL;
+  const proCustomUrl = getEnv('LEMONSQUEEZY_PRO_URL') || process.env.LEMONSQUEEZY_PRO_URL;
+
+  // Resolve checkout link safely:
+  // If a valid custom URL or variant ID is configured, use direct Lemon Squeezy checkout.
+  // Otherwise, fallback to /contact or /dashboard without dead/suspended links.
+  const getPlanHref = (variant: string | undefined, customUrl: string | undefined, planSlug: string) => {
+    if (customUrl) return customUrl;
+    if (variant && variant !== '2337849' && variant !== 'placeholder') {
+      return `https://store.lemonsqueezy.com/buy/${variant}`;
+    }
+    return `/contact?plan=${planSlug}`;
+  };
+
+  const starterHref = getPlanHref(starterVariant, starterCustomUrl, 'Starter');
+  const proHref = getPlanHref(proVariant, proCustomUrl, 'Pro');
+
+  const plans = [
+    {
+      name: 'Free',
+      price: '$0',
+      description: 'Perfect for getting started with AI visibility tracking.',
+      features: ['10 Keywords', 'Gemini AI Engine', 'Monthly Automated Scans', 'Standard Visibility Score', 'CSV & PDF Report Export'],
+      cta: 'Get Started Free',
+      href: '/login',
+      highlight: false,
+    },
+    {
+      name: 'Starter',
+      price: '$49',
+      description: 'Best for growing businesses, startups, and high-growth brands.',
+      features: [
+        '50 Monitored Keywords',
+        'Gemini + Perplexity AI Engines',
+        'Weekly Automated Scans',
+        'Actionable Fix Briefs',
+        'Email Change Digest',
+        'Brand Sentiment Analysis',
+        'Competitor SoV Benchmarks',
+      ],
+      cta: starterHref.includes('lemonsqueezy') ? 'Subscribe to Starter' : 'Get Starter Access',
+      href: starterHref,
+      highlight: true,
+    },
+    {
+      name: 'Pro',
+      price: '$79',
+      description: 'For power users, agencies, and enterprise brands.',
+      features: [
+        '150 Monitored Keywords',
+        'All AI Engines (Gemini, Perplexity, OpenAI, Grok)',
+        'Weekly Automated Scans',
+        'Priority Fix Briefs & LLMs.txt Tools',
+        'Competitor Leak Detection',
+        'VIP Priority Support',
+      ],
+      cta: proHref.includes('lemonsqueezy') ? 'Subscribe to Pro' : 'Contact Sales for Pro',
+      href: proHref,
+      highlight: false,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <Link href="/" className="text-xl font-bold">AEO Visibility Tracker</Link>
+        <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <Link href="/" className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-sm">
+              AEO
+            </span>
+            AEO Checker
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+              Dashboard
+            </Link>
+            <Link
+              href="/login"
+              className="text-sm font-medium bg-blue-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              Sign In
+            </Link>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Simple, transparent pricing</h1>
-          <p className="text-xl text-slate-600">Choose the perfect plan for your AEO needs.</p>
+      <main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 flex-1">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-4 border border-blue-100">
+            <Zap className="w-3.5 h-3.5" />
+            Flexible Pricing
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+            Simple, Transparent Pricing
+          </h1>
+          <p className="text-lg text-slate-600">
+            Track, benchmark, and maximize your brand visibility across AI answer engines like Gemini, ChatGPT, and Perplexity.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {plans.map((plan) => (
-            <div key={plan.name} className={`bg-white rounded-2xl shadow-sm border ${plan.highlight ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200'} p-8`}>
-              <h2 className="text-xl font-bold mb-2">{plan.name}</h2>
-              <p className="text-slate-500 mb-6">{plan.description}</p>
-              <div className="text-4xl font-bold mb-6">{plan.price}<span className="text-base font-normal text-slate-500">/mo</span></div>
+            <div
+              key={plan.name}
+              className={`bg-white rounded-2xl shadow-sm border flex flex-col justify-between transition-all duration-200 ${
+                plan.highlight
+                  ? 'border-blue-600 ring-2 ring-blue-600/20 shadow-md relative'
+                  : 'border-slate-200 hover:border-slate-300'
+              } p-8`}
+            >
+              <div>
+                {plan.highlight && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3" />
+                    Most Popular
+                  </div>
+                )}
 
-              <ul className="space-y-4 mb-8">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-emerald-500" />
-                    <span className="text-slate-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">{plan.name}</h2>
+                <p className="text-sm text-slate-500 mb-6 min-h-[40px]">{plan.description}</p>
+                <div className="text-4xl font-extrabold text-slate-900 mb-6">
+                  {plan.price}
+                  <span className="text-sm font-normal text-slate-500 ml-1">/month</span>
+                </div>
+
+                <div className="h-px bg-slate-100 mb-6" />
+
+                <ul className="space-y-3.5 mb-8">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm text-slate-700">
+                      <Check className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
               <a
                 href={plan.href}
-                className={`block w-full text-center py-3 rounded-lg font-semibold ${plan.highlight ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-900 text-white hover:bg-slate-800'}`}
+                className={`block w-full text-center py-3 px-4 rounded-xl font-semibold text-sm transition-colors shadow-sm ${
+                  plan.highlight
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-slate-900 text-white hover:bg-slate-800'
+                }`}
               >
                 {plan.cta}
               </a>
             </div>
           ))}
+        </div>
+
+        <div className="mt-16 bg-white rounded-2xl border border-slate-200 p-8 text-center max-w-3xl mx-auto shadow-sm">
+          <ShieldCheck className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-slate-900 mb-2">Money-Back Guarantee & Cancel Anytime</h3>
+          <p className="text-sm text-slate-600">
+            All paid plans can be cancelled anytime with zero hassle. Need enterprise volume or custom keywords?{' '}
+            <Link href="/contact" className="text-blue-600 font-medium hover:underline">
+              Contact our team
+            </Link>
+            .
+          </p>
         </div>
       </main>
     </div>
