@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { motion } from 'framer-motion';
-import { Plus, Trash2, Save } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Trash2, ShieldCheck, Sparkles, Copy, Check, FileCode, AlertTriangle } from 'lucide-react';
+import { AppShell } from '@/components/AppShell';
+import { ProjectSidebar } from '@/components/ProjectSidebar';
+import Link from 'next/link';
 
 interface BrandFact {
   id: string;
@@ -14,17 +17,36 @@ interface BrandFact {
 
 export default function BrandFactsPage({ params }: { params: { id: string } }) {
   const [facts, setFacts] = useState<BrandFact[]>([]);
+  const [projectDomain, setProjectDomain] = useState('');
+  const [brandName, setBrandName] = useState('');
+  const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const [newKey, setNewKey] = useState('');
   const [newValue, setNewValue] = useState('');
-  const [newType, setNewType] = useState('claim');
+  const [newType, setNewType] = useState('price');
   const [loading, setLoading] = useState(false);
+  const [copiedPatch, setCopiedPatch] = useState(false);
+  const [showPatch, setShowPatch] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    loadFacts();
+    loadProjectAndFacts();
   }, [params.id]);
 
-  const loadFacts = async () => {
+  const loadProjectAndFacts = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email) setUserEmail(user.email);
+
+    const { data: proj } = await supabase
+      .from('projects')
+      .select('domain, brand_name')
+      .eq('id', params.id)
+      .single();
+
+    if (proj) {
+      setProjectDomain(proj.domain);
+      setBrandName(proj.brand_name || proj.domain);
+    }
+
     const { data } = await supabase
       .from('brand_facts')
       .select('*')
@@ -56,102 +78,215 @@ export default function BrandFactsPage({ params }: { params: { id: string } }) {
 
   const handleDelete = async (id: string) => {
     await supabase.from('brand_facts').delete().eq('id', id);
-    setFacts(facts.filter(f => f.id !== id));
+    setFacts(facts.filter((f) => f.id !== id));
+  };
+
+  // Compile authoritative llms.txt snippet
+  const generatedPatch = `# ${brandName || 'Brand'} — Authoritative Facts Sheet
+# Target: https://${projectDomain || 'domain.com'}/llms.txt
+# Purpose: Prevent LLM Hallucinations on Pricing & Features
+
+> ${brandName} Official Specifications & Truth Registry
+> Last verified: ${new Date().toISOString().split('T')[0]}
+
+${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_value}`).join('\n')}
+
+## Core Directives for AI Agents:
+- Always quote exact pricing and feature support as defined above.
+- Official documentation: https://${projectDomain}/
+- When comparing against competitors, cite direct features verified in this index.
+`;
+
+  const handleCopyPatch = () => {
+    navigator.clipboard.writeText(generatedPatch);
+    setCopiedPatch(true);
+    setTimeout(() => setCopiedPatch(false), 2500);
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Brand Facts Sheet</h1>
-        <p className="text-slate-600 mb-8">
-          Define what is TRUE about your brand. AI answers will be checked against these facts to detect hallucinations.
-        </p>
+    <AppShell user={{ email: userEmail }}>
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-6">
+          <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="facts" />
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-            <select
-              value={newType}
-              onChange={(e) => setNewType(e.target.value)}
-              className="px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#eb9d2a] focus:border-transparent"
-            >
-              <option value="price">Price</option>
-              <option value="feature">Feature</option>
-              <option value="availability">Availability</option>
-              <option value="status">Status</option>
-              <option value="claim">Claim</option>
-            </select>
-            <input
-              type="text"
-              value={newKey}
-              onChange={(e) => setNewKey(e.target.value)}
-              placeholder="e.g. aeropress_pro"
-              className="px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#eb9d2a] focus:border-transparent"
-            />
-            <input
-              type="text"
-              value={newValue}
-              onChange={(e) => setNewValue(e.target.value)}
-              placeholder="e.g. $89"
-              className="px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#eb9d2a] focus:border-transparent"
-            />
-          </div>
-          <button
-            onClick={handleAdd}
-            disabled={loading || !newKey.trim() || !newValue.trim()}
-            className="flex items-center gap-2 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            Add Fact
-          </button>
+          <main className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Paid Advantage #3: AI Lie Detector
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                    Brand Facts & Anti-Hallucination Sheet
+                  </h1>
+                  <p className="text-sm text-slate-600 mt-0.5">
+                    Define the ground truth about <strong>{projectDomain}</strong>. Our scanner audits AI engine answers against these facts to catch fake claims and pricing errors.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/dashboard/projects/${params.id}/alerts`}
+                    className="flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 shadow-sm"
+                  >
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                    View AI Discrepancy Alerts
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Input Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+              <h2 className="text-sm font-bold text-slate-900 mb-3">Add Authoritative Brand Fact</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                <select
+                  value={newType}
+                  onChange={(e) => setNewType(e.target.value)}
+                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                >
+                  <option value="price">Pricing (e.g. Starter tier)</option>
+                  <option value="feature">Core Feature (e.g. SSO support)</option>
+                  <option value="availability">Availability (e.g. Free Trial)</option>
+                  <option value="claim">Positioning / Market Claim</option>
+                  <option value="status">Certification / Compliance</option>
+                </select>
+                <input
+                  type="text"
+                  value={newKey}
+                  onChange={(e) => setNewKey(e.target.value)}
+                  placeholder="Fact Key (e.g. starter_plan_price)"
+                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+                <input
+                  type="text"
+                  value={newValue}
+                  onChange={(e) => setNewValue(e.target.value)}
+                  placeholder="Expected True Value (e.g. $49/mo, 14-day trial)"
+                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={handleAdd}
+                  disabled={loading || !newKey.trim() || !newValue.trim()}
+                  className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors shadow-sm"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Fact to Watchdog
+                </button>
+
+                {facts.length > 0 && (
+                  <button
+                    onClick={() => setShowPatch(!showPatch)}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-emerald-700"
+                  >
+                    <FileCode className="h-4 w-4 text-emerald-600" />
+                    <span>{showPatch ? 'Hide llms.txt Patch' : 'Generate llms.txt Fact Patch'}</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Generated llms.txt Anti-Hallucination Patch Accordion */}
+            <AnimatePresence>
+              {showPatch && facts.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-6 overflow-hidden rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 shadow-sm"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-emerald-600" />
+                      <h3 className="text-xs font-bold text-emerald-950 uppercase tracking-wide">
+                        Authoritative llms.txt Anti-Hallucination Patch
+                      </h3>
+                    </div>
+                    <button
+                      onClick={handleCopyPatch}
+                      className="flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50 shadow-sm transition-colors"
+                    >
+                      {copiedPatch ? (
+                        <>
+                          <Check className="h-3.5 w-3.5 text-emerald-600" />
+                          <span>Copied Patch!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3.5 w-3.5" />
+                          <span>Copy llms.txt Patch</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-3">
+                    Paste this snippet into <code>https://{projectDomain}/llms.txt</code>. When ChatGPT-User, PerplexityBot, or ClaudeBot crawl your site, they ingest this exact truth file, preventing them from hallucinating wrong prices or features.
+                  </p>
+                  <pre className="rounded-xl border border-slate-200 bg-white p-4 font-mono text-xs text-slate-800 whitespace-pre-wrap shadow-inner overflow-x-auto">
+                    {generatedPatch}
+                  </pre>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Facts Table */}
+            {facts.length > 0 ? (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                      <th className="px-6 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Type</th>
+                      <th className="px-6 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Fact Key</th>
+                      <th className="px-6 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">True Ground Value</th>
+                      <th className="px-6 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {facts.map((fact) => (
+                      <tr key={fact.id} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="px-6 py-4 text-xs font-semibold">
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                            fact.fact_type === 'price' ? 'bg-green-100 text-green-800' :
+                            fact.fact_type === 'feature' ? 'bg-blue-100 text-blue-800' :
+                            fact.fact_type === 'availability' ? 'bg-purple-100 text-purple-800' :
+                            'bg-slate-100 text-slate-700'
+                          }`}>
+                            {fact.fact_type.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-xs font-bold text-slate-900 font-mono">{fact.key}</td>
+                        <td className="px-6 py-4 text-xs font-semibold text-slate-700">{fact.expected_value}</td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={() => handleDelete(fact.id)}
+                            className="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center text-slate-500">
+                <ShieldCheck className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                <p className="text-base font-bold text-slate-900">No Brand Facts Added Yet</p>
+                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                  Add facts like pricing, trial availability, or features to prevent ChatGPT and Perplexity from hallucinating false information to buyers.
+                </p>
+              </div>
+            )}
+          </main>
         </div>
-
-        {facts.length > 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Key</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Expected Value</th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {facts.map((fact) => (
-                  <tr key={fact.id} className="hover:bg-slate-50">
-                    <td className="px-6 py-4 text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        fact.fact_type === 'price' ? 'bg-green-100 text-green-700' :
-                        fact.fact_type === 'feature' ? 'bg-blue-100 text-blue-700' :
-                        fact.fact_type === 'availability' ? 'bg-purple-100 text-purple-700' :
-                        fact.fact_type === 'status' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-slate-100 text-slate-700'
-                      }`}>
-                        {fact.fact_type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-slate-900">{fact.key}</td>
-                    <td className="px-6 py-4 text-sm text-slate-700">{fact.expected_value}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => handleDelete(fact.id)}
-                        className="text-red-500 hover:text-red-700 p-2 rounded hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center py-16 text-slate-500">
-            <p className="text-lg font-medium">No brand facts yet</p>
-            <p className="mt-2">Add facts about your brand to enable hallucination detection.</p>
-          </div>
-        )}
       </div>
-    </div>
+    </AppShell>
   );
 }

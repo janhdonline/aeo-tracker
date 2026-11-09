@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 function getResend() {
-  const key = process.env.RESEND_API_KEY;
+  const key = process.env.RESEND_API_KEY || (process.env.NODE_ENV === 'test' ? 're_test_key' : null);
   if (!key) return null;
   return new Resend(key);
 }
