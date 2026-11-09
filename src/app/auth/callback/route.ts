@@ -4,28 +4,70 @@ import { getEnv } from '@/lib/env';
 
 export const dynamic = 'force-dynamic';
 
+function createHtmlRedirect(targetUrl: string, message: string = 'Redirecting...') {
+  const safeTarget = targetUrl.replace(/"/g, '&quot;');
+  return new Response(
+    `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0;url=${safeTarget}">
+  <title>Redirecting...</title>
+  <script>window.location.replace("${safeTarget.replace(/\\/g, '\\\\')}");</script>
+</head>
+<body style="font-family:sans-serif;text-align:center;padding:50px 20px;background:#f9fafb;color:#374151;">
+  <p>${message}</p>
+  <p><a href="${safeTarget}" style="color:#2563eb;text-decoration:underline;">Click here if you are not redirected automatically</a></p>
+</body>
+</html>`,
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    }
+  );
+}
+
 export async function GET(request: Request) {
   let siteUrl = '';
 
   try {
-    const { searchParams, origin } = new URL(request.url);
+    const requestUrl = new URL(request.url);
+    const searchParams = requestUrl.searchParams;
     const code = searchParams.get('code');
-    const next = searchParams.get('next') ?? '/dashboard';
+    const rawNext = searchParams.get('next') ?? '/dashboard';
     const errorParam = searchParams.get('error_description') || searchParams.get('error');
 
-    // Host detection for Cloudflare / proxy environments
+    // Host detection for Cloudflare Workers / proxy environments
     const forwardedHost = request.headers.get('x-forwarded-host');
-    const host = forwardedHost || request.headers.get('host');
-    const proto = request.headers.get('x-forwarded-proto') || 'https';
-    siteUrl = host ? `${proto}://${host}` : origin;
+    const host = forwardedHost || request.headers.get('host') || requestUrl.host;
+    const proto = request.headers.get('x-forwarded-proto') || requestUrl.protocol.replace(':', '') || 'https';
+    siteUrl = `${proto}://${host}`.replace(/\/+$/, '');
 
+    // Sanitize redirect target to prevent open redirects
+    const safeNext = (rawNext.startsWith('/') && !rawNext.startsWith('//')) ? rawNext : '/dashboard';
+
+    // Provider error (e.g. user cancelled Google sign-in)
     if (errorParam) {
-      console.error('OAuth error from provider:', errorParam);
-      return NextResponse.redirect(`${siteUrl}/login?error=${encodeURIComponent(errorParam)}`);
+      console.warn('OAuth provider returned error:', errorParam);
+      const target = `${siteUrl}/login?error=${encodeURIComponent(errorParam)}`;
+      try {
+        return NextResponse.redirect(target, { status: 303 });
+      } catch {
+        return createHtmlRedirect(target, 'Authentication cancelled. Redirecting to login...');
+      }
     }
 
+    // Missing code
     if (!code) {
-      return NextResponse.redirect(`${siteUrl}/login?error=Invalid+authentication+request`);
+      const target = `${siteUrl}/login?error=${encodeURIComponent('Authentication code not provided.')}`;
+      try {
+        return NextResponse.redirect(target, { status: 303 });
+      } catch {
+        return createHtmlRedirect(target, 'Invalid authentication request. Redirecting...');
+      }
     }
 
     const supabaseUrl =
@@ -40,13 +82,21 @@ export async function GET(request: Request) {
       '';
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      return NextResponse.redirect(
-        `${siteUrl}/login?error=${encodeURIComponent('Supabase credentials are not configured.')}`
-      );
+      const target = `${siteUrl}/login?error=${encodeURIComponent('Authentication service credentials missing.')}`;
+      try {
+        return NextResponse.redirect(target, { status: 303 });
+      } catch {
+        return createHtmlRedirect(target, 'Configuration error. Redirecting...');
+      }
     }
 
-    // Prepare redirect response so cookies can be set directly on it
-    const response = NextResponse.redirect(`${siteUrl}${next}`);
+    // Prepare redirect response so cookies can be attached
+    let response: NextResponse;
+    try {
+      response = NextResponse.redirect(`${siteUrl}${safeNext}`, { status: 303 });
+    } catch {
+      response = NextResponse.next();
+    }
 
     // Parse incoming request cookies
     const cookieHeader = request.headers.get('cookie') || '';
@@ -66,7 +116,12 @@ export async function GET(request: Request) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
             try {
-              response.cookies.set(name, value, options);
+              response.cookies.set(name, value, {
+                ...options,
+                path: options?.path ?? '/',
+                sameSite: options?.sameSite ?? 'lax',
+                secure: proto === 'https' || siteUrl.startsWith('https://'),
+              });
             } catch (cookieErr) {
               console.warn(`Could not set cookie ${name}:`, cookieErr);
             }
@@ -78,13 +133,16 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      console.error('Auth code exchange error:', error);
-      return NextResponse.redirect(
-        `${siteUrl}/login?error=${encodeURIComponent(error.message)}`
-      );
+      console.warn('Auth code exchange error:', error.message);
+      const target = `${siteUrl}/login?error=${encodeURIComponent(error.message)}`;
+      try {
+        return NextResponse.redirect(target, { status: 303 });
+      } catch {
+        return createHtmlRedirect(target, 'Redirecting to login...');
+      }
     }
 
-    // Auto-backfill user profile safely
+    // Auto-backfill user profile safely without blocking the response
     if (data?.user?.id && data?.user?.email) {
       try {
         await supabase.from('profiles').upsert(
@@ -98,17 +156,21 @@ export async function GET(request: Request) {
           { onConflict: 'id' }
         );
       } catch (profileErr) {
-        console.warn('Profile creation non-fatal warning:', profileErr);
+        console.warn('Profile sync non-fatal notice:', profileErr);
       }
     }
 
     return response;
   } catch (err: any) {
-    console.error('Fatal unhandled error in auth callback:', err);
-    const errMessage = err?.message || 'Authentication failed';
-    const fallbackBase = siteUrl || 'https://aeo-tracker.janhdonline.workers.dev';
-    return NextResponse.redirect(
-      `${fallbackBase}/login?error=${encodeURIComponent(errMessage)}`
-    );
+    console.error('Fatal unhandled error caught in auth callback handler:', err);
+    const errMessage = err?.message || 'Authentication encountered an issue';
+    const fallbackBase = (siteUrl || 'https://aeo-tracker.janhdonline.workers.dev').replace(/\/+$/, '');
+    const fallbackUrl = `${fallbackBase}/login?error=${encodeURIComponent(errMessage)}`;
+
+    try {
+      return NextResponse.redirect(fallbackUrl, { status: 303 });
+    } catch {
+      return createHtmlRedirect(fallbackUrl, 'Redirecting to login...');
+    }
   }
 }
