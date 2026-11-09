@@ -8,7 +8,9 @@ export async function middleware(request: NextRequest) {
 
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
     // If Supabase credentials are missing or placeholder, protect dashboard safely without crash
     if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('placeholder')) {

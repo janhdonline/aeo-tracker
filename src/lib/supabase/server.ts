@@ -5,8 +5,16 @@ import { getEnv } from '@/lib/env';
 export async function createClient() {
   const cookieStore = await cookies();
 
-  const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL') || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-  const supabaseAnonKey = getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY') || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+  const supabaseUrl =
+    getEnv('NEXT_PUBLIC_SUPABASE_URL') ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    'https://placeholder.supabase.co';
+  const supabaseAnonKey =
+    getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY') ||
+    getEnv('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY') ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    'placeholder-key';
 
   return createServerClient(
     supabaseUrl,
