@@ -76,7 +76,7 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
   return (
     <AppShell user={{ email: userEmail }}>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="facts" />
 
           <main className="flex-1 min-w-0">

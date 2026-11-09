@@ -234,17 +234,17 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* HERO COMMAND CENTER BANNER & QUICK DOMAIN TRACKER */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-[#131b2e] to-slate-900 p-7 sm:p-9 text-white shadow-xl border border-slate-800">
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-[#131b2e] to-slate-900 p-5 sm:p-9 text-white shadow-xl border border-slate-800">
           <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-1/3 -mb-16 w-80 h-80 rounded-full bg-[#eb9d2a]/15 blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 sm:gap-8">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 text-xs font-medium text-emerald-300 mb-4">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Live Engine Radar · ChatGPT, Gemini, Perplexity, DeepSeek
+              <div className="inline-flex max-w-full items-center gap-2 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 text-xs font-medium text-emerald-300 mb-4 overflow-hidden">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="truncate">Live Engine Radar · ChatGPT, Gemini, Perplexity, DeepSeek</span>
               </div>
-              <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white">
+              <h1 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
                 AEO Visibility Command Center
               </h1>
               <p className="mt-2.5 text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -374,7 +374,7 @@ export default function DashboardPage() {
 
         {/* REALTIME ANSWER ENGINE STATUS GRID */}
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h2 className="font-display text-lg font-bold text-slate-900">Answer Engine Coverage</h2>
               <p className="text-xs text-slate-500">Live connectivity and sampling matrices across leading foundation models</p>
@@ -464,7 +464,7 @@ export default function DashboardPage() {
 
         {/* PROJECTS SECTION */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h2 className="font-display text-xl font-bold text-slate-900">Tracked Web Properties</h2>
               <p className="text-xs text-slate-500">Your monitored domains and recurring visibility scans</p>
@@ -487,7 +487,7 @@ export default function DashboardPage() {
                       S
                     </span>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <h3 className="font-display text-lg font-bold text-slate-900">shopify.com</h3>
                         <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
                           Sample Benchmark Preview
@@ -497,7 +497,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                     <button
                       onClick={() => setActiveDemoTab('overview')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
@@ -566,11 +566,13 @@ export default function DashboardPage() {
                       { domain: 'trustpilot.com/review/shopify', authority: 'Trust Pillar', velocity: '92 reviews/mo', status: 'Dominant' },
                       { domain: 'g2.com/categories/e-commerce-platforms', authority: 'B2B Authority', velocity: 'Top 3 Grid', status: 'Action Needed' },
                     ].map((src) => (
-                      <div key={src.domain} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
-                        <span className="font-semibold text-slate-800">{src.domain}</span>
-                        <span className="text-slate-500">{src.authority}</span>
-                        <span className="text-slate-600 font-medium">{src.velocity}</span>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">{src.status}</span>
+                      <div key={src.domain} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs gap-1 sm:gap-4">
+                        <span className="font-semibold text-slate-800 break-all">{src.domain}</span>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                          <span className="text-slate-500">{src.authority}</span>
+                          <span className="text-slate-600 font-medium">{src.velocity}</span>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">{src.status}</span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -579,19 +581,19 @@ export default function DashboardPage() {
                 {/* Tab 3: Facts */}
                 {activeDemoTab === 'facts' && (
                   <div className="pt-5 space-y-2">
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs">
+                      <div className="flex items-start sm:items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" />
                         <span className="font-medium text-emerald-900">Basic Plan Pricing: $39/month verified across ChatGPT & Claude</span>
                       </div>
-                      <span className="font-bold text-emerald-700">Verified</span>
+                      <span className="font-bold text-emerald-700 shrink-0">Verified</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs">
-                      <div className="flex items-center gap-2">
-                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs">
+                      <div className="flex items-start sm:items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5 sm:mt-0" />
                         <span className="font-medium text-amber-900">Perplexity cited outdated 2.9% transaction fee instead of 2.6%</span>
                       </div>
-                      <span className="font-bold text-amber-700">llms.txt Fix Ready</span>
+                      <span className="font-bold text-amber-700 shrink-0">llms.txt Fix Ready</span>
                     </div>
                   </div>
                 )}

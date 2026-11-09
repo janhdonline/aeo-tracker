@@ -120,7 +120,7 @@ export default async function SourcesPage({ params }: { params: { id: string } }
   return (
     <AppShell user={{ email: user.email }}>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           <ProjectSidebar projectId={params.id} domain={project.domain} current="sources" />
 
           <main className="flex-1 min-w-0">

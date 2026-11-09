@@ -57,23 +57,23 @@ export function AnimatedDashboardStats({ items }: { items: StatItem[] }) {
       variants={container}
       initial={prefersReducedMotion ? false : 'hidden'}
       animate="show"
-      className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+      className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8"
     >
       {items.map((s) => (
         <motion.div
           key={s.label}
           variants={item}
           whileHover={prefersReducedMotion ? undefined : { y: -3, transition: { duration: 0.18 } }}
-          className="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-[#eb9d2a]/40 transition-shadow duration-200"
+          className="group relative rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-[#eb9d2a]/40 transition-shadow duration-200"
         >
-          <p className="font-display text-3xl font-bold text-slate-900">
+          <p className="font-display text-2xl sm:text-3xl font-bold text-slate-900">
             {s.numeric && typeof s.value === 'number' ? (
               <CountUp target={s.value} />
             ) : (
               s.value
             )}
           </p>
-          <p className="text-sm text-slate-500 mt-1">{s.label}</p>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 truncate">{s.label}</p>
           <span className="absolute bottom-3 right-4 h-1 w-8 rounded-full bg-[#eb9d2a]/20 opacity-0 transition-opacity group-hover:opacity-100" />
         </motion.div>
       ))}
