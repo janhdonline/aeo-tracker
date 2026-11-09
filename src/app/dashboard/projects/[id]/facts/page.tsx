@@ -161,7 +161,7 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
-                  Paid Advantage #3: AI Lie Detector
+                  Fact Watchdog & Anti-Hallucination
                 </span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-4">
