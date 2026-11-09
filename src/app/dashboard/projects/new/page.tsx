@@ -20,7 +20,8 @@ export default function NewProjectPage() {
     setError(null);
 
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const authRes = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+    const user = authRes?.data?.user;
     if (!user) {
       setError('Not authenticated');
       setLoading(false);

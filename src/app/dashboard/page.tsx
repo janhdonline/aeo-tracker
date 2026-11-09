@@ -9,7 +9,14 @@ import { PLAN_LIMITS } from '@/lib/types';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user: any = null;
+  try {
+    const authRes = await supabase.auth.getUser();
+    user = authRes?.data?.user || null;
+  } catch (err) {
+    console.warn('Dashboard auth check error:', err);
+    user = null;
+  }
 
   if (!user) {
     redirect('/login');

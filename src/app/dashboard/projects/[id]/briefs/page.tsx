@@ -9,7 +9,14 @@ import { BriefsManager } from './BriefsManager';
 
 export default async function BriefsPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user: any = null;
+  try {
+    const authRes = await supabase.auth.getUser();
+    user = authRes?.data?.user || null;
+  } catch (err) {
+    console.warn('BriefsPage auth check error:', err);
+    user = null;
+  }
 
   if (!user) {
     redirect('/login');

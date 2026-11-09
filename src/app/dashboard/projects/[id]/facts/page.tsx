@@ -33,8 +33,12 @@ export default function BrandFactsPage({ params }: { params: { id: string } }) {
   }, [params.id]);
 
   const loadProjectAndFacts = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user?.email) setUserEmail(user.email);
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user?.email) setUserEmail(data.user.email);
+    } catch {
+      // Ignored
+    }
 
     const { data: proj } = await supabase
       .from('projects')
