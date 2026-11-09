@@ -37,7 +37,7 @@ function queueSingle(...values: any[]) {
   );
 }
 
-import { sendScanCompletion } from '../src/lib/email';
+import { sendScanCompletion, sendExecutiveWeeklyDigest } from '../src/lib/email';
 
 const basePayload = {
   projectId: 'proj-1',
@@ -103,5 +103,34 @@ describe('sendScanCompletion', () => {
     sendMock.mockRejectedValue(new Error('Resend down'));
 
     await expect(sendScanCompletion(basePayload)).resolves.toBeUndefined();
+  });
+
+  it('sends an executive weekly digest email with rich metrics and delta badge', async () => {
+    sendMock.mockResolvedValueOnce({ id: 'msg-123' });
+
+    const res = await sendExecutiveWeeklyDigest({
+      to: 'client@company.com',
+      projectId: 'proj-1',
+      domain: 'revolut.com',
+      brandName: 'Revolut',
+      visibilityScore: 84,
+      scoreDelta: 6,
+      shareOfVoice: 62,
+      totalMentions: 38,
+      keywordsCovered: 9,
+      keywordsTotal: 10,
+      topGaps: ['Missing pricing citation on ChatGPT'],
+      verifiedFactsCount: 4,
+    });
+
+    expect(res.success).toBe(true);
+    expect(sendMock).toHaveBeenCalledTimes(1);
+    const [args] = sendMock.mock.calls[0];
+    expect(args.to).toBe('client@company.com');
+    expect(args.subject).toContain('Revolut Weekly Digest');
+    expect(args.html).toContain('84');
+    expect(args.html).toContain('+6 pts this week');
+    expect(args.html).toContain('62%');
+    expect(args.html).toContain('Missing pricing citation on ChatGPT');
   });
 });

@@ -17,6 +17,7 @@ import {
   Link2,
   Share2,
   AlertTriangle,
+  Download,
 } from 'lucide-react';
 
 interface Props {
@@ -265,15 +266,14 @@ export default async function PublicReportPage({ params }: Props) {
                   <Bot className="h-3.5 w-3.5 text-slate-500" />
                   4 AI Engines
                 </span>
-                {isOwner && (
-                  <Link
-                    href={`/api/export/pdf?projectId=${project.id}`}
-                    download
-                    className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-sm"
-                  >
-                    Export PDF
-                  </Link>
-                )}
+                <Link
+                  href={`/api/export/pdf?projectId=${project.id}`}
+                  download
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors"
+                >
+                  <Download className="h-3.5 w-3.5 text-slate-500" />
+                  Export PDF
+                </Link>
               </div>
             </div>
 

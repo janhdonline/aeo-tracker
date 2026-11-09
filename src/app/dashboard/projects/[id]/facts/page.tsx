@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, ShieldCheck, Sparkles, Copy, Check, FileCode, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, ShieldCheck, Sparkles, Copy, Check, FileCode, FileCode2, AlertTriangle } from 'lucide-react';
 import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import { LogoLoader } from '@/components/LogoLoader';
@@ -196,6 +196,14 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                   >
                     <AlertTriangle className="h-3.5 w-3.5" />
                     View AI Discrepancy Alerts
+                  </Link>
+
+                  <Link
+                    href={`/dashboard/projects/${params.id}/llms`}
+                    className="flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100 shadow-sm"
+                  >
+                    <FileCode2 className="h-3.5 w-3.5" />
+                    llms.txt Suite & Validator
                   </Link>
                 </div>
               </div>

@@ -10,6 +10,8 @@ import {
   Compass,
   ShieldAlert,
   Bot,
+  FileCode2,
+  Settings,
 } from 'lucide-react';
 
 interface NavItem {
@@ -32,7 +34,9 @@ interface ProjectSidebarProps {
     | 'alerts'
     | 'analytics'
     | 'runs'
-    | 'report';
+    | 'report'
+    | 'llms'
+    | 'settings';
 }
 
 export function ProjectSidebar({ projectId, domain, current = 'overview' }: ProjectSidebarProps) {
@@ -56,7 +60,23 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
     { label: 'Report', icon: Globe, href: `/report/${domain}`, key: 'report' },
   ];
 
-  const allItems: NavItem[] = [...coreItems, ...intelligenceItems];
+  const workspaceItems: NavItem[] = [
+    {
+      label: 'llms.txt Engine',
+      icon: FileCode2,
+      href: `/dashboard/projects/${projectId}/llms`,
+      key: 'llms',
+      badge: 'AEO',
+    },
+    {
+      label: 'Settings',
+      icon: Settings,
+      href: `/dashboard/projects/${projectId}/settings`,
+      key: 'settings',
+    },
+  ];
+
+  const allItems: NavItem[] = [...coreItems, ...intelligenceItems, ...workspaceItems];
 
   return (
     <>
@@ -162,6 +182,44 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
                       />
                       <span>{item.label}</span>
                     </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="border-t border-slate-100 pt-3">
+            <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Workspace & Delivery
+            </p>
+            <div className="mt-1 flex flex-col gap-1">
+              {workspaceItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = current === item.key;
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    className={`relative flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                      isActive
+                        ? 'text-emerald-700 bg-emerald-50/80 shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Icon
+                        className={`h-4 w-4 shrink-0 ${
+                          isActive ? 'text-emerald-600' : 'text-slate-400'
+                        }`}
+                        strokeWidth={2}
+                      />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.badge && (
+                      <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[9px] font-bold text-blue-800">
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

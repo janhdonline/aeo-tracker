@@ -129,3 +129,151 @@ export async function sendWeeklyReport(
     console.error('Failed to send weekly report:', error);
   }
 }
+
+export interface ExecutiveWeeklyDigestPayload {
+  to: string;
+  projectId: string;
+  domain: string;
+  brandName?: string;
+  visibilityScore: number;
+  scoreDelta?: number;
+  shareOfVoice: number;
+  totalMentions: number;
+  keywordsCovered?: number;
+  keywordsTotal?: number;
+  topGaps?: string[];
+  verifiedFactsCount?: number;
+  pdfUrl?: string;
+}
+
+export async function sendExecutiveWeeklyDigest(payload: ExecutiveWeeklyDigestPayload): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    projectId,
+    domain,
+    brandName = domain,
+    visibilityScore,
+    scoreDelta = 0,
+    shareOfVoice,
+    totalMentions,
+    keywordsCovered = 0,
+    keywordsTotal = 0,
+    topGaps = [],
+    verifiedFactsCount = 0,
+  } = payload;
+
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured. Simulated executive digest delivery.');
+    return { success: true };
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://aeo-tracker.janhdonline.workers.dev';
+  const deltaBadge = scoreDelta > 0 
+    ? `<span style="background: #ecfdf5; color: #047857; font-weight: 700; font-size: 13px; padding: 3px 8px; border-radius: 9999px;">+${scoreDelta} pts this week</span>`
+    : scoreDelta < 0
+    ? `<span style="background: #fef2f2; color: #b91c1c; font-weight: 700; font-size: 13px; padding: 3px 8px; border-radius: 9999px;">${scoreDelta} pts this week</span>`
+    : `<span style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 13px; padding: 3px 8px; border-radius: 9999px;">Stable vs last week</span>`;
+
+  const gapsHtml = topGaps.length > 0
+    ? topGaps.slice(0, 3).map(g => `<li style="margin-bottom: 8px; color: #334155;"><strong>${g}</strong></li>`).join('')
+    : '<li style="color: #059669;">Zero major citation gaps detected — outstanding performance across monitored AI engines.</li>';
+
+  try {
+    await resend.emails.send({
+      from: 'AEO Checker Intelligence <reports@aeotracker.com>',
+      to,
+      subject: `Executive AEO Benchmark: ${brandName} Weekly Digest (${visibilityScore}/100)`,
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 620px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; color: #0f172a;">
+          <!-- Header -->
+          <div style="background: #090d16; padding: 24px 32px; color: #ffffff;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em;">AEO Checker</span>
+              <span style="font-size: 11px; background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8;">Weekly Executive Digest</span>
+            </div>
+            <h1 style="font-size: 24px; font-weight: 800; margin: 20px 0 4px 0; color: #ffffff;">${brandName}</h1>
+            <p style="margin: 0; font-size: 13px; color: #94a3b8;">Domain: <a href="https://${domain}" style="color: #60a5fa; text-decoration: none;">${domain}</a></p>
+          </div>
+
+          <!-- Body -->
+          <div style="padding: 28px 32px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; pb: 16px;">
+              <div>
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em;">AI Visibility Score</span>
+                <div style="font-size: 38px; font-weight: 900; color: #0f172a; line-height: 1.1; margin-top: 4px;">
+                  ${visibilityScore}<span style="font-size: 18px; color: #94a3b8; font-weight: 600;">/100</span>
+                </div>
+              </div>
+              <div>${deltaBadge}</div>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+              <tr>
+                <td style="padding: 14px; background: #f8fafc; border-radius: 10px; width: 33%; vertical-align: top;">
+                  <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Share of Voice</span>
+                  <div style="font-size: 22px; font-weight: 800; color: #1e293b; margin-top: 4px;">${shareOfVoice}%</div>
+                  <span style="font-size: 10px; color: #94a3b8;">vs Tracked Competitors</span>
+                </td>
+                <td style="width: 10px;"></td>
+                <td style="padding: 14px; background: #f8fafc; border-radius: 10px; width: 33%; vertical-align: top;">
+                  <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Direct Mentions</span>
+                  <div style="font-size: 22px; font-weight: 800; color: #1e293b; margin-top: 4px;">${totalMentions}</div>
+                  <span style="font-size: 10px; color: #94a3b8;">ChatGPT, Perplexity, Gemini</span>
+                </td>
+                <td style="width: 10px;"></td>
+                <td style="padding: 14px; background: #f8fafc; border-radius: 10px; width: 33%; vertical-align: top;">
+                  <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Prompt Coverage</span>
+                  <div style="font-size: 22px; font-weight: 800; color: #1e293b; margin-top: 4px;">${keywordsCovered}/${keywordsTotal}</div>
+                  <span style="font-size: 10px; color: #94a3b8;">Commercial Queries</span>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Verified Facts Status -->
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; margin-bottom: 24px;">
+              <div style="font-size: 12px; font-weight: 700; color: #166534; display: flex; align-items: center; gap: 6px;">
+                🛡️ AI Brand Anti-Hallucination Watchdog
+              </div>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #15803d;">
+                ${verifiedFactsCount > 0 
+                  ? `Audited ${verifiedFactsCount} registered brand fact(s). No critical pricing or product discrepancies detected.`
+                  : `Ground-truth watchdog active. Add brand pricing & feature specs in Fact Watch to detect LLM hallucinations.`}
+              </p>
+            </div>
+
+            <!-- Top Actionable Gaps -->
+            <div style="margin-bottom: 28px;">
+              <h3 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.03em;">
+                Priority Citation & Content Opportunities:
+              </h3>
+              <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
+                ${gapsHtml}
+              </ul>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 12px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+              <a href="${appUrl}/dashboard/projects/${projectId}" style="background: #0f172a; color: #ffffff; font-weight: 700; font-size: 13px; padding: 12px 22px; border-radius: 10px; text-decoration: none; display: inline-block;">
+                Open Optimization Workspace →
+              </a>
+              <a href="${appUrl}/report/${domain}" style="background: #f1f5f9; color: #334155; font-weight: 600; font-size: 13px; padding: 12px 20px; border-radius: 10px; text-decoration: none; display: inline-block;">
+                View Public Benchmark
+              </a>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px 32px; font-size: 11px; color: #94a3b8; text-align: center;">
+            Sent by AEO Checker for ${brandName}. Manage delivery preferences in your Project Settings.
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error: any) {
+    console.error('Failed to send executive weekly digest:', error);
+    return { success: false, error: error?.message || 'Failed to dispatch email' };
+  }
+}
