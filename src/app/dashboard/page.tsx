@@ -1,118 +1,158 @@
-export const dynamic = 'force-dynamic';
+'use client';
 
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 import { AppShell } from '@/components/AppShell';
 import { AnimatedDashboardStats } from './AnimatedDashboardStats';
-import Link from 'next/link';
 import { PLAN_LIMITS } from '@/lib/types';
+import { Loader2, Plus, FileText, ArrowRight, ExternalLink } from 'lucide-react';
 
-export default async function DashboardPage() {
-  const supabase = await createClient();
-  let user: any = null;
-  try {
-    const authRes = await supabase.auth.getUser();
-    user = authRes?.data?.user || null;
-  } catch (err) {
-    console.warn('Dashboard auth check error:', err);
-    user = null;
-  }
+export default function DashboardPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ email?: string; id?: string } | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [keywordsCount, setKeywordsCount] = useState(0);
+  const [lastScan, setLastScan] = useState<string | null>(null);
+  const [plan, setPlan] = useState('free');
+  const [avgScore, setAvgScore] = useState(0);
 
-  if (!user) {
-    redirect('/login');
-  }
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const supabase = createClient();
+        const authRes = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+        const currentUser = authRes?.data?.user;
 
-  let projects: any[] = [];
-  try {
-    const { data } = await supabase
-      .from('projects')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    projects = data || [];
-  } catch (err) {
-    console.error('Failed to load projects:', err);
-  }
+        if (!currentUser) {
+          router.replace('/login');
+          return;
+        }
 
-  const projectIds = projects.map((p: any) => p.id);
-  let keywordsCount = 0;
-  let lastScan: string | null = null;
+        setUser({ email: currentUser.email || '', id: currentUser.id });
 
-  if (projectIds.length > 0) {
-    try {
-      const { count } = await supabase
-        .from('keywords')
-        .select('id', { count: 'exact', head: true })
-        .in('project_id', projectIds)
-        .eq('active', true);
-      keywordsCount = count || 0;
+        // Fetch user projects
+        const { data: projData } = await supabase
+          .from('projects')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .order('created_at', { ascending: false });
 
-      const { data: runs } = await supabase
-        .from('scan_runs')
-        .select('started_at')
-        .in('project_id', projectIds)
-        .order('started_at', { ascending: false })
-        .limit(1);
-      lastScan = runs?.[0]?.started_at || null;
-    } catch (err) {
-      console.warn('Failed to load keywords or runs count:', err);
+        const loadedProjects = projData || [];
+        setProjects(loadedProjects);
+
+        // Fetch user profile for plan info
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('plan, plan_keywords_limit')
+            .eq('id', currentUser.id)
+            .single();
+
+          if (profile?.plan) {
+            setPlan(profile.plan);
+          }
+        } catch {
+          // Defaults to free
+        }
+
+        const projectIds = loadedProjects.map((p: any) => p.id);
+
+        if (projectIds.length > 0) {
+          // Count active tracked keywords
+          try {
+            const { count } = await supabase
+              .from('keywords')
+              .select('id', { count: 'exact', head: true })
+              .in('project_id', projectIds)
+              .eq('active', true);
+            setKeywordsCount(count || 0);
+          } catch {
+            // Ignored
+          }
+
+          // Last scan run
+          try {
+            const { data: runs } = await supabase
+              .from('scan_runs')
+              .select('started_at')
+              .in('project_id', projectIds)
+              .order('started_at', { ascending: false })
+              .limit(1);
+            if (runs?.[0]?.started_at) {
+              setLastScan(runs[0].started_at);
+            }
+          } catch {
+            // Ignored
+          }
+
+          // Average score across snapshots
+          try {
+            const { data: scoreData } = await supabase
+              .from('snapshot_scores')
+              .select('visibility_score')
+              .in('project_id', projectIds);
+
+            if (scoreData && scoreData.length > 0) {
+              const avg = Math.round(
+                scoreData.reduce((acc: number, curr: any) => acc + (curr.visibility_score || 0), 0) /
+                  scoreData.length
+              );
+              setAvgScore(avg);
+            }
+          } catch {
+            // Ignored
+          }
+        }
+      } catch (err) {
+        console.warn('Dashboard client load error:', err);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  // Fetch user profile for plan info
-  let plan = 'free';
-  try {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('plan, plan_keywords_limit')
-      .eq('id', user.id)
-      .single();
-    plan = profile?.plan || 'free';
-  } catch (err) {
-    console.warn('Profile fetch note:', err);
-  }
+    loadDashboard();
+  }, [router]);
 
   const planLimit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS]?.keywords || 10;
 
-  let avgScore = 0;
-  if (projectIds.length > 0) {
-    try {
-      const { data: scoreData } = await supabase
-        .from('snapshot_scores')
-        .select('visibility_score, project_id')
-        .in('project_id', projectIds);
-
-      if (scoreData && scoreData.length > 0) {
-        avgScore = Math.round(
-          scoreData.reduce((acc: number, curr: any) => acc + (curr.visibility_score || 0), 0) / scoreData.length
-        );
-      }
-    } catch (err) {
-      console.warn('Failed to load score averages:', err);
-    }
+  if (loading) {
+    return (
+      <AppShell user={{ email: user?.email || 'Loading...' }}>
+        <div className="min-h-[70vh] flex flex-col items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#eb9d2a] mb-3" />
+          <p className="text-sm font-medium text-slate-500">Loading your AEO dashboard...</p>
+        </div>
+      </AppShell>
+    );
   }
 
   return (
-    <AppShell user={{ email: user.email }}>
+    <AppShell user={{ email: user?.email || '' }}>
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="font-display text-2xl font-bold">Projects</h2>
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h2 className="font-display text-2xl font-bold text-slate-900">Projects</h2>
+            <p className="text-sm text-slate-500 mt-0.5">Track and optimize your website visibility across AI engines</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
             <Link
               href="/dashboard/projects/new"
-              className="bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-semibold"
+              className="inline-flex items-center gap-1.5 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-semibold shadow-sm"
             >
-              + New Project
+              <Plus className="h-4 w-4" /> New Project
             </Link>
             <a
               href="/api/export/csv"
-              className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition-colors"
+              className="border border-slate-200 px-4 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50 transition-colors"
             >
               Export CSV
             </a>
             <Link
               href="/report/shopify.com"
-              className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition-colors"
+              className="border border-slate-200 px-4 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50 transition-colors"
             >
               View sample report
             </Link>
@@ -120,27 +160,27 @@ export default async function DashboardPage() {
         </div>
 
         {/* Plan Info Banner */}
-        <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
               <span
-                className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
                   plan === 'pro'
-                    ? 'bg-emerald-100 text-emerald-700'
+                    ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
                     : plan === 'starter'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-slate-100 text-slate-600'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'bg-slate-200 text-slate-700'
                 }`}
               >
-                {plan.charAt(0).toUpperCase() + plan.slice(1)} Plan
+                {plan} Plan
               </span>
-              <span className="text-sm text-slate-600">
-                {keywordsCount} / {planLimit} keywords used
+              <span className="text-sm text-slate-600 font-medium">
+                {keywordsCount} / {planLimit} keywords tracked
               </span>
             </div>
             <div className="flex-1 max-w-xs">
-              <div className="flex justify-between text-xs text-slate-500 mb-1">
-                <span>Keyword Usage</span>
+              <div className="flex justify-between text-xs text-slate-500 mb-1 font-medium">
+                <span>Keyword Limit Usage</span>
                 <span>{Math.round((keywordsCount / planLimit) * 100)}%</span>
               </div>
               <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
@@ -155,9 +195,9 @@ export default async function DashboardPage() {
             </div>
             <Link
               href="/pricing"
-              className="text-sm font-medium text-[#eb9d2a] hover:text-[#d88b1e] transition-colors"
+              className="text-sm font-semibold text-[#eb9d2a] hover:text-[#d88b1e] transition-colors"
             >
-              {plan === 'free' ? 'Upgrade Plan' : 'Change Plan'}
+              {plan === 'free' ? 'Upgrade Plan →' : 'Manage Subscription'}
             </Link>
           </div>
         </div>
@@ -167,19 +207,27 @@ export default async function DashboardPage() {
             { label: 'Total Projects', value: projects.length, numeric: true },
             { label: 'Keywords Tracked', value: keywordsCount, numeric: true },
             { label: 'Avg AEO Score', value: avgScore, numeric: true },
-            { label: 'Last Scan', value: lastScan ? new Date(lastScan).toLocaleDateString() : '—' },
+            {
+              label: 'Last Scan',
+              value: lastScan ? new Date(lastScan).toLocaleDateString() : '—',
+            },
           ]}
         />
 
         {projects.length === 0 ? (
-          <div className="text-center py-16 text-slate-500">
-            <p className="font-display text-xl font-bold text-slate-900">No projects yet</p>
-            <p className="mt-2">Create your first project to start tracking AI visibility.</p>
+          <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200 p-8 shadow-sm">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-[#eb9d2a] mb-3">
+              <FileText className="h-6 w-6" />
+            </div>
+            <p className="font-display text-lg font-bold text-slate-900">No projects yet</p>
+            <p className="mt-1 text-sm text-slate-500 max-w-sm mx-auto">
+              Create your first project to start tracking your brand visibility across ChatGPT, Gemini, and DeepSeek.
+            </p>
             <Link
               href="/dashboard/projects/new"
-              className="inline-block mt-4 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-4 py-2 rounded-lg transition-all duration-200"
+              className="inline-flex items-center gap-2 mt-5 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm transition-all"
             >
-              + New Project
+              <Plus className="h-4 w-4" /> Create First Project
             </Link>
           </div>
         ) : (
@@ -187,28 +235,37 @@ export default async function DashboardPage() {
             {projects.map((p: any) => (
               <div
                 key={p.id}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200"
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-[#eb9d2a]/30 transition-all duration-200"
               >
-                <h3 className="font-display text-lg font-bold text-slate-900">{p.domain}</h3>
-                <p className="text-sm text-slate-500">{p.brand_name}</p>
-                <div className="flex gap-3 mt-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-display text-lg font-bold text-slate-900">{p.domain}</h3>
+                    <p className="text-sm text-slate-500 mt-0.5">{p.brand_name}</p>
+                  </div>
+                  <span className="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">
+                    Active
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-100">
                   <Link
                     href={`/dashboard/projects/${p.id}`}
-                    className="text-sm text-[#eb9d2a] font-medium hover:underline"
+                    className="text-sm font-semibold text-[#eb9d2a] hover:text-[#d88b1e] inline-flex items-center gap-1"
                   >
-                    View
+                    View Project <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
+                  <span className="text-slate-300">|</span>
                   <Link
                     href={`/dashboard/projects/${p.id}/keywords`}
-                    className="text-sm text-slate-600 hover:text-slate-900"
+                    className="text-sm text-slate-600 hover:text-slate-900 font-medium"
                   >
                     Keywords
                   </Link>
+                  <span className="text-slate-300">|</span>
                   <Link
                     href={`/report/${p.domain}`}
-                    className="text-sm text-slate-600 hover:text-slate-900"
+                    className="text-sm text-slate-600 hover:text-slate-900 font-medium inline-flex items-center gap-1"
                   >
-                    Report
+                    Report <ExternalLink className="h-3 w-3" />
                   </Link>
                 </div>
               </div>
