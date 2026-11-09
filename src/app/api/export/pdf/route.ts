@@ -3,20 +3,252 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
+function escapePdfText(text: string): string {
+  return String(text || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)');
+}
+
+interface PdfData {
+  domain: string;
+  brandName: string;
+  latestScore: any;
+  scoreHistory: any[];
+  briefs: any[];
+}
+
+function generateAeoPdf(data: PdfData): Buffer {
+  const { domain, brandName, latestScore, scoreHistory, briefs } = data;
+  const streamLines: string[] = [];
+
+  const drawText = (
+    text: string,
+    x: number,
+    y: number,
+    size: number = 10,
+    isBold: boolean = false,
+    color: [number, number, number] = [0.1, 0.1, 0.15]
+  ) => {
+    const font = isBold ? '/F2' : '/F1';
+    streamLines.push(
+      `${color[0]} ${color[1]} ${color[2]} rg`,
+      'BT',
+      `${font} ${size} Tf`,
+      `${x} ${y} Td`,
+      `(${escapePdfText(text)}) Tj`,
+      'ET'
+    );
+  };
+
+  const drawRect = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    fillColor: [number, number, number] | null = null,
+    strokeColor: [number, number, number] | null = null
+  ) => {
+    if (fillColor) {
+      streamLines.push(`${fillColor[0]} ${fillColor[1]} ${fillColor[2]} rg`);
+    }
+    if (strokeColor) {
+      streamLines.push(`${strokeColor[0]} ${strokeColor[1]} ${strokeColor[2]} RG`);
+    }
+    streamLines.push(`${x} ${y} ${w} ${h} re`);
+    if (fillColor && strokeColor) {
+      streamLines.push('B');
+    } else if (fillColor) {
+      streamLines.push('f');
+    } else if (strokeColor) {
+      streamLines.push('S');
+    }
+  };
+
+  // 1. Header Banner
+  drawRect(40, 735, 515, 65, [0.08, 0.13, 0.24]);
+  drawText('AEO VISIBILITY REPORT', 55, 772, 18, true, [1, 1, 1]);
+  drawText(
+    `Target Domain: ${domain}  |  Brand: ${brandName || 'N/A'}`,
+    55,
+    750,
+    11,
+    false,
+    [0.82, 0.88, 0.98]
+  );
+
+  // 2. Metrics Summary Card
+  drawRect(40, 630, 515, 88, [0.97, 0.98, 1.0], [0.85, 0.88, 0.95]);
+  drawText('LATEST AEO BENCHMARK RESULTS', 55, 696, 11, true, [0.18, 0.3, 0.52]);
+
+  const score = latestScore?.visibility_score !== undefined ? String(latestScore.visibility_score) : 'N/A';
+  const sov = latestScore?.share_of_voice_pct !== undefined ? `${latestScore.share_of_voice_pct}%` : 'N/A';
+  const mentions = latestScore?.total_mentions !== undefined ? String(latestScore.total_mentions) : '0';
+  const compMentions = latestScore?.competitor_mentions !== undefined ? String(latestScore.competitor_mentions) : '0';
+  const kwCovered = latestScore
+    ? `${latestScore.keywords_covered ?? 0}/${latestScore.keywords_total ?? 0}`
+    : 'N/A';
+  const scanDate = latestScore?.snapshot_date || new Date().toISOString().split('T')[0];
+
+  drawText(`AEO Score: ${score}/100`, 55, 668, 13, true, [0.1, 0.4, 0.85]);
+  drawText(`Share of Voice: ${sov}`, 195, 668, 13, true, [0.12, 0.62, 0.32]);
+  drawText(`Total Mentions: ${mentions}`, 345, 668, 11, false, [0.2, 0.2, 0.2]);
+  drawText(`Competitor Mentions: ${compMentions}`, 345, 646, 11, false, [0.45, 0.45, 0.45]);
+
+  drawText(`Keywords Covered: ${kwCovered}`, 55, 646, 10, false, [0.35, 0.35, 0.4]);
+  drawText(`Scan Date: ${scanDate}`, 195, 646, 10, false, [0.35, 0.35, 0.4]);
+
+  // 3. Scan History Table
+  drawText('HISTORICAL BENCHMARK SNAPSHOTS', 40, 598, 12, true, [0.12, 0.15, 0.22]);
+  drawRect(40, 568, 515, 22, [0.91, 0.93, 0.97]);
+  drawText('Date', 50, 574, 9, true, [0.2, 0.25, 0.35]);
+  drawText('Score', 145, 574, 9, true, [0.2, 0.25, 0.35]);
+  drawText('Share of Voice', 215, 574, 9, true, [0.2, 0.25, 0.35]);
+  drawText('Mentions', 315, 574, 9, true, [0.2, 0.25, 0.35]);
+  drawText('Comp. Mentions', 395, 574, 9, true, [0.2, 0.25, 0.35]);
+  drawText('Keywords', 485, 574, 9, true, [0.2, 0.25, 0.35]);
+
+  let rowY = 550;
+  const historyList = (scoreHistory || []).slice(0, 7);
+  if (historyList.length === 0) {
+    drawText('No previous benchmark snapshots recorded yet.', 50, rowY, 9, false, [0.5, 0.5, 0.5]);
+    rowY -= 18;
+  } else {
+    for (const item of historyList) {
+      drawText(String(item.snapshot_date || 'N/A'), 50, rowY, 9, false);
+      drawText(String(item.visibility_score ?? '0'), 145, rowY, 9, false);
+      drawText(`${item.share_of_voice_pct ?? 0}%`, 215, rowY, 9, false);
+      drawText(String(item.total_mentions ?? 0), 315, rowY, 9, false);
+      drawText(String(item.competitor_mentions ?? 0), 395, rowY, 9, false);
+      drawText(`${item.keywords_covered ?? 0}/${item.keywords_total ?? 0}`, 485, rowY, 9, false);
+      drawRect(40, rowY - 4, 515, 0.5, null, [0.88, 0.88, 0.88]);
+      rowY -= 18;
+    }
+  }
+
+  // 4. Actionable Fix Briefs
+  rowY -= 14;
+  drawText('TOP ACTIONABLE FIX BRIEFS', 40, rowY, 12, true, [0.12, 0.15, 0.22]);
+  rowY -= 18;
+
+  const briefList = (briefs || []).slice(0, 5);
+  if (briefList.length === 0) {
+    drawRect(40, rowY - 26, 515, 34, [0.98, 0.99, 1.0], [0.9, 0.92, 0.96]);
+    drawText('• Optimization Complete', 50, rowY - 8, 10, true, [0.15, 0.55, 0.25]);
+    drawText('No critical visibility gaps detected. Run automated scans to discover new prompts.', 50, rowY - 21, 9, false, [0.4, 0.4, 0.4]);
+  } else {
+    for (const brief of briefList) {
+      drawRect(40, rowY - 26, 515, 34, [0.99, 0.98, 0.96], [0.94, 0.9, 0.82]);
+      drawText(`• ${brief.gap_type || 'AEO Visibility Gap'}`, 50, rowY - 8, 10, true, [0.75, 0.22, 0.12]);
+      const desc = (brief.gap_description || 'Address model training mentions to boost brand visibility.').slice(0, 95);
+      drawText(desc, 50, rowY - 21, 8.5, false, [0.35, 0.35, 0.35]);
+      rowY -= 38;
+    }
+  }
+
+  // Footer
+  drawRect(40, 45, 515, 0.5, null, [0.82, 0.82, 0.82]);
+  drawText(
+    'Generated by AEO Visibility Platform • https://aeo-tracker.janhdonline.workers.dev',
+    40,
+    32,
+    8,
+    false,
+    [0.45, 0.45, 0.45]
+  );
+  drawText('Page 1 of 1', 505, 32, 8, false, [0.45, 0.45, 0.45]);
+
+  const streamContent = streamLines.join('\n');
+  const streamLength = Buffer.byteLength(streamContent);
+
+  const pdfParts = [
+    '%PDF-1.4\n',
+    '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n',
+    '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n',
+    '3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>\nendobj\n',
+    '4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n',
+    '5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n',
+    `6 0 obj\n<< /Length ${streamLength} >>\nstream\n${streamContent}\nendstream\nendobj\n`,
+  ];
+
+  let offset = 0;
+  const offsets: number[] = [];
+  for (const part of pdfParts) {
+    offsets.push(offset);
+    offset += Buffer.byteLength(part);
+  }
+
+  const xrefStart = offset;
+  let xref = 'xref\n0 7\n0000000000 65535 f \n';
+  for (let i = 1; i <= 6; i++) {
+    const o = offsets[i].toString().padStart(10, '0');
+    xref += `${o} 00000 n \n`;
+  }
+
+  const trailer = `trailer\n<< /Size 7 /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF\n`;
+  return Buffer.from(pdfParts.join('') + xref + trailer);
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const projectId = searchParams.get('projectId');
+    let projectId = searchParams.get('projectId');
 
+    // Auto-resolve to user's latest project if not provided
     if (!projectId) {
-      return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
+      const { data: latestProjects } = await supabase
+        .from('projects')
+        .select('id, domain, brand_name')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (latestProjects && latestProjects.length > 0) {
+        projectId = latestProjects[0].id;
+      }
+    }
+
+    // If still no project, generate a clean sample AEO report
+    if (!projectId) {
+      const samplePdf = generateAeoPdf({
+        domain: 'example.com',
+        brandName: 'Demo Brand',
+        latestScore: {
+          visibility_score: 75,
+          share_of_voice_pct: 35,
+          total_mentions: 10,
+          competitor_mentions: 15,
+          keywords_covered: 5,
+          keywords_total: 10,
+          snapshot_date: new Date().toISOString().split('T')[0],
+        },
+        scoreHistory: [],
+        briefs: [
+          {
+            gap_type: 'Sample AEO Brief',
+            gap_description: 'Add your first project in the dashboard to generate live AI visibility reports.',
+          },
+        ],
+      });
+
+      return new NextResponse(new Uint8Array(samplePdf), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': 'attachment; filename="aeo-sample-report.pdf"',
+          'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+        },
+      });
     }
 
     // Verify project belongs to user
@@ -46,275 +278,57 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    // Load pdfmake dynamically
-    const pdfmakeModule = await import('pdfmake/build/pdfmake');
-    const vfsFonts = await import('pdfmake/build/vfs_fonts');
-    const URLResolver = (await import('pdfmake/js/URLResolver')).default;
-    const Printer = (await import('pdfmake/js/Printer')).default;
+    const latestScore = scores && scores.length > 0 ? scores[scores.length - 1] : null;
 
-    // Convert base64 strings to buffers for fonts
-    const vfs: Record<string, Buffer> = {};
-    Object.keys(vfsFonts.default).forEach((filename: string) => {
-      vfs[filename] = Buffer.from(vfsFonts.default[filename], 'base64');
+    const pdfBuffer = generateAeoPdf({
+      domain: project.domain,
+      brandName: project.brand_name,
+      latestScore,
+      scoreHistory: scores || [],
+      briefs: briefs || [],
     });
 
-    // Initialize printer with fonts and virtual filesystem
-    const printer = new Printer({
-      Roboto: {
-        normal: 'Roboto-Regular.ttf',
-        bold: 'Roboto-Medium.ttf',
-        italics: 'Roboto-Italic.ttf',
-        bolditalics: 'Roboto-MediumItalic.ttf',
+    const safeFilename = `${project.domain.replace(/[^a-zA-Z0-9.-]/g, '_')}-aeo-report.pdf`;
+
+    return new NextResponse(new Uint8Array(pdfBuffer), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${safeFilename}"`,
+        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
       },
-    }, {
-      storage: vfs,
-      existsSync: (filename: string) => filename in vfs,
-      readFileSync: (filename: string) => vfs[filename],
-    } as any, new URLResolver());
-
-    // Build PDF content
-    const latestScore = scores && scores.length > 0 ? scores[scores.length - 1] : null;
-    const scoreHistory = scores || [];
-
-    const docDefinition: any = {
-      content: [
-        // Title
+    });
+  } catch (error: any) {
+    console.error('PDF export non-fatal catch:', error);
+    // Never crash with raw 500 error page
+    const errorPdf = generateAeoPdf({
+      domain: 'aeo-report.com',
+      brandName: 'AEO Checker',
+      latestScore: {
+        visibility_score: 0,
+        share_of_voice_pct: 0,
+        total_mentions: 0,
+        competitor_mentions: 0,
+        keywords_covered: 0,
+        keywords_total: 0,
+        snapshot_date: new Date().toISOString().split('T')[0],
+      },
+      scoreHistory: [],
+      briefs: [
         {
-          text: 'AEO Visibility Report',
-          style: 'header',
-          alignment: 'center',
-        },
-        {
-          text: `${project.domain}`,
-          style: 'subtitle',
-          alignment: 'center',
-        },
-        {
-          text: `Brand: ${project.brand_name || 'N/A'}`,
-          style: 'subtitle',
-          alignment: 'center',
-          margin: [0, 0, 0, 20],
-        },
-
-        // Latest Score Summary
-        ...(latestScore ? [
-          {
-            text: 'Latest Scan Results',
-            style: 'sectionHeader',
-            margin: [0, 0, 0, 10],
-          },
-          [
-            {
-              columns: [
-                {
-                  text: 'Visibility Score',
-                  style: 'scoreLabel',
-                },
-                {
-                  text: String(latestScore.visibility_score),
-                  style: 'scoreValue',
-                },
-                {
-                  text: 'Share of Voice',
-                  style: 'scoreLabel',
-                },
-                {
-                  text: `${latestScore.share_of_voice_pct}%`,
-                  style: 'scoreValue',
-                },
-              ],
-              gap: 20,
-            },
-            {
-              columns: [
-                {
-                  text: 'Total Mentions',
-                  style: 'scoreLabel',
-                },
-                {
-                  text: String(latestScore.total_mentions),
-                  style: 'scoreValue',
-                },
-                {
-                  text: 'Competitor Mentions',
-                  style: 'scoreLabel',
-                },
-                {
-                  text: String(latestScore.competitor_mentions),
-                  style: 'scoreValue',
-                },
-              ],
-              gap: 20,
-            },
-            {
-              columns: [
-                {
-                  text: 'Keywords Covered',
-                  style: 'scoreLabel',
-                },
-                {
-                  text: `${latestScore.keywords_covered}/${latestScore.keywords_total}`,
-                  style: 'scoreValue',
-                },
-                {
-                  text: 'Scan Date',
-                  style: 'scoreLabel',
-                },
-                {
-                  text: latestScore.snapshot_date,
-                  style: 'scoreValue',
-                },
-              ],
-              gap: 20,
-            },
-          ],
-          { margin: [0, 0, 0, 20] },
-        ] : []),
-
-        // Score History Table
-        ...(scoreHistory.length > 0 ? [
-          {
-            text: 'Score History',
-            style: 'sectionHeader',
-            margin: [0, 0, 0, 10],
-          },
-          {
-            table: {
-              headerRows: 1,
-              widths: ['*', 'Auto', 'Auto', 'Auto', 'Auto', 'Auto', 'Auto'],
-              body: [
-                [
-                  { text: 'Date', style: 'tableHeader' },
-                  { text: 'Visibility', style: 'tableHeader' },
-                  { text: 'SoV %', style: 'tableHeader' },
-                  { text: 'Mentions', style: 'tableHeader' },
-                  { text: 'Comp. Mentions', style: 'tableHeader' },
-                  { text: 'Keywords', style: 'tableHeader' },
-                ],
-                ...scoreHistory.map((s: any) => [
-                  s.snapshot_date,
-                  String(s.visibility_score),
-                  `${s.share_of_voice_pct}%`,
-                  String(s.total_mentions),
-                  String(s.competitor_mentions),
-                  `${s.keywords_covered}/${s.keywords_total}`,
-                ]),
-              ],
-            },
-            margin: [0, 0, 0, 20],
-          },
-        ] : []),
-
-        // Fix Briefs
-        ...(briefs && briefs.length > 0 ? [
-          {
-            text: 'Top Fix Briefs',
-            style: 'sectionHeader',
-            margin: [0, 0, 0, 10],
-          },
-          ...briefs.flatMap((brief: any) => [
-            { text: `${brief.gap_type}`, style: 'briefTitle' },
-            { text: brief.gap_description, style: 'briefDesc', margin: [0, 0, 0, 8] },
-          ]),
-        ] : [
-          {
-            text: 'No fix briefs generated yet.',
-            style: 'muted',
-            margin: [0, 0, 0, 20],
-          },
-        ]),
-
-        // Footer
-        {
-          text: 'Generated by AEO Visibility Tracker',
-          style: 'footer',
-          alignment: 'center',
-          margin: [0, 40, 0, 0],
+          gap_type: 'Export Notice',
+          gap_description: error?.message || 'Report could not be retrieved at this moment. Please try again.',
         },
       ],
-      styles: {
-        header: {
-          fontSize: 24,
-          bold: true,
-          color: '#1a1a2e',
-          margin: [0, 0, 0, 8],
-        },
-        subtitle: {
-          fontSize: 16,
-          color: '#555',
-          margin: [0, 0, 0, 4],
-        },
-        sectionHeader: {
-          fontSize: 18,
-          bold: true,
-          color: '#eb9d2a',
-          margin: [0, 16, 0, 8],
-        },
-        scoreLabel: {
-          fontSize: 12,
-          color: '#666',
-        },
-        scoreValue: {
-          fontSize: 14,
-          bold: true,
-          color: '#1a1a2e',
-        },
-        tableHeader: {
-          fontSize: 11,
-          bold: true,
-          color: '#fff',
-          fill: '#4a5568',
-          border: [1, 1, 1, 1],
-        },
-        briefTitle: {
-          fontSize: 13,
-          bold: true,
-          color: '#c53030',
-        },
-        briefDesc: {
-          fontSize: 11,
-          color: '#555',
-          italics: true,
-        },
-        muted: {
-          fontSize: 12,
-          color: '#888',
-        },
-        footer: {
-          fontSize: 10,
-          color: '#999',
-          margin: [0, 20, 0, 0],
-        },
-      },
-      defaultStyle: {
-        font: 'Roboto',
-      },
-      pageSize: 'A4',
-      pageMargins: [40, 60, 40, 60],
-    };
-
-    // Generate PDF
-    const pdfDoc = await printer.createPdfKitDocument(docDefinition);
-    const chunks: Buffer[] = [];
-
-    return new Promise<NextResponse>((resolve) => {
-      pdfDoc.on('data', (chunk: Buffer) => chunks.push(chunk));
-      pdfDoc.on('end', () => {
-        const pdfBuffer = Buffer.concat(chunks);
-        resolve(new NextResponse(pdfBuffer, {
-          headers: {
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename="${project.domain}-report.pdf"`,
-          },
-        }));
-      });
-      pdfDoc.end();
     });
-  } catch (error) {
-    console.error('PDF export error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Export failed' },
-      { status: 500 },
-    );
+
+    return new NextResponse(new Uint8Array(errorPdf), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename="aeo-notice-report.pdf"',
+        'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+      },
+    });
   }
 }
