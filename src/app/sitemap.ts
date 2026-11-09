@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://aeo-checker.com';
@@ -76,7 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch active project domains from DB for dynamic report pages
   let reportPages: MetadataRoute.Sitemap = [];
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { data: projects } = await supabase
       .from('projects')
       .select('domain, updated_at')

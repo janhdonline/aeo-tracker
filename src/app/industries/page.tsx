@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'AI Visibility Index — Industry Benchmarks',
   description: 'See which websites are most cited in AI answers by industry. Aggregated from 1000+ AEO visibility scans.',

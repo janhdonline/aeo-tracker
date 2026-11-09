@@ -29,6 +29,8 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import type { LiveDashboardData } from "@/lib/types";
 import DashboardPreview from "@/components/landing/DashboardPreview";
+import AiModelRotator from "@/components/landing/AiModelRotator";
+import AiEngineSwitcher from "@/components/landing/AiEngineSwitcher";
 import ReportPreview from "@/components/landing/ReportPreview";
 import { ProgressBar, Sparkline } from "@/components/landing/Charts";
 import {
@@ -707,7 +709,7 @@ export default function Home() {
               className="mx-auto mt-6 max-w-2xl text-balance text-[15px] leading-7 text-gray-500 sm:text-lg sm:leading-8"
             >
               Answer Engine Optimization improves your website&apos;s visibility to AIs like
-              DeepSeek
+              <AiModelRotator />
             </motion.p>
 
             <motion.div
@@ -953,80 +955,7 @@ export default function Home() {
                   ))}
                 </div>
 
-                <div className="relative mt-8">
-                  <div className="absolute -top-4 right-4 z-10 flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-white px-3 py-2 shadow-md">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-sm font-semibold text-emerald-700">
-                      84
-                    </span>
-                    <div>
-                      <p className="text-[9px] font-semibold text-gray-800">AEO score</p>
-                      <p className="text-[8px] font-medium text-emerald-600">+8.4 this month</p>
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-soft sm:p-4">
-                    <div className="rounded-xl border border-gray-200 bg-[#FCFCFD] p-3.5 sm:p-4">
-                      <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#111827]">
-                          <Sparkles className="h-3 w-3 text-white" />
-                        </span>
-                        <p className="text-[10px] font-semibold text-gray-800">AI answer preview</p>
-                        <span className="ml-auto rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[8px] font-medium text-gray-500">
-                          DeepSeek
-                        </span>
-                      </div>
-
-                      <div className="mt-3 rounded-lg border border-gray-100 bg-gray-50/80 p-3">
-                        <div className="flex items-center gap-1.5 text-[8px] text-gray-400">
-                          <Search className="h-2.5 w-2.5" />
-                          &quot;best AEO tools for SaaS&quot;
-                        </div>
-                        <p className="mt-2 text-[10px] leading-[1.6] text-gray-600">
-                          The best AEO platforms help teams track brand mentions across AI engines.{" "}
-                          <mark className="rounded bg-emerald-100 px-1 py-0.5 font-semibold text-emerald-800">
-                            AEO Checker
-                          </mark>{" "}
-                          stands out for daily prompt monitoring, competitor benchmarks, and
-                          actionable recommendations...
-                        </p>
-                      </div>
-
-                      <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                        <span className="mr-1 text-[7px] font-semibold uppercase tracking-[0.1em] text-gray-400">
-                          Sources
-                        </span>
-                        {["Reddit", "G2", "Your site"].map((source) => (
-                          <span
-                            key={source}
-                            className="rounded-md border border-gray-200 bg-white px-2 py-1 text-[8px] font-medium text-gray-500 shadow-sm"
-                          >
-                            {source}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="mt-3 grid grid-cols-3 gap-2">
-                        {[
-                          { label: "Mentions", value: "42" },
-                          { label: "Citations", value: "18" },
-                          { label: "Sentiment", value: "0.85" },
-                        ].map((item) => (
-                          <div
-                            key={item.label}
-                            className="rounded-lg border border-gray-100 bg-white p-2 shadow-sm"
-                          >
-                            <p className="text-[7px] font-medium uppercase tracking-[0.08em] text-gray-400">
-                              {item.label}
-                            </p>
-                            <p className="mt-0.5 text-[13px] font-semibold tracking-[-0.03em] text-gray-800">
-                              {item.value}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <AiEngineSwitcher />
               </div>
 
               <div>

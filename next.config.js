@@ -9,6 +9,18 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/index',
+        destination: '/industries',
+      },
+      {
+        source: '/index/:industry',
+        destination: '/industries/:industry',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

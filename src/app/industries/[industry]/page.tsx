@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import Link from 'next/link';
 
 interface IndustryPageProps {
@@ -24,7 +24,7 @@ export default async function IndustryIndexPage({ params }: IndustryPageProps) {
   const industry = params.industry.replace(/-/g, ' ');
   const formatted = industry.replace(/\b\w/g, (c: string) => c.toUpperCase());
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   
   // Aggregate source stats across all projects in this industry
   // Only aggregate anonymized data — never expose project identity

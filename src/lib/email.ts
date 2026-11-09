@@ -1,7 +1,11 @@
 import { Resend } from 'resend';
 import { createAdminClient } from '@/lib/supabase/admin';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  return new Resend(key);
+}
 
 export interface ScanCompletionPayload {
   projectId: string;
@@ -39,6 +43,12 @@ export async function sendScanCompletion(payload: ScanCompletionPayload): Promis
   const gapList = topGaps.length > 0
     ? `<ul>${topGaps.map(gap => `<li style="margin-bottom: 6px;">${gap}</li>`).join('')}</ul>`
     : '<p style="color: #64748b;">No gaps detected — great work!</p>';
+
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured. Skipping scan completion email.');
+    return;
+  }
 
   try {
     await resend.emails.send({
@@ -91,6 +101,12 @@ export async function sendWeeklyReport(
   scoreDelta: number,
   topGaps: string[]
 ): Promise<void> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured. Skipping scan completion email.');
+    return;
+  }
+
   try {
     await resend.emails.send({
       from: 'AEO Tracker <reports@aeotracker.com>',
