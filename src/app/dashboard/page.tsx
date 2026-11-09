@@ -55,6 +55,7 @@ export default function DashboardPage() {
 
   // Sample Demo Preview Tab
   const [activeDemoTab, setActiveDemoTab] = useState<'overview' | 'sources' | 'facts'>('overview');
+  const [schemaNeeded, setSchemaNeeded] = useState(false);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -70,24 +71,35 @@ export default function DashboardPage() {
 
         setUser({ email: currentUser.email || '', id: currentUser.id });
 
-        // Fetch user projects
-        const { data: projData } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('user_id', currentUser.id)
-          .order('created_at', { ascending: false });
-
-        const loadedProjects = projData || [];
-        setProjects(loadedProjects);
-
-        // Fetch user profile for plan info
+        // Fetch user projects safely
+        let loadedProjects: any[] = [];
         try {
-          const { data: profile } = await supabase
+          const { data: projData, error: projErr } = await supabase
+            .from('projects')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .order('created_at', { ascending: false });
+
+          if (projErr && (projErr.code === '42P01' || String(projErr.message).includes('403') || String(projErr.message).includes('permission'))) {
+            setSchemaNeeded(true);
+          }
+          loadedProjects = projData || [];
+          setProjects(loadedProjects);
+        } catch {
+          // Defaults to empty
+        }
+
+        // Fetch user profile for plan info safely
+        try {
+          const { data: profile, error: profErr } = await supabase
             .from('profiles')
             .select('plan, plan_keywords_limit')
             .eq('id', currentUser.id)
-            .single();
+            .maybeSingle();
 
+          if (profErr && (profErr.code === '42P01' || String(profErr.message).includes('403') || String(profErr.message).includes('permission'))) {
+            setSchemaNeeded(true);
+          }
           if (profile?.plan) {
             setPlan(profile.plan);
           }
@@ -320,6 +332,32 @@ export default function DashboardPage() {
             </div>
           </div>
         </section>
+
+        {schemaNeeded && (
+          <div className="rounded-2xl border border-amber-300 bg-amber-50/90 p-5 shadow-sm text-amber-950">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-bold text-amber-950">1-Step Supabase Database Setup</h4>
+                  <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+                    Your Supabase project needs its database tables initialized. Open our SQL script and run it once in your Supabase SQL Editor to activate live project tracking and profile tiers.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href="/api/tools/schema"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 text-xs font-semibold shadow-sm transition-colors"
+                >
+                  <FileCode className="h-3.5 w-3.5" /> View Setup SQL Script ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* STATS OVERVIEW CARDS */}
         <AnimatedDashboardStats
