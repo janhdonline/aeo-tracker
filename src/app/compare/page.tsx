@@ -50,7 +50,7 @@ export default function ComparePage() {
             <thead>
               <tr className="border-b-2 border-slate-200">
                 <th className="py-4 pr-8 text-slate-900 font-semibold">Feature</th>
-                <th className="py-4 px-8 text-[#eb9d2a] font-semibold">Our Tool</th>
+                <th className="py-4 px-8 text-emerald-600 font-semibold">Our Tool</th>
                 <th className="py-4 pl-8 text-slate-500 font-medium">Others</th>
               </tr>
             </thead>
@@ -58,7 +58,7 @@ export default function ComparePage() {
               {comparisons.map((row, i) => (
                 <tr key={i} className="border-b border-slate-100">
                   <td className="py-4 pr-8 font-medium text-slate-900">{row.feature}</td>
-                  <td className="py-4 px-8 text-slate-700">{row.ours}</td>
+                  <td className="py-4 px-8 text-slate-700 font-medium">{row.ours}</td>
                   <td className="py-4 pl-8 text-slate-500">{row.others}</td>
                 </tr>
               ))}
@@ -68,7 +68,7 @@ export default function ComparePage() {
 
         <div className="mt-12 text-center">
           <p className="text-slate-600 mb-4">Ready to try it yourself?</p>
-          <Link href="/dashboard/projects/new" className="inline-block bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+          <Link href="/dashboard/projects/new" className="inline-block bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-semibold shadow-xs transition-all">
             Start Free Trial
           </Link>
         </div>

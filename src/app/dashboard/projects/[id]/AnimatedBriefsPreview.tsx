@@ -37,7 +37,7 @@ export function AnimatedBriefsPreview({ projectId, briefs }: { projectId: string
           </span>
           <h3 className="font-display text-lg font-semibold">Open Fix Briefs ({openBriefs.length})</h3>
         </div>
-        <Link href={`/dashboard/projects/${projectId}/briefs`} className="text-sm text-[#eb9d2a] font-medium hover:underline">
+        <Link href={`/dashboard/projects/${projectId}/briefs`} className="text-xs font-bold text-slate-900 hover:text-blue-600 transition-colors">
           View all →
         </Link>
       </div>

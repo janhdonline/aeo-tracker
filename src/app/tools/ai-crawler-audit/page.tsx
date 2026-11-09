@@ -49,25 +49,25 @@ export default function AICrawlerAuditPage() {
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <Shield className="h-12 w-12 text-[#eb9d2a] mx-auto mb-4" />
+          <Shield className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-slate-900">AI Crawler Readiness Audit</h1>
           <p className="mt-2 text-slate-600">Check if your website is properly configured for AI crawlers like GPTBot, ClaudeBot, and PerplexityBot.</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-6 mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
               placeholder="example.com"
-              className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#eb9d2a] focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400"
               onKeyDown={(e) => e.key === 'Enter' && handleAudit()}
             />
             <button
               onClick={handleAudit}
               disabled={loading || !domain.trim()}
-              className="bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50 transition-colors"
+              className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-semibold disabled:opacity-50 transition-all shadow-xs"
             >
               {loading ? 'Scanning...' : 'Audit'}
             </button>
@@ -167,7 +167,7 @@ export default function AICrawlerAuditPage() {
               {/* CTA */}
               <div className="text-center pt-4">
                 <p className="text-slate-600 mb-3">Want to monitor and improve your AI visibility?</p>
-                <a href="/dashboard/projects/new" className="inline-block bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                <a href="/dashboard/projects/new" className="inline-block bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-semibold shadow-xs transition-all">
                   Start Tracking Now
                 </a>
               </div>

@@ -39,50 +39,60 @@ export function AppShell({ user, children }: AppShellProps) {
     router.refresh();
   };
 
+  const userInitial = user.email ? user.email.charAt(0).toUpperCase() : 'U';
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#fafafa] text-slate-900">
       <motion.header
-        initial={prefersReducedMotion ? false : { opacity: 0, y: -8 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="sticky top-0 z-50 border-b border-slate-200 bg-white/85 backdrop-blur-xl"
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl transition-all"
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <motion.div
-            whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
-            transition={{ duration: 0.18 }}
+            whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
+            transition={{ duration: 0.15 }}
           >
-            <Link href="/dashboard" className="flex items-center gap-2.5">
-              <LogoMark className="h-9 w-9" />
-              <span className="text-[17px] font-semibold tracking-[-0.035em] text-slate-900">
+            <Link href="/dashboard" className="flex items-center gap-2.5 group">
+              <LogoMark className="h-8 w-8 transition-transform duration-200 group-hover:scale-105" />
+              <span className="text-[16px] font-bold tracking-tight text-slate-900">
                 AEO Visibility Tracker
               </span>
             </Link>
           </motion.div>
 
-          <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary navigation">
+          <nav className="hidden items-center gap-2 lg:flex" aria-label="Primary navigation">
             <Link
               href="/dashboard"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 transition-all hover:bg-slate-100/80 hover:text-slate-900"
             >
               Dashboard
             </Link>
             <Link
               href="/dashboard/projects/new"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 transition-all hover:bg-slate-100/80 hover:text-slate-900"
             >
               New Project
             </Link>
           </nav>
 
           <div className="hidden items-center gap-3 sm:flex">
-            <span className="text-sm text-slate-600">{user.email}</span>
+            <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-100/80 border border-slate-200/60">
+              <div className="h-6 w-6 rounded-full bg-slate-900 text-white font-bold text-[11px] flex items-center justify-center shrink-0">
+                {userInitial}
+              </div>
+              <span className="text-xs font-medium text-slate-700 max-w-[140px] truncate">
+                {user.email}
+              </span>
+            </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
+              title="Sign out of your account"
             >
-              <LogOut className="h-4 w-4" />
-              Logout
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Logout</span>
             </button>
           </div>
 

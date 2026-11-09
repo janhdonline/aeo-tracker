@@ -55,7 +55,7 @@ export default function ResourcesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {resources.map((r) => (
-            <Link key={r.href} href={r.href} className="block p-6 rounded-xl border border-slate-200 hover:border-[#eb9d2a] hover:shadow-md transition-all">
+            <Link key={r.href} href={r.href} className="block p-6 rounded-2xl border border-slate-200/80 bg-white hover:border-slate-300 hover:shadow-card transition-all">
               <div className="text-3xl mb-3">{r.icon}</div>
               <h2 className="text-lg font-semibold text-slate-900 mb-2">{r.title}</h2>
               <p className="text-sm text-slate-600">{r.description}</p>

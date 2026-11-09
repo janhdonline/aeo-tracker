@@ -22,37 +22,37 @@ export function ShareOfVoice({ yourDomain, yourMentions, competitorCounts }: Pro
     pct: Math.round((e.count / total) * 100),
   }));
 
-  const palette = ['#eb9d2a', '#6366f1', '#ec4899', '#14b8a6', '#f97316', '#8b5cf6'];
+  const palette = ['#10b981', '#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ec4899'];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+    <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-5 mb-6">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 className="font-display text-lg font-semibold">Share of Voice</h3>
+          <h3 className="font-display text-base font-bold text-slate-900">Share of Voice</h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Mentions across {total} AI responses in the latest scan
           </p>
         </div>
         <div className="text-right">
-          <p className="font-display text-2xl font-bold text-[#eb9d2a]">{yourPct}%</p>
-          <p className="text-xs text-slate-500">your share</p>
+          <p className="font-display text-2xl font-bold text-emerald-600">{yourPct}%</p>
+          <p className="text-xs text-slate-500 font-medium">your share</p>
         </div>
       </div>
 
       {/* Your bar */}
       <div className="mb-4">
-        <div className="flex justify-between items-center mb-1">
-          <span className="text-sm font-medium text-slate-800 truncate mr-2">{yourDomain}</span>
-          <span className="text-sm font-semibold text-slate-900 shrink-0">
-            {yourMentions} · {yourPct}%
+        <div className="flex justify-between items-center mb-1.5">
+          <span className="text-xs font-semibold text-slate-800 truncate mr-2">{yourDomain}</span>
+          <span className="text-xs font-bold text-slate-900 shrink-0">
+            {yourMentions} mentions · {yourPct}%
           </span>
         </div>
-        <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+        <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${yourPct}%` }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="h-full rounded-full bg-[#eb9d2a]"
+            className="h-full rounded-full bg-emerald-500"
           />
         </div>
       </div>

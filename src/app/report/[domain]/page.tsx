@@ -172,10 +172,10 @@ export default async function PublicReportPage({ params }: Props) {
                     {isOwner ? (
                       <Link
                         href={`/dashboard/projects/${project.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#eb9d2a] px-3.5 py-2 text-xs font-bold text-slate-950 shadow-sm hover:bg-[#d88b1e] transition-colors"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-colors"
                       >
                         Project Workspace
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        <ArrowRight className="h-3.5 w-3.5 text-emerald-400" />
                       </Link>
                     ) : (
                       <Link
@@ -212,27 +212,27 @@ export default async function PublicReportPage({ params }: Props) {
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
           {/* Owner Ribbon */}
           {isOwner && (
-            <div className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-amber-50/70 to-yellow-50/50 p-4 shadow-sm">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500 text-white shadow-sm">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-xs">
                     <ShieldCheck className="h-4 w-4" />
                   </span>
                   <div>
-                    <h3 className="text-xs font-bold text-amber-950">
+                    <h3 className="text-xs font-bold text-slate-900">
                       You are viewing your tracked property
                     </h3>
-                    <p className="text-[11px] text-amber-800">
+                    <p className="text-[11px] text-slate-500">
                       This is the public share link for {project.domain}. Manage keywords, run live scans, and access source blueprints from your workspace.
                     </p>
                   </div>
                 </div>
                 <Link
                   href={`/dashboard/projects/${project.id}`}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-amber-700 transition-colors self-start sm:self-auto"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-colors self-start sm:self-auto"
                 >
                   Manage in Workspace
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <ArrowRight className="h-3.5 w-3.5 text-emerald-400" />
                 </Link>
               </div>
             </div>
@@ -266,14 +266,14 @@ export default async function PublicReportPage({ params }: Props) {
                   <Bot className="h-3.5 w-3.5 text-slate-500" />
                   4 AI Engines
                 </span>
-                <Link
+                <a
                   href={`/api/export/pdf?projectId=${project.id}`}
                   download
                   className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors"
                 >
                   <Download className="h-3.5 w-3.5 text-slate-500" />
                   Export PDF
-                </Link>
+                </a>
               </div>
             </div>
 

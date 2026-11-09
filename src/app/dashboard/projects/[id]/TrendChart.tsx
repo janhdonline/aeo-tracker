@@ -27,7 +27,7 @@ export function TrendChart({ data }: Props) {
       <motion.polyline
         points={pts}
         fill="none"
-        stroke="#eb9d2a"
+        stroke="#10b981"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -41,7 +41,7 @@ export function TrendChart({ data }: Props) {
           cx={(i / (vals.length - 1)) * 300}
           cy={80 - ((v - min) / range) * 70 - 5}
           r="2.5"
-          fill="#eb9d2a"
+          fill="#10b981"
           initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : 0.3 + i * 0.06, ease: 'backOut' }}

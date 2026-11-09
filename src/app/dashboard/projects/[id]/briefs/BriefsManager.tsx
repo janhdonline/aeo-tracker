@@ -256,7 +256,7 @@ export function BriefsManager({ projectId, initialBriefs }: { projectId: string;
                 <LogoLoader variant="mini" text="Analyzing Visibility Gaps..." />
               ) : (
                 <>
-                  <Sparkles className="h-3.5 w-3.5 text-[#eb9d2a]" />
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
                   Generate Initial AEO Briefs
                 </>
               )}

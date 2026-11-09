@@ -77,7 +77,7 @@ export default async function IndustryIndexPage({ params }: IndustryPageProps) {
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-2 rounded-full bg-slate-200 overflow-hidden">
                           <div
-                            className="h-full bg-[#eb9d2a]"
+                            className="h-full bg-emerald-500"
                             style={{ width: `${(count / sortedDomains[0][1]) * 100}%` }}
                           />
                         </div>
@@ -93,7 +93,7 @@ export default async function IndustryIndexPage({ params }: IndustryPageProps) {
           <div className="text-center py-16 text-slate-500">
             <p className="text-lg font-medium">No data yet for {formatted}</p>
             <p className="mt-2">Be the first to track AI visibility for this industry.</p>
-            <Link href="/dashboard/projects/new" className="inline-block mt-4 bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-6 py-3 rounded-lg font-semibold">
+            <Link href="/dashboard/projects/new" className="inline-block mt-4 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-semibold shadow-xs transition-all">
               Start Tracking
             </Link>
           </div>
@@ -101,7 +101,7 @@ export default async function IndustryIndexPage({ params }: IndustryPageProps) {
 
         <div className="mt-8 text-center">
           <p className="text-slate-600 mb-4">Want to see your industry here?</p>
-          <Link href="/dashboard/projects/new" className="inline-block bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+          <Link href="/dashboard/projects/new" className="inline-block bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-semibold shadow-xs transition-all">
             Add Your Domain
           </Link>
         </div>

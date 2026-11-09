@@ -57,24 +57,26 @@ export function AnimatedDashboardStats({ items }: { items: StatItem[] }) {
       variants={container}
       initial={prefersReducedMotion ? false : 'hidden'}
       animate="show"
-      className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8"
+      className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-4 mb-8"
     >
       {items.map((s) => (
         <motion.div
           key={s.label}
           variants={item}
-          whileHover={prefersReducedMotion ? undefined : { y: -3, transition: { duration: 0.18 } }}
-          className="group relative rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-[#eb9d2a]/40 transition-shadow duration-200"
+          whileHover={prefersReducedMotion ? undefined : { y: -2, transition: { duration: 0.18 } }}
+          className="group relative rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-xs hover:shadow-card hover:border-slate-300 transition-all duration-200"
         >
-          <p className="font-display text-2xl sm:text-3xl font-bold text-slate-900">
-            {s.numeric && typeof s.value === 'number' ? (
-              <CountUp target={s.value} />
-            ) : (
-              s.value
-            )}
-          </p>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 truncate">{s.label}</p>
-          <span className="absolute bottom-3 right-4 h-1 w-8 rounded-full bg-[#eb9d2a]/20 opacity-0 transition-opacity group-hover:opacity-100" />
+          <div className="flex items-center justify-between">
+            <p className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+              {s.numeric && typeof s.value === 'number' ? (
+                <CountUp target={s.value} />
+              ) : (
+                s.value
+              )}
+            </p>
+            <span className="h-2 w-2 rounded-full bg-emerald-500 opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-200" />
+          </div>
+          <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1 truncate">{s.label}</p>
         </motion.div>
       ))}
     </motion.div>

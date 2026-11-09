@@ -83,7 +83,7 @@ export async function sendScanCompletion(payload: ScanCompletionPayload): Promis
           ${gapList}
 
           <p style="margin-top: 24px;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/projects/${projectId}" style="background: #eb9d2a; color: #fff; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/projects/${projectId}" style="background: #0f172a; color: #fff; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">
               View full dashboard →
             </a>
           </p>

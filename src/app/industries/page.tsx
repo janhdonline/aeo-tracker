@@ -37,7 +37,7 @@ export default function IndexPage() {
             <Link
               key={industry.slug}
               href={`/index/${industry.slug}`}
-              className="block p-6 rounded-xl border border-slate-200 hover:border-[#eb9d2a] hover:shadow-md transition-all"
+              className="block p-6 rounded-2xl border border-slate-200/80 bg-white hover:border-slate-300 hover:shadow-card transition-all"
             >
               <h2 className="text-lg font-semibold text-slate-900">{industry.name}</h2>
               <p className="text-sm text-slate-500 mt-1">

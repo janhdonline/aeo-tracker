@@ -241,7 +241,7 @@ function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@company.com"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#eb9d2a] focus:border-transparent transition-all"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all"
               />
             </div>
           </div>
@@ -264,7 +264,7 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••••••"
-                className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#eb9d2a] focus:border-transparent transition-all"
+                className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all"
               />
               <button
                 type="button"
@@ -281,13 +281,13 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || googleLoading}
-            className="w-full mt-2 py-2.5 px-4 rounded-xl shadow-md shadow-amber-500/20 text-sm font-semibold text-white bg-gradient-to-r from-[#eb9d2a] to-[#d88b1e] hover:from-[#d88b1e] hover:to-[#c47c17] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#eb9d2a] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+            className="w-full mt-2 py-2.5 px-4 rounded-xl shadow-xs text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2"
           >
             {loading ? (
               <LogoLoader variant="mini" text="Processing..." />
             ) : mode === 'signup' ? (
               <>
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 text-emerald-400" />
                 <span>Create Free Account</span>
               </>
             ) : (
@@ -307,7 +307,7 @@ function LoginForm() {
                     setError(null);
                     setSuccessMessage(null);
                   }}
-                  className="font-semibold text-[#eb9d2a] hover:text-[#d88b1e] underline underline-offset-2 transition-colors"
+                  className="font-semibold text-slate-900 hover:text-blue-600 underline underline-offset-2 transition-colors"
                 >
                   Sign up free
                 </button>
@@ -322,7 +322,7 @@ function LoginForm() {
                     setError(null);
                     setSuccessMessage(null);
                   }}
-                  className="font-semibold text-[#eb9d2a] hover:text-[#d88b1e] underline underline-offset-2 transition-colors"
+                  className="font-semibold text-slate-900 hover:text-blue-600 underline underline-offset-2 transition-colors"
                 >
                   Sign in
                 </button>

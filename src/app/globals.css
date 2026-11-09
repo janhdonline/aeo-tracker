@@ -15,22 +15,25 @@
   }
 
   body {
-    @apply bg-white text-[#111827] antialiased;
-    font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply bg-[#fafafa] text-slate-900 antialiased selection:bg-emerald-500/20 selection:text-slate-900;
+    font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: -0.03em;
+    font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    letter-spacing: -0.035em;
   }
 
   ::selection {
     background-color: rgba(16, 185, 129, 0.2);
-    color: #111827;
+    color: #0f172a;
   }
 
   :focus-visible {
@@ -42,6 +45,30 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Minimalist Glass & Card Utilities */
+  .glass-header {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .minimal-card {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .minimal-card:hover {
+    border-color: rgba(203, 213, 225, 1);
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    transform: translateY(-2px);
+  }
+
+  .smooth-transition {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .hero-grid {

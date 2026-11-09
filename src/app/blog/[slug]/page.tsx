@@ -58,11 +58,11 @@ export default function BlogPostPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: '{"@context":"https://schema.org","@type":"Article","headline":"' + post.title + '","datePublished":"' + post.date + '","dateModified":"' + post.date + '","author":{"@type":"Organization","name":"AEO Checker"},"publisher":{"@type":"Organization","name":"AEO Checker","logo":{"@type":"ImageObject","url":"' + siteUrl + '/og-image.png"}},"mainEntityOfPage":"' + siteUrl + '/blog/' + params.slug + '","articleSection":"' + post.category + '"}' }}
       />
       <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <Link href="/blog" className="text-sm text-[#eb9d2a] hover:underline mb-8 inline-block">Back to Blog</Link>
+        <Link href="/blog" className="text-xs font-semibold text-slate-500 hover:text-slate-900 mb-8 inline-block">← Back to Blog</Link>
         <div className="mb-8">
-          <span className="text-sm font-medium text-[#eb9d2a]">{post.category}</span>
-          <h1 className="text-4xl font-bold text-slate-900 mt-2 mb-4">{post.title}</h1>
-          <p className="text-slate-500">{post.date}</p>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">{post.category}</span>
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-3 mb-2 tracking-tight">{post.title}</h1>
+          <p className="text-xs text-slate-400">{post.date}</p>
         </div>
         <div className="prose prose-lg prose-slate max-w-none">
           {post.content.split('\n').map((p, i) => {
@@ -72,7 +72,7 @@ export default function BlogPostPage({ params }: PageProps) {
           })}
         </div>
         <div className="mt-12 pt-8 border-t border-slate-200">
-          <p className="text-slate-600">Want to track your AI visibility? <Link href="/dashboard" className="text-[#eb9d2a] font-semibold hover:underline">Start your free trial →</Link></p>
+          <p className="text-slate-600">Want to track your AI visibility? <Link href="/dashboard" className="text-slate-900 font-semibold hover:text-emerald-700 underline underline-offset-2">Start your free trial →</Link></p>
         </div>
       </div>
     </div>
