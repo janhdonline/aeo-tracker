@@ -7,36 +7,30 @@ import { createClient } from '@/lib/supabase/client';
 import { AppShell } from '@/components/AppShell';
 import { LogoLoader } from '@/components/LogoLoader';
 import { AnimatedDashboardStats } from './AnimatedDashboardStats';
-import { PLAN_LIMITS } from '@/lib/types';
 import {
-  Loader2,
   Plus,
-  FileText,
   ArrowRight,
   ExternalLink,
-  Sparkles,
-  Compass,
-  ShieldCheck,
-  TrendingUp,
-  Cpu,
-  Layers,
+  Globe,
   Bot,
   Search,
   CheckCircle2,
   AlertTriangle,
   FileCode,
-  Share2,
   Download,
   Zap,
+  ShieldCheck,
+  Compass,
+  FileCode2,
 } from 'lucide-react';
 
 const AI_ENGINES = [
-  { name: 'ChatGPT-4o / SearchGPT', status: 'Active Grounding', accuracy: '94% Citation Recall', tone: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-  { name: 'Google Gemini 2.0', status: 'Direct Grounding', accuracy: 'Real-time Web Graph', tone: 'text-blue-700 bg-blue-50 border-blue-200' },
-  { name: 'Perplexity Pro', status: 'Live Indexing', accuracy: 'Deep Source Extraction', tone: 'text-teal-700 bg-teal-50 border-teal-200' },
-  { name: 'DeepSeek R1 / V3', status: 'Reasoning Mode', accuracy: 'Algorithmic Synthesis', tone: 'text-indigo-700 bg-indigo-50 border-indigo-200' },
-  { name: 'Claude 3.5 Sonnet', status: 'Contextual Recs', accuracy: 'High-Intent Benchmark', tone: 'text-amber-800 bg-amber-50 border-amber-200' },
-  { name: 'Grok 2 / xAI', status: 'Realtime Stream', accuracy: 'Social & Sentiment Vector', tone: 'text-slate-800 bg-slate-100 border-slate-300' },
+  { name: 'ChatGPT-4o', status: 'Active Index', tone: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+  { name: 'Google Gemini', status: 'Live Overview', tone: 'text-blue-700 bg-blue-50 border-blue-200' },
+  { name: 'Perplexity Pro', status: 'Web Citations', tone: 'text-teal-700 bg-teal-50 border-teal-200' },
+  { name: 'Claude 3.5', status: 'High-Intent Recs', tone: 'text-amber-800 bg-amber-50 border-amber-200' },
+  { name: 'DeepSeek R1', status: 'Reasoning Mode', tone: 'text-indigo-700 bg-indigo-50 border-indigo-200' },
+  { name: 'Grok 2', status: 'Realtime Stream', tone: 'text-slate-800 bg-slate-100 border-slate-300' },
 ];
 
 export default function DashboardPage() {
@@ -53,9 +47,6 @@ export default function DashboardPage() {
   const [quickDomain, setQuickDomain] = useState('');
   const [quickSubmitting, setQuickSubmitting] = useState(false);
   const [quickError, setQuickError] = useState('');
-
-  // Sample Demo Preview Tab
-  const [activeDemoTab, setActiveDemoTab] = useState<'overview' | 'sources' | 'facts'>('overview');
   const [schemaNeeded, setSchemaNeeded] = useState(false);
 
   useEffect(() => {
@@ -90,7 +81,7 @@ export default function DashboardPage() {
           // Defaults to empty
         }
 
-        // Fetch user profile for plan info safely
+        // Fetch user profile
         try {
           const { data: profile, error: profErr } = await supabase
             .from('profiles')
@@ -178,7 +169,7 @@ export default function DashboardPage() {
       .split('/')[0];
 
     if (!cleanDomain || !cleanDomain.includes('.')) {
-      setQuickError('Please enter a valid website domain (e.g. revolut.com or yourbrand.io)');
+      setQuickError('Please enter a valid website domain (e.g. yourbrand.com)');
       return;
     }
 
@@ -217,8 +208,6 @@ export default function DashboardPage() {
     }
   }
 
-  const planLimit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS]?.keywords || 10;
-
   if (loading) {
     return (
       <AppShell user={{ email: user?.email || 'Loading...' }}>
@@ -226,7 +215,7 @@ export default function DashboardPage() {
           <LogoLoader
             variant="section"
             text="Connecting to Answer Engine Radar..."
-            subtext="Syncing visibility snapshots, prompt coverage, and source intelligence"
+            subtext="Loading your tracked websites and AI visibility snapshots"
           />
         </div>
       </AppShell>
@@ -237,26 +226,25 @@ export default function DashboardPage() {
     <AppShell user={{ email: user?.email || '' }}>
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">
         
-        {/* HERO COMMAND CENTER BANNER & QUICK DOMAIN TRACKER */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-[#131b2e] to-slate-900 p-5 sm:p-9 text-white shadow-xl border border-slate-800">
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-1/3 -mb-16 w-80 h-80 rounded-full bg-[#eb9d2a]/15 blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 sm:gap-8">
-            <div className="max-w-2xl">
-              <div className="inline-flex max-w-full items-center gap-2 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 text-xs font-medium text-emerald-300 mb-4 overflow-hidden">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="truncate">Live Engine Radar · ChatGPT, Gemini, Perplexity, DeepSeek</span>
+        {/* TOP COMMAND HEADER: Clean, Professional, Beginner-Friendly */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="max-w-xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-800 mb-3">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>AI Engine Radar Online · 6 Engines Monitored</span>
               </div>
-              <h1 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
-                AEO Visibility Command Center
+              <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+                AEO Visibility Hub
               </h1>
-              <p className="mt-2.5 text-sm sm:text-base text-slate-300 leading-relaxed">
-                Monitor where AI recommends your brand, reverse-engineer high-authority citation sources, and eliminate hallucinated pricing or claims.
+              <p className="mt-1 text-sm text-slate-600 leading-relaxed">
+                Monitor where AI engines (ChatGPT, Perplexity, Gemini) recommend your website, find missing citations, and fix hallucinated facts.
               </p>
+            </div>
 
-              {/* Instant Website Tracking Form */}
-              <form onSubmit={handleQuickAdd} className="mt-6 flex flex-col sm:flex-row gap-2.5 max-w-xl">
+            {/* Quick Track Input Form */}
+            <div className="w-full lg:max-w-md">
+              <form onSubmit={handleQuickAdd} className="flex gap-2">
                 <div className="relative flex-1">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                     <Search className="h-4 w-4" />
@@ -265,72 +253,22 @@ export default function DashboardPage() {
                     type="text"
                     value={quickDomain}
                     onChange={(e) => setQuickDomain(e.target.value)}
-                    placeholder="Enter website URL (e.g. revolut.com, stripe.com)"
-                    className="w-full rounded-xl border border-slate-700 bg-slate-800/90 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-400 shadow-inner focus:border-[#eb9d2a] focus:outline-none focus:ring-2 focus:ring-[#eb9d2a]/40"
+                    placeholder="Add website (e.g. acme.com)"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={quickSubmitting}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#eb9d2a] to-[#d88b1e] px-5 py-3 text-sm font-semibold text-white shadow-md hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#111827] px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-colors shrink-0 disabled:opacity-50"
                 >
-                  {quickSubmitting ? (
-                    <LogoLoader variant="mini" text="Tracking..." />
-                  ) : (
-                    <>
-                      <Zap className="h-4 w-4" /> Track Website
-                    </>
-                  )}
+                  <Plus className="h-3.5 w-3.5" />
+                  {quickSubmitting ? 'Adding...' : 'Track Website'}
                 </button>
               </form>
               {quickError && (
-                <p className="mt-2 text-xs text-rose-400 font-medium">{quickError}</p>
+                <p className="mt-2 text-xs text-rose-600 font-semibold">{quickError}</p>
               )}
-
-              {/* Quick Presets */}
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span>Quick try:</span>
-                {['revolut.com', 'stripe.com', 'linear.app', 'shopify.com'].map((example) => (
-                  <button
-                    key={example}
-                    type="button"
-                    onClick={() => setQuickDomain(example)}
-                    className="rounded-md border border-slate-700/80 bg-slate-800/60 px-2 py-0.5 text-slate-300 hover:border-slate-500 hover:text-white transition-colors"
-                  >
-                    {example}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Summary Pill & Actions */}
-            <div className="flex flex-col gap-3 shrink-0 rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md">
-              <div className="flex items-center justify-between gap-6 pb-3 border-b border-white/10">
-                <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold">Active Tier</span>
-                <span className="inline-flex items-center rounded-full bg-emerald-400/20 px-2.5 py-0.5 text-xs font-bold text-emerald-300 uppercase">
-                  {plan}
-                </span>
-              </div>
-              <div className="space-y-1 text-xs text-slate-300">
-                <div className="flex justify-between gap-6">
-                  <span className="text-slate-400">Tracked Projects:</span>
-                  <span className="font-semibold text-white">{projects.length}</span>
-                </div>
-                <div className="flex justify-between gap-6">
-                  <span className="text-slate-400">Keywords in Orbit:</span>
-                  <span className="font-semibold text-white">{keywordsCount} / {planLimit}</span>
-                </div>
-                <div className="flex justify-between gap-6">
-                  <span className="text-slate-400">Statistical Engine:</span>
-                  <span className="font-semibold text-emerald-400">Wilson 95% Confidence</span>
-                </div>
-              </div>
-              <Link
-                href="/pricing"
-                className="mt-2 block w-full text-center rounded-lg bg-white/10 py-2 text-xs font-semibold text-white hover:bg-white/20 transition-colors"
-              >
-                {plan === 'free' ? 'Unlock PRO Multi-Sampling →' : 'Manage Subscription'}
-              </Link>
             </div>
           </div>
         </section>
@@ -343,30 +281,28 @@ export default function DashboardPage() {
                 <div>
                   <h4 className="text-sm font-bold text-amber-950">1-Step Supabase Database Setup</h4>
                   <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-                    Your Supabase project needs its database tables initialized. Open our SQL script and run it once in your Supabase SQL Editor to activate live project tracking and profile tiers.
+                    Your Supabase project needs its database tables initialized. Open our SQL script and run it once in your Supabase SQL Editor.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <a
-                  href="/api/tools/schema"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 text-xs font-semibold shadow-sm transition-colors"
-                >
-                  <FileCode className="h-3.5 w-3.5" /> View Setup SQL Script ↗
-                </a>
-              </div>
+              <a
+                href="/api/tools/schema"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 text-xs font-semibold shadow-sm transition-colors shrink-0"
+              >
+                <FileCode className="h-3.5 w-3.5" /> View Setup SQL Script ↗
+              </a>
             </div>
           </div>
         )}
 
-        {/* STATS OVERVIEW CARDS */}
+        {/* 4 SUMMARY STATS: High Clarity & Zero Jargon */}
         <AnimatedDashboardStats
           items={[
-            { label: 'Active Projects', value: projects.length, numeric: true },
-            { label: 'Keywords Tracked', value: keywordsCount, numeric: true },
-            { label: 'Average AEO Score', value: avgScore > 0 ? avgScore : '—', numeric: avgScore > 0 },
+            { label: 'Tracked Websites', value: projects.length, numeric: true },
+            { label: 'Buyer Queries Monitored', value: keywordsCount, numeric: true },
+            { label: 'Average AI Score', value: avgScore > 0 ? `${avgScore}/100` : 'Ready to Scan', numeric: avgScore > 0 },
             {
               label: 'Last Engine Audit',
               value: lastScan ? new Date(lastScan).toLocaleDateString() : 'Ready to Run',
@@ -374,295 +310,125 @@ export default function DashboardPage() {
           ]}
         />
 
-        {/* REALTIME ANSWER ENGINE STATUS GRID */}
-        <section className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="font-display text-lg font-bold text-slate-900">Answer Engine Coverage</h2>
-              <p className="text-xs text-slate-500">Live connectivity and sampling matrices across leading foundation models</p>
-            </div>
-            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" /> 6 Engines Synced
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {AI_ENGINES.map((engine) => (
-              <div
-                key={engine.name}
-                className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-bold text-slate-800 truncate">{engine.name}</span>
-                </div>
-                <div className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border inline-block ${engine.tone}`}>
-                  {engine.status}
-                </div>
-                <p className="mt-2 text-[11px] text-slate-500 leading-tight">{engine.accuracy}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 4 PAID SUPERPOWERS SPOTLIGHT */}
-        <section className="rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50/70 to-white p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full mb-1">
-                <Sparkles className="h-3.5 w-3.5" /> Proprietary AEO Advantages
-              </div>
-              <h2 className="font-display text-xl font-bold text-slate-900">
-                Why Standard SEO Tools Fail at AEO
-              </h2>
-            </div>
-            <p className="text-xs text-slate-500 max-w-sm">
-              Answer engines don&apos;t rank 10 blue links; they synthesize answers. Here is how our engine guarantees market dominance:
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-emerald-300 transition-colors">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 mb-3">
-                <Compass className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-900">Source Reverse-Engineering</h3>
-              <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                Identifies the exact Reddit threads, Trustpilot reviews, and G2 tables LLMs cite before naming your competitors.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-blue-300 transition-colors">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700 mb-3">
-                <TrendingUp className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-900">Wilson 95% Confidence</h3>
-              <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                Protects against LLM temperature noise. Multi-pass sampling proves statistically whether your brand truly wins.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-amber-300 transition-colors">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50 text-amber-700 mb-3">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-900">AI Hallucination Watchdog</h3>
-              <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                Audits whether ChatGPT or Gemini is quoting obsolete pricing or fabricated claims, with instant <code className="text-slate-800">llms.txt</code> patches.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-300 transition-colors">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 mb-3">
-                <Share2 className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-900">Traffic Leak Diagnostic</h3>
-              <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                Measures Mention vs Citation gaps. When AI names your brand without a clickable link, you lose high-intent buyer traffic.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* PROJECTS SECTION */}
+        {/* PRIMARY SECTION: Tracked Web Properties (Front & Center!) */}
         <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-display text-xl font-bold text-slate-900">Tracked Web Properties</h2>
-              <p className="text-xs text-slate-500">Your monitored domains and recurring visibility scans</p>
+              <h2 className="font-display text-xl font-bold text-slate-900">
+                Tracked Web Properties
+              </h2>
+              <p className="text-xs text-slate-500">
+                Select a website to view full AI visibility scores, citation blueprints, and recommendation briefs.
+              </p>
             </div>
             <Link
               href="/dashboard/projects/new"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#eb9d2a] hover:text-[#d88b1e]"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors"
             >
-              Advanced Project Setup <ArrowRight className="h-3 w-3" />
+              + New Custom Setup
             </Link>
           </div>
 
           {projects.length === 0 ? (
-            /* INTERACTIVE SAMPLE SHOWCASE WHEN ZERO PROJECTS */
-            <div className="space-y-6">
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold shadow-sm">
-                      S
-                    </span>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                        <h3 className="font-display text-lg font-bold text-slate-900">shopify.com</h3>
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
-                          Sample Benchmark Preview
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500">Shopify Global Commerce · 84/100 AEO Visibility Score</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <button
-                      onClick={() => setActiveDemoTab('overview')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                        activeDemoTab === 'overview'
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
-                    >
-                      Overview
-                    </button>
-                    <button
-                      onClick={() => setActiveDemoTab('sources')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                        activeDemoTab === 'sources'
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
-                    >
-                      Citation Sources
-                    </button>
-                    <button
-                      onClick={() => setActiveDemoTab('facts')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                        activeDemoTab === 'facts'
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
-                    >
-                      Fact Watchdog
-                    </button>
-                    <Link
-                      href="/report/shopify.com"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
-                    >
-                      Full Report <ExternalLink className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Tab 1: Overview */}
-                {activeDemoTab === 'overview' && (
-                  <div className="pt-5 grid sm:grid-cols-3 gap-4">
-                    <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                      <span className="text-xs font-medium text-slate-500">AI Mention Frequency</span>
-                      <p className="mt-1 font-display text-2xl font-bold text-slate-900">89.4%</p>
-                      <p className="mt-1 text-[11px] text-emerald-600 font-semibold">Wilson 95% CI: [82.1% — 93.6%]</p>
-                    </div>
-                    <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                      <span className="text-xs font-medium text-slate-500">Citation Click-Through Rate</span>
-                      <p className="mt-1 font-display text-2xl font-bold text-slate-900">76.2%</p>
-                      <p className="mt-1 text-[11px] text-blue-600 font-semibold">13.2% Traffic Leak to Competitors</p>
-                    </div>
-                    <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                      <span className="text-xs font-medium text-slate-500">Core Category Competitors</span>
-                      <p className="mt-1 font-display text-2xl font-bold text-slate-900">Woo, BigCommerce</p>
-                      <p className="mt-1 text-[11px] text-slate-500">3 Gap Opportunities Identified</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Tab 2: Sources */}
-                {activeDemoTab === 'sources' && (
-                  <div className="pt-5 space-y-2">
-                    {[
-                      { domain: 'reddit.com/r/ecommerce', authority: 'High Citation Weight', velocity: '48 mentions/mo', status: 'Injected' },
-                      { domain: 'trustpilot.com/review/shopify', authority: 'Trust Pillar', velocity: '92 reviews/mo', status: 'Dominant' },
-                      { domain: 'g2.com/categories/e-commerce-platforms', authority: 'B2B Authority', velocity: 'Top 3 Grid', status: 'Action Needed' },
-                    ].map((src) => (
-                      <div key={src.domain} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs gap-1 sm:gap-4">
-                        <span className="font-semibold text-slate-800 break-all">{src.domain}</span>
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                          <span className="text-slate-500">{src.authority}</span>
-                          <span className="text-slate-600 font-medium">{src.velocity}</span>
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">{src.status}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Tab 3: Facts */}
-                {activeDemoTab === 'facts' && (
-                  <div className="pt-5 space-y-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs">
-                      <div className="flex items-start sm:items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" />
-                        <span className="font-medium text-emerald-900">Basic Plan Pricing: $39/month verified across ChatGPT & Claude</span>
-                      </div>
-                      <span className="font-bold text-emerald-700 shrink-0">Verified</span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs">
-                      <div className="flex items-start sm:items-center gap-2">
-                        <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5 sm:mt-0" />
-                        <span className="font-medium text-amber-900">Perplexity cited outdated 2.9% transaction fee instead of 2.6%</span>
-                      </div>
-                      <span className="font-bold text-amber-700 shrink-0">llms.txt Fix Ready</span>
-                    </div>
-                  </div>
-                )}
+            /* Friendly Beginner Empty State */
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center space-y-4 shadow-sm">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 mx-auto">
+                <Globe className="h-6 w-6" />
+              </span>
+              <div className="max-w-md mx-auto">
+                <h3 className="font-display text-lg font-bold text-slate-900">
+                  Track Your First Website
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Enter your business domain above or click below to launch automated AI visibility monitoring across ChatGPT, Perplexity, and Gemini.
+                </p>
+              </div>
+              <div className="pt-2">
+                <button
+                  onClick={() => {
+                    const el = document.querySelector('input[placeholder*="Add website"]') as HTMLInputElement;
+                    el?.focus();
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-all"
+                >
+                  <Plus className="h-4 w-4" /> Add Website Now
+                </button>
               </div>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            /* Clean & Intuitive Cards for Real Projects */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {projects.map((p: any) => (
                 <div
                   key={p.id}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-[#eb9d2a]/40 transition-all duration-200 group"
+                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-blue-400 transition-all duration-200 flex flex-col justify-between group"
                 >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <Link href={`/dashboard/projects/${p.id}`}>
-                        <h3 className="font-display text-lg font-bold text-slate-900 group-hover:text-[#eb9d2a] transition-colors cursor-pointer">
-                          {p.domain}
-                        </h3>
-                      </Link>
-                      <p className="text-sm text-slate-500 mt-0.5">{p.brand_name}</p>
+                  <div>
+                    <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+                          <Globe className="h-5 w-5" />
+                        </span>
+                        <div>
+                          <Link href={`/dashboard/projects/${p.id}`}>
+                            <h3 className="font-display text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                              {p.domain}
+                            </h3>
+                          </Link>
+                          <p className="text-xs text-slate-500">{p.brand_name || p.domain}</p>
+                        </div>
+                      </div>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200 shrink-0">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Active
+                      </span>
                     </div>
-                    <span className="inline-flex items-center rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
-                      Tracking
-                    </span>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                          AI Engines
+                        </span>
+                        <span className="font-bold text-slate-800 mt-0.5 block">
+                          4 Monitored
+                        </span>
+                      </div>
+                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                          Tracking Mode
+                        </span>
+                        <span className="font-bold text-emerald-700 mt-0.5 block">
+                          Weekly Radar
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-5 grid grid-cols-2 gap-2 text-xs text-slate-500 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                    <div>
-                      <span className="text-[11px] text-slate-400 block">AI Status</span>
-                      <span className="font-semibold text-slate-700">Active Scan</span>
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-slate-400 block">Sources Audited</span>
-                      <span className="font-semibold text-emerald-600">PRO Available</span>
-                    </div>
-                  </div>
+                  {/* Clean Bottom Action Strip */}
+                  <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <Link
+                      href={`/dashboard/projects/${p.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 shadow-xs transition-colors"
+                    >
+                      Open Workspace
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
 
-                  <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-100 text-xs">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/dashboard/projects/${p.id}`}
-                        className="font-bold text-[#eb9d2a] hover:text-[#d88b1e] inline-flex items-center gap-1"
+                        href={`/report/${p.domain}`}
+                        target="_blank"
+                        className="p-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                        title="View Public Report"
                       >
-                        Audit & Scans <ArrowRight className="h-3 w-3" />
+                        <ExternalLink className="h-3.5 w-3.5" />
                       </Link>
-                      <span className="text-slate-200">|</span>
                       <Link
-                        href={`/dashboard/projects/${p.id}/sources`}
-                        className="text-slate-600 hover:text-slate-900 font-medium"
+                        href={`/dashboard/projects/${p.id}/settings`}
+                        className="text-xs font-semibold text-slate-500 hover:text-slate-800 px-2 py-1"
                       >
-                        Sources
-                      </Link>
-                      <span className="text-slate-200">|</span>
-                      <Link
-                        href={`/dashboard/projects/${p.id}/keywords`}
-                        className="text-slate-600 hover:text-slate-900 font-medium"
-                      >
-                        Keywords
+                        Settings
                       </Link>
                     </div>
-                    <Link
-                      href={`/report/${p.domain}`}
-                      className="text-slate-500 hover:text-slate-900 font-medium inline-flex items-center gap-0.5"
-                      title="Public shareable report"
-                    >
-                      Share Link <ExternalLink className="h-2.5 w-2.5" />
-                    </Link>
                   </div>
                 </div>
               ))}
@@ -670,54 +436,77 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* QUICK TOOLS & AEO ESSENTIALS FOOTER SHELF */}
-        <section className="pt-4 border-t border-slate-200/80">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-            Essential AEO Optimization Toolkit
-          </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* ANSWER ENGINE RADAR STATUS STRIP (Simple & Compact) */}
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <Bot className="h-4 w-4 text-emerald-600" />
+              <h3 className="font-display text-sm font-bold text-slate-900">
+                Answer Engine Radar Status
+              </h3>
+            </div>
+            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+              All 6 AI Models Operational
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            {AI_ENGINES.map((engine) => (
+              <div
+                key={engine.name}
+                className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100"
+              >
+                <div>
+                  <p className="text-xs font-bold text-slate-800">{engine.name}</p>
+                  <p className="text-[10px] text-slate-500">{engine.status}</p>
+                </div>
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ESSENTIAL TOOLS QUICK SHELF */}
+        <section className="pt-2">
+          <div className="grid sm:grid-cols-3 gap-3">
             <Link
               href="/tools/ai-crawler-audit"
-              className="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
+              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
             >
-              <Bot className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+                <Bot className="h-4 w-4" />
+              </span>
               <div>
                 <h4 className="text-xs font-bold text-slate-900">AI Crawler Audit</h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">Test robots.txt access for GPTBot & Perplexity</p>
+                <p className="text-[11px] text-slate-500">Test robots.txt bot access</p>
               </div>
             </Link>
 
             <Link
               href="/tools/llms-generator"
-              className="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
+              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
             >
-              <FileCode className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                <FileCode2 className="h-4 w-4" />
+              </span>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">llms.txt Generator</h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">Structured documentation for AI models</p>
-              </div>
-            </Link>
-
-            <Link
-              href="/report/shopify.com"
-              className="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
-            >
-              <FileText className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-xs font-bold text-slate-900">Sample Report</h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">Explore full AEO intelligence teardown</p>
+                <h4 className="text-xs font-bold text-slate-900">llms.txt Builder</h4>
+                <p className="text-[11px] text-slate-500">Generate AI documentation</p>
               </div>
             </Link>
 
             <a
               href={projects.length > 0 ? `/api/export/csv?projectId=${projects[0].id}` : '/api/export/csv'}
               download
-              className="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
+              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
             >
-              <Download className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-700">
+                <Download className="h-4 w-4" />
+              </span>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">CSV Data Export</h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">Export rank history & prompt answers</p>
+                <h4 className="text-xs font-bold text-slate-900">CSV Export</h4>
+                <p className="text-[11px] text-slate-500">Download citation logs</p>
               </div>
             </a>
           </div>

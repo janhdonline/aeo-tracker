@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 interface Keyword {
   id: string;
@@ -75,5 +75,3 @@ export function AnimatedKeywords({ keywords }: Props) {
     </motion.div>
   );
 }
-
-import { AnimatePresence } from 'framer-motion';

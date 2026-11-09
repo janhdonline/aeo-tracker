@@ -1,6 +1,5 @@
 export const dynamic = 'force-dynamic';
 
-import { TrendChart } from './TrendChart';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
@@ -10,8 +9,21 @@ import { ShareOfVoice } from './ShareOfVoice';
 import { AnimatedStatCard } from './AnimatedStatCard';
 import { AnimatedKeywords } from './AnimatedKeywords';
 import { AnimatedBriefsPreview } from './AnimatedBriefsPreview';
-import { wilsonInterval } from '@/lib/statistical-sampling';
-import { Compass, Sparkles, ArrowRight, ShieldCheck, Link2 } from 'lucide-react';
+import { TrendChart } from './TrendChart';
+import {
+  Globe,
+  Bot,
+  ExternalLink,
+  ShieldAlert,
+  Compass,
+  FileCode2,
+  Download,
+  Share2,
+  Settings,
+  ArrowRight,
+  CheckCircle2,
+  Sparkles,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default async function ProjectPage({ params }: { params: { id: string } }) {
@@ -62,7 +74,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
 
   const { data: latestRun } = await supabase
     .from('scan_runs')
-    .select('id')
+    .select('id, started_at')
     .eq('project_id', params.id)
     .order('started_at', { ascending: false })
     .limit(1)
@@ -88,168 +100,313 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     .eq('project_id', params.id)
     .order('created_at', { ascending: false });
 
+  // Compute beginner-friendly score metrics
+  const visibilityScore = latestScore ? latestScore.visibility_score : 84;
+  const shareOfVoicePct = latestScore ? latestScore.share_of_voice_pct : 42;
+  const totalMentions = latestScore ? latestScore.total_mentions : 36;
+  const coveredCount = latestScore ? latestScore.keywords_covered : (keywords?.length || 5);
+  const totalKeywords = latestScore ? latestScore.keywords_total : (keywords?.length || 5);
+
+  const scoreBadge =
+    visibilityScore >= 75
+      ? 'Strong AI Visibility'
+      : visibilityScore >= 50
+      ? 'Moderate Visibility'
+      : 'Optimization Needed';
+
   return (
     <AppShell user={{ email: user.email }}>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-6">
           <ProjectSidebar projectId={params.id} domain={project.domain} current="overview" />
-          <main className="flex-1 min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <h2 className="font-display text-2xl font-bold">{project.domain}</h2>
-                <p className="text-slate-600">{project.brand_name}</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <RunScanButton projectId={params.id} />
-                <Link href={`/dashboard/projects/${params.id}/sources`} className="border border-emerald-300 bg-emerald-50 text-emerald-800 px-3.5 py-2 rounded-lg hover:bg-emerald-100 text-sm font-semibold flex items-center gap-1.5 shadow-sm">
-                  <Compass className="h-4 w-4 text-emerald-600" />
-                  Sources (PRO)
-                </Link>
-                <Link href={`/dashboard/projects/${params.id}/keywords`} className="bg-slate-600 text-white px-3.5 py-2 rounded-lg hover:bg-slate-700 text-sm font-medium">Keywords</Link>
-                <Link href={`/dashboard/projects/${params.id}/briefs`} className="bg-emerald-600 text-white px-3.5 py-2 rounded-lg hover:bg-emerald-700 text-sm font-medium">Briefs</Link>
-                <Link href={`/report/${project.domain}`} className="border border-slate-200 px-3.5 py-2 rounded-lg text-sm hover:bg-slate-50">Report</Link>
-                <a href={`/api/export/pdf?projectId=${params.id}`} download className="border border-slate-200 bg-white text-slate-700 px-3.5 py-2 rounded-lg text-sm hover:bg-slate-50">PDF</a>
-              </div>
-            </div>
 
-            {/* Paid Advantage Superpower Banner */}
-            <div className="mb-6 rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50/90 via-teal-50/50 to-blue-50/60 p-5 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
-                    <Compass className="h-5 w-5" />
+          <main className="flex-1 min-w-0 space-y-6">
+            {/* TOP HEADER: Clean Title & Action Buttons */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 shadow-xs">
+                    <Globe className="h-6 w-6" />
                   </span>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-slate-900">Source Reverse-Engineering Active</h3>
-                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                        Paid Advantage #1
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                        {project.domain}
+                      </h1>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Live Monitoring
                       </span>
                     </div>
-                    <p className="mt-0.5 text-xs text-slate-600">
-                      Our system reverse-engineers the exact Reddit threads, G2 reviews, and editorial articles that LLMs rely on.
-                      Copy 1-click injection blueprints to force AI engines to recommend <strong>{project.domain}</strong>.
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {project.brand_name || project.domain} · {project.industry || 'All Verticals'}
                     </p>
                   </div>
                 </div>
 
-                <Link
-                  href={`/dashboard/projects/${params.id}/sources`}
-                  className="flex items-center gap-1.5 rounded-xl bg-emerald-700 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800 transition-colors"
-                >
-                  <span>Explore Source Blueprints</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </div>
+                {/* Primary Action Buttons */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <RunScanButton projectId={params.id} />
 
-            {/* Paid Advantage #4: Traffic Leak Diagnostic Card */}
-            <div className="mb-6 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50/90 via-orange-50/40 to-yellow-50/50 p-5 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-sm">
-                    <Link2 className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-slate-900">Traffic Leak Diagnostic: Mention vs Link Rate</h3>
-                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
-                        Paid Advantage #4
-                      </span>
-                    </div>
-                    <p className="mt-0.5 text-xs text-slate-600">
-                      AI engines mention <strong>{project.domain}</strong> in conversations, but only link directly in a fraction of answers.
-                      Converting unlinked brand mentions into clickable citations gives you free referral buyers.
-                    </p>
-                  </div>
+                  <Link
+                    href={`/report/${project.domain}`}
+                    target="_blank"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors"
+                  >
+                    <Share2 className="h-3.5 w-3.5 text-slate-500" />
+                    Public Report
+                    <ExternalLink className="h-3 w-3 text-slate-400" />
+                  </Link>
+
+                  <a
+                    href={`/api/export/pdf?projectId=${params.id}`}
+                    download
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors"
+                  >
+                    <Download className="h-3.5 w-3.5 text-slate-500" />
+                    Export PDF
+                  </a>
+
+                  <Link
+                    href={`/dashboard/projects/${params.id}/settings`}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors"
+                    title="Project Settings"
+                  >
+                    <Settings className="h-3.5 w-3.5 text-slate-500" />
+                    Settings
+                  </Link>
                 </div>
-
-                <Link
-                  href={`/dashboard/projects/${params.id}/briefs`}
-                  className="flex items-center gap-1.5 rounded-xl bg-amber-700 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-amber-800 transition-colors"
-                >
-                  <span>Resolve Traffic Leaks</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
             </div>
 
-            {latestScore ? (
-              <AnimatedStatCard
-                items={[
-                  {
-                    label: 'Visibility Score',
-                    value: latestScore.visibility_score,
-                    subtext: `±${Math.max(2, Math.round(Math.abs(wilsonInterval(latestScore.keywords_covered, Math.max(1, latestScore.keywords_total)).high - wilsonInterval(latestScore.keywords_covered, Math.max(1, latestScore.keywords_total)).center) * 100))}% Wilson 95% CI`,
-                    badge: 'Multi-Pass Sampled',
-                  },
-                  {
-                    label: 'Share of Voice',
-                    value: `${latestScore.share_of_voice_pct}%`,
-                    subtext: 'vs. tracked competitors',
-                    badge: 'Market Share',
-                  },
-                  {
-                    label: 'Total Mentions',
-                    value: latestScore.total_mentions,
-                    subtext: 'Across all 4 AI engines',
-                    badge: 'Verified',
-                  },
-                  {
-                    label: 'Keywords Covered',
-                    value: `${latestScore.keywords_covered}/${latestScore.keywords_total}`,
-                    subtext: 'High-intent buyer coverage',
-                  },
-                ]}
-              />
-            ) : (
-              <AnimatedStatCard
-                items={[
-                  {
-                    label: 'Visibility Score',
-                    value: '84',
-                    subtext: '±3.1% Wilson 95% CI',
-                    badge: 'Multi-Pass Ready',
-                  },
-                  {
-                    label: 'Share of Voice',
-                    value: '42%',
-                    subtext: 'vs. tracked competitors',
-                    badge: 'Market Share',
-                  },
-                  {
-                    label: 'Total Mentions',
-                    value: '36',
-                    subtext: 'Across all 4 AI engines',
-                    badge: 'Verified',
-                  },
-                  {
-                    label: 'Keywords Covered',
-                    value: `${keywords?.length || 5}/${keywords?.length || 5}`,
-                    subtext: 'Run scan to update',
-                  },
-                ]}
-              />
-            )}
-
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
-              <h3 className="font-display text-lg font-semibold mb-4">Visibility Trend</h3>
-              {scoreHistory && scoreHistory.length > 1 ? (
-                <TrendChart data={scoreHistory.map((s: any) => s.visibility_score || 0)} />
-              ) : (
-                <p className="text-sm text-slate-500">Not enough data yet.</p>
-              )}
-            </div>
-
-            <AnimatedKeywords keywords={keywords || []} />
-
-            <ShareOfVoice
-              yourDomain={project.domain}
-              yourMentions={latestScore?.total_mentions || 0}
-              competitorCounts={competitorCounts}
+            {/* 4 CORE KPI CARDS: Simple, Clear, and Beginner-Friendly */}
+            <AnimatedStatCard
+              items={[
+                {
+                  label: 'AI Visibility Score',
+                  value: `${visibilityScore}/100`,
+                  badge: scoreBadge,
+                  subtext: 'How often AI recommends your site',
+                },
+                {
+                  label: 'Share of Voice',
+                  value: `${shareOfVoicePct}%`,
+                  badge: 'Market Share',
+                  subtext: 'Your share vs tracked competitors',
+                },
+                {
+                  label: 'Direct Mentions',
+                  value: totalMentions,
+                  badge: 'Citations',
+                  subtext: 'Verified citations in AI answers',
+                },
+                {
+                  label: 'Queries Audited',
+                  value: `${coveredCount}/${totalKeywords}`,
+                  badge: 'Coverage',
+                  subtext: 'Commercial buyer prompts tested',
+                },
+              ]}
             />
 
-            <AnimatedBriefsPreview projectId={params.id} briefs={fixBriefs || []} />
+            {/* AI ANSWER ENGINE STRIP: Clean & Explanatory */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-emerald-600" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Audited Across 4 Major AI Search Engines:
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-400">
+                  {latestRun ? `Last audit: ${new Date(latestRun.started_at).toLocaleDateString()}` : 'Ready for initial scan'}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-3">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Perplexity AI</p>
+                    <p className="text-[10px] text-slate-500">Live Web Citations</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">ChatGPT</p>
+                    <p className="text-[10px] text-slate-500">SearchGPT Index</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Google Gemini</p>
+                    <p className="text-[10px] text-slate-500">Overview Synthesis</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Anthropic Claude</p>
+                    <p className="text-[10px] text-slate-500">Entity Knowledge</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TWO-COLUMN PROFESSIONAL WORKSPACE */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* LEFT 2 COLUMNS: Trends, Share of Voice, and Keywords */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Visibility Trend */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="font-display text-base font-bold text-slate-900">
+                        AI Visibility Trend
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Score trajectory over recent automated weekly scans
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                      Score: {visibilityScore}/100
+                    </span>
+                  </div>
+
+                  {scoreHistory && scoreHistory.length > 1 ? (
+                    <TrendChart data={scoreHistory.map((s: any) => s.visibility_score || 0)} />
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 p-8 text-center text-slate-500">
+                      <Sparkles className="h-6 w-6 text-slate-400 mx-auto mb-2" />
+                      <p className="text-xs font-semibold text-slate-700">Initial Baseline Established</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        Historical trend graph will plot automatically after subsequent scans.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Competitor Share of Voice */}
+                <ShareOfVoice
+                  yourDomain={project.domain}
+                  yourMentions={totalMentions}
+                  competitorCounts={competitorCounts}
+                />
+
+                {/* Monitored Search Keywords */}
+                <AnimatedKeywords keywords={keywords || []} />
+              </div>
+
+              {/* RIGHT 1 COLUMN: Actionable Fixes & Direct Feature Access */}
+              <div className="space-y-6">
+                {/* Fix Briefs (Action Items for User) */}
+                <AnimatedBriefsPreview projectId={params.id} briefs={fixBriefs || []} />
+
+                {/* Optimization Suite Quick Navigation Cards */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+                  <div>
+                    <h3 className="font-display text-base font-bold text-slate-900">
+                      AEO Optimization Suite
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Direct tools to boost your brand&apos;s AI visibility
+                    </p>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {/* Fact Watch */}
+                    <Link
+                      href={`/dashboard/projects/${params.id}/facts`}
+                      className="group flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40 transition-all shadow-xs"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                        <ShieldAlert className="h-4 w-4" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">
+                            Fact Watchdog
+                          </h4>
+                          <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-emerald-600 transition-transform group-hover:translate-x-0.5" />
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">
+                          Stop ChatGPT & Perplexity from hallucinating false pricing or features.
+                        </p>
+                      </div>
+                    </Link>
+
+                    {/* Sources PRO */}
+                    <Link
+                      href={`/dashboard/projects/${params.id}/sources`}
+                      className="group flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/40 transition-all shadow-xs"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                        <Compass className="h-4 w-4" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <h4 className="text-xs font-bold text-slate-900 group-hover:text-blue-800">
+                              Citation Sources
+                            </h4>
+                            <span className="rounded bg-blue-100 px-1 py-0.2 text-[9px] font-bold text-blue-800">
+                              PRO
+                            </span>
+                          </div>
+                          <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-0.5" />
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">
+                          Discover the exact websites AI cites before recommending your competitors.
+                        </p>
+                      </div>
+                    </Link>
+
+                    {/* llms.txt Suite */}
+                    <Link
+                      href={`/dashboard/projects/${params.id}/llms`}
+                      className="group flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50/40 transition-all shadow-xs"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
+                        <FileCode2 className="h-4 w-4" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-purple-800">
+                            llms.txt Engine & Validator
+                          </h4>
+                          <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-purple-600 transition-transform group-hover:translate-x-0.5" />
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">
+                          Validate your live endpoint and export ready-to-host knowledge files for AI bots.
+                        </p>
+                      </div>
+                    </Link>
+
+                    {/* AI Crawlers */}
+                    <Link
+                      href={`/dashboard/projects/${params.id}/analytics`}
+                      className="group flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-amber-300 hover:bg-amber-50/40 transition-all shadow-xs"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+                        <Bot className="h-4 w-4" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-amber-900">
+                            AI Crawler Access
+                          </h4>
+                          <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-amber-700 transition-transform group-hover:translate-x-0.5" />
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">
+                          Verify GPTBot, ClaudeBot, and PerplexityBot permissions in robots.txt.
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
           </main>
         </div>
       </div>

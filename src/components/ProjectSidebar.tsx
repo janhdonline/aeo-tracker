@@ -44,20 +44,20 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
     { label: 'Overview', icon: LayoutDashboard, href: `/dashboard/projects/${projectId}`, key: 'overview' },
     { label: 'Keywords', icon: FileText, href: `/dashboard/projects/${projectId}/keywords`, key: 'keywords' },
     {
-      label: 'Sources',
+      label: 'Citation Sources',
       icon: Compass,
       href: `/dashboard/projects/${projectId}/sources`,
       key: 'sources',
       badge: 'PRO',
     },
-    { label: 'Fix Briefs', icon: BarChart3, href: `/dashboard/projects/${projectId}/briefs`, key: 'briefs' },
+    { label: 'Recommendations', icon: BarChart3, href: `/dashboard/projects/${projectId}/briefs`, key: 'briefs' },
   ];
 
   const intelligenceItems: NavItem[] = [
-    { label: 'Fact Watch', icon: ShieldAlert, href: `/dashboard/projects/${projectId}/facts`, key: 'facts' },
+    { label: 'Fact Watchdog', icon: ShieldAlert, href: `/dashboard/projects/${projectId}/facts`, key: 'facts' },
     { label: 'AI Crawlers', icon: Bot, href: `/dashboard/projects/${projectId}/analytics`, key: 'analytics' },
-    { label: 'Runs', icon: ListChecks, href: `/dashboard/projects/${projectId}/runs`, key: 'runs' },
-    { label: 'Report', icon: Globe, href: `/report/${domain}`, key: 'report' },
+    { label: 'Scan History', icon: ListChecks, href: `/dashboard/projects/${projectId}/runs`, key: 'runs' },
+    { label: 'Public Report', icon: Globe, href: `/report/${domain}`, key: 'report' },
   ];
 
   const workspaceItems: NavItem[] = [
