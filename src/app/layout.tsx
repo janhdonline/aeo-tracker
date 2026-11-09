@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import { ChunkErrorRecovery } from "@/components/ChunkErrorRecovery";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",

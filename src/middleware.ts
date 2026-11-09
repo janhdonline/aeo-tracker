@@ -75,6 +75,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
+    supabaseResponse.headers.set(
+      'Cache-Control',
+      'no-cache, no-store, max-age=0, must-revalidate'
+    );
     return supabaseResponse;
   } catch (err) {
     console.error('Middleware caught non-fatal error:', err);
@@ -83,6 +87,10 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/login';
       return NextResponse.redirect(url);
     }
+    supabaseResponse.headers.set(
+      'Cache-Control',
+      'no-cache, no-store, max-age=0, must-revalidate'
+    );
     return supabaseResponse;
   }
 }
