@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -491,16 +492,32 @@ export default function Home() {
   const [dashboardData, setDashboardData] = useState<LiveDashboardData | null>(null);
   const [error, setError] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !window.location.hash.includes("access_token")) {
-      return;
+    const supabase = createClient();
+
+    supabase.auth.getUser().then((res: any) => {
+      if (res?.data?.user) {
+        setUser(res.data.user);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      setUser(session?.user || null);
+    });
+
+    if (typeof window !== "undefined" && window.location.hash.includes("access_token")) {
+      supabase.auth.getSession().then(({ data }: { data: { session: unknown } }) => {
+        if (data.session) router.push("/dashboard");
+      });
     }
 
-    const supabase = createClient();
-    supabase.auth.getSession().then(({ data }: { data: { session: unknown } }) => {
-      if (data.session) router.push("/dashboard");
-    });
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [router]);
 
   function pickExample(exampleDomain: string) {
@@ -582,19 +599,39 @@ export default function Home() {
           </nav>
 
           <div className="hidden items-center gap-3 sm:flex">
-            <a
-              href="/login"
-              className="rounded-lg px-3 py-2 text-[13px] font-medium text-gray-500 transition-colors hover:text-gray-900"
-            >
-              Log in
-            </a>
-            <a
-              href="/login"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800 hover:shadow-md"
-            >
-              Try for free
-              <ArrowRight className="h-3.5 w-3.5" />
-            </a>
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded-lg px-3 py-2 text-[13px] font-medium text-gray-700 transition-colors hover:text-gray-900"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800 hover:shadow-md"
+                >
+                  Go to Dashboard
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-lg px-3 py-2 text-[13px] font-medium text-gray-500 transition-colors hover:text-gray-900"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800 hover:shadow-md"
+                >
+                  Try for free
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -623,19 +660,43 @@ export default function Home() {
               ))}
             </nav>
             <div className="mt-3 flex flex-col gap-2 border-t border-gray-100 pt-3">
-              <a
-                href="/login"
-                className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-gray-600 hover:bg-gray-50"
-              >
-                Log in
-              </a>
-              <a
-                href="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-4 py-3 text-sm font-semibold text-white"
-              >
-                Try for free
-                <ArrowRight className="h-4 w-4" />
-              </a>
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-4 py-3 text-sm font-semibold text-white"
+                  >
+                    Go to Dashboard
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-gray-600 hover:bg-gray-50"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-4 py-3 text-sm font-semibold text-white"
+                  >
+                    Try for free
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -788,13 +849,13 @@ export default function Home() {
                             · {result.totalMentions} mentions across {result.totalQueries} prompts
                           </p>
                         </div>
-                        <a
-                          href="/login"
+                        <Link
+                          href={user ? "/dashboard" : "/login"}
                           className="hidden shrink-0 items-center gap-1 rounded-lg bg-[#111827] px-3 py-2 text-[11px] font-semibold text-white hover:bg-gray-800 sm:inline-flex"
                         >
-                          Unlock report
+                          {user ? "View in Dashboard" : "Unlock report"}
                           <ArrowRight className="h-3 w-3" />
-                        </a>
+                        </Link>
                       </div>
                       <div className="h-1 w-full bg-gray-100">
                         <div
@@ -1138,19 +1199,19 @@ export default function Home() {
                   in AI search.
                 </p>
                 <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-                  <a
-                    href="/login"
+                  <Link
+                    href={user ? "/dashboard" : "/login"}
                     className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-8 py-4 text-[15px] font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-gray-800 hover:shadow-lg"
                   >
-                    Try for free
+                    {user ? "Go to Dashboard" : "Try for free"}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/contact"
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-8 py-4 text-[15px] font-semibold text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-gray-400 hover:text-gray-900 hover:shadow-md"
                   >
                     Get in Touch
-                  </a>
+                  </Link>
                 </div>
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-gray-400">
                   <span className="flex items-center gap-1.5">

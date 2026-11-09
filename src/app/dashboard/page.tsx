@@ -608,9 +608,11 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-display text-lg font-bold text-slate-900 group-hover:text-[#eb9d2a] transition-colors">
-                        {p.domain}
-                      </h3>
+                      <Link href={`/dashboard/projects/${p.id}`}>
+                        <h3 className="font-display text-lg font-bold text-slate-900 group-hover:text-[#eb9d2a] transition-colors cursor-pointer">
+                          {p.domain}
+                        </h3>
+                      </Link>
                       <p className="text-sm text-slate-500 mt-0.5">{p.brand_name}</p>
                     </div>
                     <span className="inline-flex items-center rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
@@ -629,33 +631,35 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 mt-5 pt-4 border-t border-slate-100 text-xs">
-                    <Link
-                      href={`/dashboard/projects/${p.id}`}
-                      className="font-bold text-[#eb9d2a] hover:text-[#d88b1e] inline-flex items-center gap-1"
-                    >
-                      Audit View <ArrowRight className="h-3 w-3" />
-                    </Link>
-                    <span className="text-slate-200">|</span>
-                    <Link
-                      href={`/dashboard/projects/${p.id}/sources`}
-                      className="text-slate-600 hover:text-slate-900 font-medium"
-                    >
-                      Sources (PRO)
-                    </Link>
-                    <span className="text-slate-200">|</span>
-                    <Link
-                      href={`/dashboard/projects/${p.id}/keywords`}
-                      className="text-slate-600 hover:text-slate-900 font-medium"
-                    >
-                      Keywords
-                    </Link>
-                    <span className="text-slate-200">|</span>
+                  <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-100 text-xs">
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/dashboard/projects/${p.id}`}
+                        className="font-bold text-[#eb9d2a] hover:text-[#d88b1e] inline-flex items-center gap-1"
+                      >
+                        Audit & Scans <ArrowRight className="h-3 w-3" />
+                      </Link>
+                      <span className="text-slate-200">|</span>
+                      <Link
+                        href={`/dashboard/projects/${p.id}/sources`}
+                        className="text-slate-600 hover:text-slate-900 font-medium"
+                      >
+                        Sources
+                      </Link>
+                      <span className="text-slate-200">|</span>
+                      <Link
+                        href={`/dashboard/projects/${p.id}/keywords`}
+                        className="text-slate-600 hover:text-slate-900 font-medium"
+                      >
+                        Keywords
+                      </Link>
+                    </div>
                     <Link
                       href={`/report/${p.domain}`}
-                      className="text-slate-600 hover:text-slate-900 font-medium inline-flex items-center gap-0.5"
+                      className="text-slate-500 hover:text-slate-900 font-medium inline-flex items-center gap-0.5"
+                      title="Public shareable report"
                     >
-                      Report <ExternalLink className="h-2.5 w-2.5" />
+                      Share Link <ExternalLink className="h-2.5 w-2.5" />
                     </Link>
                   </div>
                 </div>
