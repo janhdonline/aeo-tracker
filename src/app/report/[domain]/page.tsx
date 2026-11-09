@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase/server';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { LogoMark } from '@/components/landing/BrandLogos';
 import {
   Globe,
   ArrowRight,
@@ -147,11 +148,9 @@ export default async function PublicReportPage({ params }: Props) {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-3">
-                <Link href="/" className="flex items-center gap-2 group">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#111827] text-white shadow-sm transition-transform group-hover:scale-105">
-                    <Sparkles className="h-4 w-4 text-[#eb9d2a]" />
-                  </span>
-                  <span className="font-display font-bold text-base text-slate-900 tracking-tight">
+                <Link href="/" className="flex items-center gap-2.5 group">
+                  <LogoMark className="h-8 w-8" />
+                  <span className="font-display font-bold text-base text-slate-900 tracking-tight group-hover:text-slate-700 transition-colors">
                     AEO Checker
                   </span>
                 </Link>

@@ -1,14 +1,41 @@
 import { ScanSearch } from "lucide-react";
 
-export function LogoMark({ className = "h-9 w-9" }: { className?: string }) {
+export function LogoMark({
+  className = "h-9 w-9",
+  animated = true,
+}: {
+  className?: string;
+  animated?: boolean;
+}) {
   return (
     <span
-      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[11px] bg-[#111827] shadow-sm ${className}`}
+      className={`group relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[11px] bg-[#111827] shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md ${className}`}
       aria-hidden="true"
     >
+      {/* Soft emerald ambient glow in corner */}
       <span className="absolute -right-2 -top-2 h-5 w-5 rounded-full bg-emerald-400/30 blur-[2px]" />
-      <ScanSearch className="relative h-[52%] w-[52%] text-white" strokeWidth={2.2} />
-      <span className="absolute bottom-[18%] right-[18%] h-1.5 w-1.5 rounded-full bg-emerald-400 ring-2 ring-[#111827]" />
+
+      {/* High-tech animated laser scan beam across surface */}
+      {animated && (
+        <span
+          className="pointer-events-none absolute inset-x-0 h-1/2 -top-full bg-gradient-to-b from-transparent via-emerald-400/25 to-transparent animate-logo-scan"
+          style={{ willChange: "transform" }}
+        />
+      )}
+
+      {/* Main ScanSearch icon */}
+      <ScanSearch
+        className="relative h-[52%] w-[52%] text-white transition-transform duration-300 group-hover:scale-110"
+        strokeWidth={2.2}
+      />
+
+      {/* Live AI status beacon dot with pulse ping */}
+      <span className="absolute bottom-[16%] right-[16%] flex h-2 w-2 items-center justify-center">
+        {animated && (
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+        )}
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 ring-2 ring-[#111827]" />
+      </span>
     </span>
   );
 }

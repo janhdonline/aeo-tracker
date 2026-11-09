@@ -5,7 +5,8 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { LogoMark } from '@/components/landing/BrandLogos';
-import { Loader2, Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { LogoLoader } from '@/components/LogoLoader';
+import { Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 
 function GoogleIcon() {
   return (
@@ -203,17 +204,17 @@ function LoginForm() {
             className="w-full py-2.5 px-4 flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-medium text-sm shadow-sm transition-all duration-150 hover:shadow disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {googleLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin text-[#eb9d2a]" />
+              <LogoLoader variant="mini" text="Connecting to Google..." />
             ) : (
-              <GoogleIcon />
+              <>
+                <GoogleIcon />
+                <span>
+                  {mode === 'signup'
+                    ? 'Sign up with Google'
+                    : 'Continue with Google'}
+                </span>
+              </>
             )}
-            <span>
-              {googleLoading
-                ? 'Connecting to Google...'
-                : mode === 'signup'
-                ? 'Sign up with Google'
-                : 'Continue with Google'}
-            </span>
           </button>
         </div>
 
@@ -283,10 +284,7 @@ function LoginForm() {
             className="w-full mt-2 py-2.5 px-4 rounded-xl shadow-md shadow-amber-500/20 text-sm font-semibold text-white bg-gradient-to-r from-[#eb9d2a] to-[#d88b1e] hover:from-[#d88b1e] hover:to-[#c47c17] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#eb9d2a] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
           >
             {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Processing...</span>
-              </>
+              <LogoLoader variant="mini" text="Processing..." />
             ) : mode === 'signup' ? (
               <>
                 <Sparkles className="w-4 h-4" />
@@ -347,9 +345,11 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
-          <Loader2 className="w-8 h-8 animate-spin text-[#eb9d2a]" />
-        </div>
+        <LogoLoader
+          variant="fullscreen"
+          text="Authenticating..."
+          subtext="Securing your AEO session..."
+        />
       }
     >
       <LoginForm />

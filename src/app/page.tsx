@@ -34,6 +34,7 @@ import AiModelRotator from "@/components/landing/AiModelRotator";
 import AiEngineSwitcher from "@/components/landing/AiEngineSwitcher";
 import ReportPreview from "@/components/landing/ReportPreview";
 import { ProgressBar, Sparkline } from "@/components/landing/Charts";
+import { LogoLoader } from "@/components/LogoLoader";
 import {
   BrandIcon,
   BrandWordmark,
@@ -805,10 +806,14 @@ export default function Home() {
                     disabled={loading}
                     className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-gray-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70 sm:mt-0 sm:w-auto"
                   >
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                    {loading ? "Analyzing..." : "Analyze"}
-                    {!loading && (
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    {loading ? (
+                      <LogoLoader variant="mini" text="Analyzing..." />
+                    ) : (
+                      <>
+                        <Search className="h-4 w-4" />
+                        Analyze
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </>
                     )}
                   </button>
                 </div>
@@ -829,6 +834,16 @@ export default function Home() {
                 </div>
 
                 <div aria-live="polite">
+                  {loading && (
+                    <div className="mx-auto mt-5 max-w-xl overflow-hidden rounded-2xl border border-emerald-200/80 bg-white/95 p-6 shadow-md backdrop-blur-sm">
+                      <LogoLoader
+                        variant="section"
+                        text={`Scanning AI visibility for ${domain || "website"}...`}
+                        subtext="Querying Perplexity, ChatGPT, Gemini & Claude models for commercial mentions"
+                      />
+                    </div>
+                  )}
+
                   {error && (
                     <p className="mt-4 text-xs font-medium text-red-500" role="alert">
                       {error}

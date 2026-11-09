@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertCircle, RotateCcw, Home, LogIn } from 'lucide-react';
+import { LogoMark } from '@/components/landing/BrandLogos';
 
 export default function ErrorBoundary({
   error,
@@ -19,8 +20,10 @@ export default function ErrorBoundary({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 p-8 text-center">
-        <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl mx-auto flex items-center justify-center mb-5 ring-8 ring-red-50/50">
-          <AlertCircle className="w-7 h-7" />
+        <div className="flex justify-center mb-5">
+          <Link href="/">
+            <LogoMark className="h-12 w-12" />
+          </Link>
         </div>
 
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Something went wrong</h1>

@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Loader2, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
+import { LogoLoader } from '@/components/LogoLoader';
 
 export function RunScanButton({ projectId }: { projectId: string }) {
   const [loading, setLoading] = useState(false);
@@ -45,10 +46,7 @@ export function RunScanButton({ projectId }: { projectId: string }) {
         className="flex items-center gap-2 bg-[#eb9d2a] text-white px-4 py-2 rounded-lg hover:bg-[#d88b1e] disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium text-sm"
       >
         {loading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Running...
-          </>
+          <LogoLoader variant="mini" text="Running Live Scan..." />
         ) : (
           <>
             <Play className="h-4 w-4" />

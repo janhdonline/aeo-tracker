@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Check, ShieldCheck, Zap, Sparkles } from 'lucide-react';
+import { LogoMark } from '@/components/landing/BrandLogos';
 import { getEnv } from '@/lib/env';
 import { LemonOverlay } from '@/components/LemonOverlay';
 
@@ -91,11 +92,11 @@ export default function PricingPage() {
 
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-sm">
-              AEO
+          <Link href="/" className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5 group">
+            <LogoMark className="h-8 w-8" />
+            <span className="font-display group-hover:text-slate-700 transition-colors">
+              AEO Checker
             </span>
-            AEO Checker
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">

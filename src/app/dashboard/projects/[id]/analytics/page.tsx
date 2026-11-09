@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { motion } from 'framer-motion';
 import { Bot, CheckCircle, AlertTriangle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { LogoLoader } from '@/components/LogoLoader';
 
 interface EngineStat {
   visits: number;
@@ -62,11 +63,12 @@ export default function AnalyticsPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
-          <Bot className="h-12 w-12 text-[#eb9d2a] mx-auto mb-4 animate-spin" />
-          <p className="text-slate-600">Loading analytics...</p>
-        </div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <LogoLoader
+          variant="section"
+          text="Loading AI Analytics..."
+          subtext="Auditing crawler activity, bot citations, and engine verification rates"
+        />
       </div>
     );
   }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { AppShell } from '@/components/AppShell';
+import { LogoLoader } from '@/components/LogoLoader';
 import { AnimatedDashboardStats } from './AnimatedDashboardStats';
 import { PLAN_LIMITS } from '@/lib/types';
 import {
@@ -221,9 +222,12 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <AppShell user={{ email: user?.email || 'Loading...' }}>
-        <div className="min-h-[70vh] flex flex-col items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[#eb9d2a] mb-3" />
-          <p className="text-sm font-medium text-slate-500">Connecting to Answer Engine Radar...</p>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <LogoLoader
+            variant="section"
+            text="Connecting to Answer Engine Radar..."
+            subtext="Syncing visibility snapshots, prompt coverage, and source intelligence"
+          />
         </div>
       </AppShell>
     );
@@ -271,9 +275,7 @@ export default function DashboardPage() {
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#eb9d2a] to-[#d88b1e] px-5 py-3 text-sm font-semibold text-white shadow-md hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60"
                 >
                   {quickSubmitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Tracking...
-                    </>
+                    <LogoLoader variant="mini" text="Tracking..." />
                   ) : (
                     <>
                       <Zap className="h-4 w-4" /> Track Website
