@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Check, ShieldCheck, Zap, Sparkles } from 'lucide-react';
 import { getEnv } from '@/lib/env';
+import { LemonOverlay } from '@/components/LemonOverlay';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,15 +17,19 @@ const DEFAULT_PRO_URL =
   'https://aeo-tracker.lemonsqueezy.com/checkout/buy/41f8ba70-e418-48da-8554-e25210808053';
 
 export default function PricingPage() {
-  const starterUrl =
+  const rawStarterUrl =
     getEnv('LEMONSQUEEZY_STARTER_URL') ||
     process.env.LEMONSQUEEZY_STARTER_URL ||
     DEFAULT_STARTER_URL;
 
-  const proUrl =
+  const rawProUrl =
     getEnv('LEMONSQUEEZY_PRO_URL') ||
     process.env.LEMONSQUEEZY_PRO_URL ||
     DEFAULT_PRO_URL;
+
+  // Add embed=1 parameter so Lemon.js opens in-page overlay modal seamlessly
+  const starterUrl = `${rawStarterUrl}${rawStarterUrl.includes('?') ? '&' : '?'}embed=1`;
+  const proUrl = `${rawProUrl}${rawProUrl.includes('?') ? '&' : '?'}embed=1`;
 
   const plans = [
     {
@@ -40,6 +45,7 @@ export default function PricingPage() {
       ],
       cta: 'Get Started Free',
       href: '/login',
+      isLemon: false,
       highlight: false,
     },
     {
@@ -57,6 +63,7 @@ export default function PricingPage() {
       ],
       cta: 'Subscribe to Starter',
       href: starterUrl,
+      isLemon: true,
       highlight: true,
     },
     {
@@ -73,12 +80,15 @@ export default function PricingPage() {
       ],
       cta: 'Subscribe to Pro',
       href: proUrl,
+      isLemon: true,
       highlight: false,
     },
   ];
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
+      <LemonOverlay />
+
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -154,7 +164,7 @@ export default function PricingPage() {
 
               <a
                 href={plan.href}
-                className={`block w-full text-center py-3 px-4 rounded-xl font-semibold text-sm transition-colors shadow-sm ${
+                className={`lemonsqueezy-button block w-full text-center py-3 px-4 rounded-xl font-semibold text-sm transition-colors shadow-sm cursor-pointer ${
                   plan.highlight
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-slate-900 text-white hover:bg-slate-800'
