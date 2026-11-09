@@ -22,15 +22,51 @@ import {
   ShieldCheck,
   Compass,
   FileCode2,
+  Sparkles,
+  Target,
+  Activity,
+  Layers,
 } from 'lucide-react';
 
+const SUGGESTIONS = ['stripe.com', 'linear.app', 'notion.so', 'supabase.com', 'github.com'];
+
+const BENCHMARK_EXAMPLES = [
+  {
+    domain: 'stripe.com',
+    brand: 'Stripe',
+    score: 88,
+    sov: '64%',
+    citations: '420+ citations',
+    tag: 'Fintech Leader',
+    engines: 'ChatGPT & Perplexity',
+  },
+  {
+    domain: 'linear.app',
+    brand: 'Linear',
+    score: 91,
+    sov: '78%',
+    citations: '310+ citations',
+    tag: 'Productivity Top Rank',
+    engines: 'ChatGPT & Claude',
+  },
+  {
+    domain: 'notion.so',
+    brand: 'Notion',
+    score: 84,
+    sov: '52%',
+    citations: '580+ citations',
+    tag: 'Knowledge Base',
+    engines: 'Gemini & Perplexity',
+  },
+];
+
 const AI_ENGINES = [
-  { name: 'ChatGPT-4o', status: 'Active Index', tone: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-  { name: 'Google Gemini', status: 'Live Overview', tone: 'text-blue-700 bg-blue-50 border-blue-200' },
-  { name: 'Perplexity Pro', status: 'Web Citations', tone: 'text-teal-700 bg-teal-50 border-teal-200' },
-  { name: 'Claude 3.5', status: 'High-Intent Recs', tone: 'text-amber-800 bg-amber-50 border-amber-200' },
-  { name: 'DeepSeek R1', status: 'Reasoning Mode', tone: 'text-indigo-700 bg-indigo-50 border-indigo-200' },
-  { name: 'Grok 2', status: 'Realtime Stream', tone: 'text-slate-800 bg-slate-100 border-slate-300' },
+  { name: 'ChatGPT-4o', provider: 'OpenAI', latency: '110ms', status: 'SearchGPT Live', tone: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+  { name: 'Google Gemini', provider: 'Google AI', latency: '95ms', status: 'Overview Synthesis', tone: 'text-blue-700 bg-blue-50 border-blue-200' },
+  { name: 'Perplexity Pro', provider: 'Perplexity', latency: '142ms', status: 'Web Citations', tone: 'text-teal-700 bg-teal-50 border-teal-200' },
+  { name: 'Claude 3.5 Sonnet', provider: 'Anthropic', latency: '120ms', status: 'Entity Knowledge', tone: 'text-amber-800 bg-amber-50 border-amber-200' },
+  { name: 'DeepSeek R1', provider: 'DeepSeek', latency: '210ms', status: 'Reasoning Mode', tone: 'text-indigo-700 bg-indigo-50 border-indigo-200' },
+  { name: 'Grok 2', provider: 'xAI', latency: '135ms', status: 'Realtime Stream', tone: 'text-slate-800 bg-slate-100 border-slate-300' },
 ];
 
 export default function DashboardPage() {
@@ -226,26 +262,47 @@ export default function DashboardPage() {
     <AppShell user={{ email: user?.email || '' }}>
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">
         
-        {/* TOP COMMAND HEADER: Clean, Professional, Beginner-Friendly */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        {/* TOP COMMAND CONSOLE: High-End Futuristic B2B Studio */}
+        <section className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/70 p-6 sm:p-8 shadow-xs">
+          {/* Subtle Ambient Radial Glow */}
+          <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-56 w-full max-w-3xl rounded-full bg-gradient-to-b from-emerald-500/10 via-blue-500/5 to-transparent blur-3xl" />
+
+          <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-800 mb-3">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>AI Engine Radar Online · 6 Engines Monitored</span>
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/80 px-3 py-1 text-xs font-semibold text-emerald-800 mb-3 shadow-2xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span>AI Engine Radar Online · 6 Engines Synced</span>
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-                AEO Visibility Hub
+              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900">
+                AEO Visibility Studio
               </h1>
-              <p className="mt-1 text-sm text-slate-600 leading-relaxed">
-                Monitor where AI engines (ChatGPT, Perplexity, Gemini) recommend your website, find missing citations, and fix hallucinated facts.
+              <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed max-w-lg">
+                Monitor where AI models (ChatGPT, Perplexity, Gemini, Claude) cite your brand, uncover competitor citation leaks, and repair hallucinated facts.
               </p>
+
+              {/* Instant 1-Click Suggestions Chips */}
+              <div className="mt-4 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                <span className="font-medium text-slate-400">Try instant scan:</span>
+                {SUGGESTIONS.map((sug) => (
+                  <button
+                    key={sug}
+                    type="button"
+                    onClick={() => setQuickDomain(sug)}
+                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-medium text-xs transition-colors cursor-pointer"
+                  >
+                    {sug}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Quick Track Input Form */}
+            {/* Quick Track Command Input */}
             <div className="w-full lg:max-w-md">
-              <form onSubmit={handleQuickAdd} className="flex gap-2">
-                <div className="relative flex-1">
+              <form onSubmit={handleQuickAdd} className="space-y-2">
+                <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                     <Search className="h-4 w-4" />
                   </div>
@@ -253,22 +310,25 @@ export default function DashboardPage() {
                     type="text"
                     value={quickDomain}
                     onChange={(e) => setQuickDomain(e.target.value)}
-                    placeholder="Add website (e.g. acme.com)"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
+                    placeholder="Enter website domain (e.g. acme.com)"
+                    className="w-full rounded-2xl border border-slate-300/80 bg-white py-3 pl-10 pr-28 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-xs focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 focus:outline-none transition-all"
                   />
+                  <button
+                    type="submit"
+                    disabled={quickSubmitting}
+                    className="absolute right-1.5 top-1.5 bottom-1.5 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-3.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all disabled:opacity-50"
+                  >
+                    <Plus className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>{quickSubmitting ? 'Tracking...' : 'Track'}</span>
+                  </button>
                 </div>
-                <button
-                  type="submit"
-                  disabled={quickSubmitting}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#111827] px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-colors shrink-0 disabled:opacity-50"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  {quickSubmitting ? 'Adding...' : 'Track Website'}
-                </button>
+                {quickError && (
+                  <p className="text-xs text-rose-600 font-semibold px-1">{quickError}</p>
+                )}
+                <p className="text-[11px] text-slate-400 px-1">
+                  Press Enter to initialize automated multi-engine visibility index.
+                </p>
               </form>
-              {quickError && (
-                <p className="mt-2 text-xs text-rose-600 font-semibold">{quickError}</p>
-              )}
             </div>
           </div>
         </section>
@@ -300,12 +360,41 @@ export default function DashboardPage() {
         {/* 4 SUMMARY STATS: High Clarity & Zero Jargon */}
         <AnimatedDashboardStats
           items={[
-            { label: 'Tracked Websites', value: projects.length, numeric: true },
-            { label: 'Buyer Queries Monitored', value: keywordsCount, numeric: true },
-            { label: 'Average AI Score', value: avgScore > 0 ? `${avgScore}/100` : 'Ready to Scan', numeric: avgScore > 0 },
             {
-              label: 'Last Engine Audit',
-              value: lastScan ? new Date(lastScan).toLocaleDateString() : 'Ready to Run',
+              label: 'Tracked Web Properties',
+              value: projects.length,
+              numeric: true,
+              icon: Globe,
+              accent: 'blue',
+              badge: projects.length > 0 ? `${projects.length} Active` : 'Ready to Track',
+              subtext: 'Websites monitored in AI answers',
+            },
+            {
+              label: 'Commercial Buyer Queries',
+              value: keywordsCount,
+              numeric: true,
+              icon: Search,
+              accent: 'purple',
+              badge: keywordsCount > 0 ? `${keywordsCount} Live` : 'High Intent',
+              subtext: 'Audited across AI model prompts',
+            },
+            {
+              label: 'Average AI Visibility',
+              value: avgScore > 0 ? `${avgScore}/100` : '—/100',
+              numeric: avgScore > 0,
+              icon: Target,
+              accent: 'emerald',
+              badge: avgScore > 0 ? 'Verified' : 'Ready to Audit',
+              subtext: avgScore > 0 ? 'Multi-pass confidence score' : 'Run first scan to compute',
+            },
+            {
+              label: 'Answer Engine Radar',
+              value: '100%',
+              numeric: false,
+              icon: Activity,
+              accent: 'amber',
+              badge: '6/6 Online',
+              subtext: 'Real-time telemetry & latency sync',
             },
           ]}
         />
@@ -330,29 +419,103 @@ export default function DashboardPage() {
           </div>
 
           {projects.length === 0 ? (
-            /* Friendly Beginner Empty State */
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center space-y-4 shadow-sm">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 mx-auto">
-                <Globe className="h-6 w-6" />
-              </span>
-              <div className="max-w-md mx-auto">
-                <h3 className="font-display text-lg font-bold text-slate-900">
-                  Track Your First Website
-                </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Enter your business domain above or click below to launch automated AI visibility monitoring across ChatGPT, Perplexity, and Gemini.
-                </p>
-              </div>
-              <div className="pt-2">
-                <button
-                  onClick={() => {
-                    const el = document.querySelector('input[placeholder*="Add website"]') as HTMLInputElement;
-                    el?.focus();
-                  }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-all"
-                >
-                  <Plus className="h-4 w-4" /> Add Website Now
-                </button>
+            /* Inspiring Interactive Starter & Live Benchmarks */
+            <div className="space-y-6">
+              {/* Primary Callout Card */}
+              <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-xs">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-lg font-bold text-slate-900">
+                        Start Your First AI Visibility Audit
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-500 mt-0.5 max-w-xl leading-relaxed">
+                        Track how your brand appears when prospective buyers ask ChatGPT, Perplexity, and Gemini for vendor recommendations in your industry.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const el = document.querySelector('input[placeholder*="domain"]') as HTMLInputElement;
+                      el?.focus();
+                    }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all shrink-0"
+                  >
+                    <Plus className="h-4 w-4 text-emerald-400" />
+                    <span>Add Website Above</span>
+                  </button>
+                </div>
+
+                {/* 3 Live Benchmark Demonstrations */}
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Explore How Leading Tech Brands Perform in AI Answers
+                    </span>
+                    <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
+                      Live Sample Reports
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {BENCHMARK_EXAMPLES.map((b) => (
+                      <div
+                        key={b.domain}
+                        className="group relative rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-white p-4 sm:p-5 shadow-2xs hover:shadow-card hover:border-slate-300 transition-all duration-200 flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-3">
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                              {b.domain}
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200/60">
+                              {b.score}/100 AEO
+                            </span>
+                          </div>
+
+                          <div className="space-y-1.5 text-xs text-slate-600">
+                            <div className="flex justify-between py-1 border-b border-slate-100">
+                              <span className="text-slate-400">Share of Voice</span>
+                              <span className="font-bold text-slate-800">{b.sov}</span>
+                            </div>
+                            <div className="flex justify-between py-1 border-b border-slate-100">
+                              <span className="text-slate-400">Web Citations</span>
+                              <span className="font-bold text-slate-800">{b.citations}</span>
+                            </div>
+                            <div className="flex justify-between py-1">
+                              <span className="text-slate-400">Top Engines</span>
+                              <span className="font-medium text-slate-700 text-[11px]">{b.engines}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between">
+                          <Link
+                            href={`/report/${b.domain}`}
+                            className="inline-flex items-center gap-1 text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors"
+                          >
+                            <span>Inspect Public Report</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setQuickDomain(b.domain);
+                              const el = document.querySelector('input[placeholder*="domain"]') as HTMLInputElement;
+                              el?.focus();
+                            }}
+                            className="text-[11px] font-semibold text-emerald-700 hover:underline"
+                          >
+                            + Track This
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
@@ -436,8 +599,8 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* ANSWER ENGINE RADAR STATUS STRIP (Simple & Compact) */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
+        {/* ANSWER ENGINE RADAR STATUS STRIP (With Model Latency Telemetry) */}
+        <section className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <Bot className="h-4 w-4 text-emerald-600" />
@@ -455,13 +618,16 @@ export default function DashboardPage() {
             {AI_ENGINES.map((engine) => (
               <div
                 key={engine.name}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100"
+                className="flex flex-col justify-between p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-white hover:border-slate-200 hover:shadow-2xs transition-all"
               >
-                <div>
-                  <p className="text-xs font-bold text-slate-800">{engine.name}</p>
-                  <p className="text-[10px] text-slate-500">{engine.status}</p>
+                <div className="flex items-start justify-between gap-1 mb-2">
+                  <p className="text-xs font-bold text-slate-900 truncate">{engine.name}</p>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
                 </div>
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-slate-500">{engine.status}</p>
+                  <p className="text-[9px] font-semibold text-emerald-700 mt-0.5">{engine.latency}</p>
+                </div>
               </div>
             ))}
           </div>

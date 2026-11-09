@@ -42,7 +42,7 @@ export function AppShell({ user, children }: AppShellProps) {
   const userInitial = user.email ? user.email.charAt(0).toUpperCase() : 'U';
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-slate-900">
+    <div className="min-h-screen bg-[#fafafa] dashboard-ambient text-slate-900">
       <motion.header
         initial={prefersReducedMotion ? false : { opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}

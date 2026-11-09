@@ -71,6 +71,13 @@
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  .dashboard-ambient {
+    background-image:
+      radial-gradient(1200px circle at 50% -80px, rgba(16, 185, 129, 0.08), transparent 65%),
+      radial-gradient(900px circle at 95% 150px, rgba(59, 130, 246, 0.05), transparent 55%),
+      radial-gradient(800px circle at 5% 300px, rgba(139, 92, 246, 0.03), transparent 50%);
+  }
+
   .hero-grid {
     background-image:
       linear-gradient(to right, rgba(17, 24, 39, 0.045) 1px, transparent 1px),
