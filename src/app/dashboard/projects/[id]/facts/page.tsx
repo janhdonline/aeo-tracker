@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, ShieldCheck, Sparkles, Copy, Check, FileCode, AlertTriangle } from 'lucide-react';
 import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
+import { LogoLoader } from '@/components/LogoLoader';
 import Link from 'next/link';
 
 interface BrandFact {
@@ -26,6 +27,9 @@ export default function BrandFactsPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(false);
   const [copiedPatch, setCopiedPatch] = useState(false);
   const [showPatch, setShowPatch] = useState(false);
+  const [auditLoading, setAuditLoading] = useState(false);
+  const [auditResult, setAuditResult] = useState<string | null>(null);
+  const [auditError, setAuditError] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -85,6 +89,44 @@ export default function BrandFactsPage({ params }: { params: { id: string } }) {
     setFacts(facts.filter((f) => f.id !== id));
   };
 
+  const handleRunAudit = async () => {
+    setAuditLoading(true);
+    setAuditError(null);
+    setAuditResult(null);
+    try {
+      const res = await fetch('/api/facts/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: params.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Audit failed');
+      setAuditResult(data.message);
+    } catch (err: any) {
+      setAuditError(err.message || 'Audit execution failed');
+    } finally {
+      setAuditLoading(false);
+    }
+  };
+
+  const handleQuickSeed = async (type: string, key: string, value: string) => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('brand_facts')
+      .insert({
+        project_id: params.id,
+        fact_type: type,
+        key,
+        expected_value: value,
+      })
+      .select()
+      .single();
+    if (!error && data) {
+      setFacts((prev) => [...prev, data]);
+    }
+    setLoading(false);
+  };
+
   // Compile authoritative llms.txt snippet
   const generatedPatch = `# ${brandName || 'Brand'} — Authoritative Facts Sheet
 # Target: https://${projectDomain || 'domain.com'}/llms.txt
@@ -132,7 +174,22 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={handleRunAudit}
+                    disabled={auditLoading || facts.length === 0}
+                    className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 shadow-sm disabled:opacity-50 transition-colors"
+                  >
+                    {auditLoading ? (
+                      <LogoLoader variant="mini" text="Auditing AI Models..." />
+                    ) : (
+                      <>
+                        <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                        Run Fact Audit
+                      </>
+                    )}
+                  </button>
+
                   <Link
                     href={`/dashboard/projects/${params.id}/alerts`}
                     className="flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 shadow-sm"
@@ -142,6 +199,20 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                   </Link>
                 </div>
               </div>
+
+              {auditResult && (
+                <div className="mt-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-medium text-emerald-900 flex items-center gap-2">
+                  <Check className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <span>{auditResult}</span>
+                </div>
+              )}
+
+              {auditError && (
+                <div className="mt-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-800 flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
+                  <span>{auditError}</span>
+                </div>
+              )}
             </div>
 
             {/* Input Card */}
@@ -286,6 +357,26 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                 <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
                   Add facts like pricing, trial availability, or features to prevent ChatGPT and Perplexity from hallucinating false information to buyers.
                 </p>
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    onClick={() => handleQuickSeed('price', 'starter_plan_price', '$49/mo')}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-xs font-semibold text-emerald-800 transition-colors"
+                  >
+                    + Quick Add: Starter Price ($49/mo)
+                  </button>
+                  <button
+                    onClick={() => handleQuickSeed('availability', 'free_trial', '14 days without credit card')}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-xs font-semibold text-blue-800 transition-colors"
+                  >
+                    + Quick Add: 14-Day Free Trial
+                  </button>
+                  <button
+                    onClick={() => handleQuickSeed('feature', 'supported_ai_engines', 'ChatGPT, Perplexity, Claude & Gemini')}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-xs font-semibold text-purple-800 transition-colors"
+                  >
+                    + Quick Add: 4 AI Engines
+                  </button>
+                </div>
               </div>
             )}
           </main>

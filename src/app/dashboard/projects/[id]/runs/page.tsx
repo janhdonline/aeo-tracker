@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
+import { ListChecks } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function RunsPage({ params }: { params: { id: string } }) {
@@ -101,7 +102,15 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
                   {(!runs || runs.length === 0) && (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center text-sm text-gray-500">
-                        No scan runs recorded yet for this project.
+                        <ListChecks className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                        <p className="font-bold text-slate-800">No scan runs recorded yet for this project.</p>
+                        <p className="text-xs text-slate-500 mt-1 mb-4">Run an on-demand audit to benchmark AI search engines.</p>
+                        <Link
+                          href={`/dashboard/projects/${params.id}`}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors"
+                        >
+                          Go to Overview & Run Scan →
+                        </Link>
                       </td>
                     </tr>
                   )}

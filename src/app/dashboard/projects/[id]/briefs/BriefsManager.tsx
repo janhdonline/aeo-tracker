@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, AlertCircle, Clock } from 'lucide-react';
+import { Check, X, AlertCircle, Clock, Sparkles } from 'lucide-react';
+import { LogoLoader } from '@/components/LogoLoader';
 
 interface Brief {
   id: string;
@@ -45,7 +46,27 @@ const gapTypeIcon = {
 
 export function BriefsManager({ projectId, initialBriefs }: { projectId: string; initialBriefs: Brief[] }) {
   const [briefs, setBriefs] = useState(initialBriefs);
+  const [generating, setGenerating] = useState(false);
   const supabase = createClient();
+
+  const handleGenerateBriefs = async () => {
+    setGenerating(true);
+    try {
+      const res = await fetch('/api/briefs/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId }),
+      });
+      const data = await res.json();
+      if (data.briefs && data.briefs.length > 0) {
+        setBriefs((prev) => [...prev, ...data.briefs]);
+      }
+    } catch (e) {
+      console.error('Failed to generate briefs:', e);
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const handleMarkApplied = async (id: string) => {
     const { error } = await supabase
@@ -216,11 +237,31 @@ export function BriefsManager({ projectId, initialBriefs }: { projectId: string;
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-200"
+          className="text-center py-12 px-4 bg-white rounded-2xl border border-dashed border-slate-200"
         >
-          <Check className="h-12 w-12 text-green-400 mx-auto mb-3" />
-          <p className="text-gray-600 font-medium">No fix briefs yet</p>
-          <p className="text-sm text-gray-400 mt-1">Run a scan to generate recommendations</p>
+          <div className="h-12 w-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-3 border border-amber-100">
+            <Sparkles className="h-6 w-6" />
+          </div>
+          <p className="text-base font-bold text-slate-900">No Fix Briefs Generated Yet</p>
+          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+            Fix briefs identify actionable visibility gaps, competitor mention losses, and source infiltration steps.
+          </p>
+          <div className="mt-5">
+            <button
+              onClick={handleGenerateBriefs}
+              disabled={generating}
+              className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+            >
+              {generating ? (
+                <LogoLoader variant="mini" text="Analyzing Visibility Gaps..." />
+              ) : (
+                <>
+                  <Sparkles className="h-3.5 w-3.5 text-[#eb9d2a]" />
+                  Generate Initial AEO Briefs
+                </>
+              )}
+            </button>
+          </div>
         </motion.div>
       )}
     </div>

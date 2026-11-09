@@ -58,11 +58,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: keywordCheck.reason }, { status: 403 });
     }
     
-    // Check scan frequency
+    // Check scan frequency (only against successfully completed runs)
     const { data: lastRun } = await supabase
       .from('scan_runs')
       .select('started_at')
       .eq('project_id', projectId)
+      .eq('status', 'done')
       .order('started_at', { ascending: false })
       .limit(1);
     

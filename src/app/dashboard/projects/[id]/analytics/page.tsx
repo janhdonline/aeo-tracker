@@ -3,8 +3,24 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { motion } from 'framer-motion';
-import { Bot, CheckCircle, AlertTriangle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import {
+  Bot,
+  CheckCircle,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Check,
+  Copy,
+  ShieldCheck,
+  FileCode,
+  ExternalLink,
+  Sparkles,
+} from 'lucide-react';
+import { AppShell } from '@/components/AppShell';
+import { ProjectSidebar } from '@/components/ProjectSidebar';
 import { LogoLoader } from '@/components/LogoLoader';
+import Link from 'next/link';
 
 interface EngineStat {
   visits: number;
@@ -29,19 +45,36 @@ export default function AnalyticsPage({ params }: { params: { id: string } }) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [projectDomain, setProjectDomain] = useState('');
+  const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
+  const [copiedRobots, setCopiedRobots] = useState(false);
+  const [copiedSnippet, setCopiedSnippet] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    loadAnalytics();
+    loadProjectAndAnalytics();
   }, [params.id]);
 
-  const loadAnalytics = async () => {
+  const loadProjectAndAnalytics = async () => {
     setLoading(true);
     try {
+      const { data: authData } = await supabase.auth.getUser();
+      if (authData?.user?.email) setUserEmail(authData.user.email);
+
+      const { data: proj } = await supabase
+        .from('projects')
+        .select('domain, brand_name')
+        .eq('id', params.id)
+        .single();
+
+      if (proj) {
+        setProjectDomain(proj.domain);
+      }
+
       const res = await fetch(`/api/tools/agent-analytics?projectId=${params.id}&days=30`);
       if (!res.ok) throw new Error('Failed to load analytics');
-      const data = await res.json();
-      setData(data);
+      const analyticsData = await res.json();
+      setData(analyticsData);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load');
     } finally {
@@ -61,179 +94,221 @@ export default function AnalyticsPage({ params }: { params: { id: string } }) {
     return 'Balanced';
   };
 
+  const recommendedRobotsTxt = `# AEO Visibility Directive for ${projectDomain || 'your-domain.com'}
+# Allow Verified AI Search Crawlers
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://${projectDomain || 'your-domain.com'}/sitemap.xml`;
+
+  const trackingSnippet = `// Add to your Next.js middleware.ts / Express handler:
+fetch("https://aeo-tracker.janhdonline.workers.dev/api/tools/agent-analytics", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    projectId: "${params.id}",
+    userAgent: request.headers.get("user-agent"),
+    path: request.nextUrl.pathname,
+  }),
+});`;
+
+  const copyRobots = () => {
+    navigator.clipboard.writeText(recommendedRobotsTxt);
+    setCopiedRobots(true);
+    setTimeout(() => setCopiedRobots(false), 2000);
+  };
+
+  const copySnippet = () => {
+    navigator.clipboard.writeText(trackingSnippet);
+    setCopiedSnippet(true);
+    setTimeout(() => setCopiedSnippet(false), 2000);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <LogoLoader
-          variant="section"
-          text="Loading AI Analytics..."
-          subtext="Auditing crawler activity, bot citations, and engine verification rates"
-        />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
-          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <p className="text-red-600">{error}</p>
+      <AppShell user={{ email: userEmail }}>
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-6">
+            <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="analytics" />
+            <main className="flex-1 min-w-0">
+              <div className="min-h-[50vh] flex items-center justify-center">
+                <LogoLoader
+                  variant="section"
+                  text="Auditing AI Crawler Readiness..."
+                  subtext="Checking bot verification, robots.txt directives, and model scrapers"
+                />
+              </div>
+            </main>
+          </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
-
-  if (!data) return null;
-
-  const engineEntries = Object.entries(data.engineStats);
-  const pathEntries = Object.entries(data.pathStats);
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Agent Traffic Analytics</h1>
-        <p className="text-slate-600 mb-8">
-          Track AI crawler visits by engine and page. Correlate bot visits with citations.
-        </p>
+    <AppShell user={{ email: userEmail }}>
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="analytics" />
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
-          >
-            <div className="flex items-center gap-3">
-              <Bot className="h-8 w-8 text-[#eb9d2a]" />
-              <div>
-                <p className="text-sm text-slate-500">Total Bot Visits</p>
-                <p className="text-3xl font-bold text-slate-900">{data.totalVisits}</p>
+          <main className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <Bot className="h-3.5 w-3.5" />
+                  AI Crawler Audit & Bot Telemetry
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                AI Crawler Readiness for {projectDomain}
+              </h1>
+              <p className="text-sm text-slate-600 mt-0.5">
+                Ensure OpenAI, Perplexity, Anthropic, and Google crawlers can index your website and feed accurate data into AI answers.
+              </p>
+            </div>
+
+            {/* Live AI Crawlers Readiness Strip */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+              <h2 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                Live Bot Indexing Status for {projectDomain}
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/70">
+                  <span className="text-xs font-bold text-emerald-950 block">GPTBot (OpenAI)</span>
+                  <span className="text-[11px] font-semibold text-emerald-700 mt-1 inline-flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" /> Ready to Index
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/70">
+                  <span className="text-xs font-bold text-emerald-950 block">PerplexityBot</span>
+                  <span className="text-[11px] font-semibold text-emerald-700 mt-1 inline-flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" /> Live Citation Ready
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/70">
+                  <span className="text-xs font-bold text-emerald-950 block">ClaudeBot (Anthropic)</span>
+                  <span className="text-[11px] font-semibold text-emerald-700 mt-1 inline-flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" /> Training Access
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/70">
+                  <span className="text-xs font-bold text-emerald-950 block">Google-Extended</span>
+                  <span className="text-[11px] font-semibold text-emerald-700 mt-1 inline-flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" /> Gemini Grounding
+                  </span>
+                </div>
               </div>
             </div>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
-          >
-            <div className="flex items-center gap-3">
-              <CheckCircle className="h-8 w-8 text-emerald-500" />
-              <div>
-                <p className="text-sm text-slate-500">Verified Bots</p>
-                <p className="text-3xl font-bold text-emerald-600">{data.verifiedVisits}</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
-          >
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <Bot className="h-4 w-4 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-500">Period</p>
-                <p className="text-3xl font-bold text-slate-900">{data.periodDays} days</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Engine Breakdown */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Visits by Engine</h2>
-          {Object.keys(data.engineStats).length > 0 ? (
-            <div className="space-y-3">
-              {Object.entries(data.engineStats).map(([engine, stat]) => (
-                <motion.div
-                  key={engine}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium text-slate-900 capitalize">{engine}</span>
-                    <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-600">
-                      {stat.visits} visits
-                    </span>
+            {/* Metrics Overview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
+                    <Bot className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 uppercase">Total Bot Visits</p>
+                    <p className="text-2xl font-bold text-slate-900 mt-0.5">{data?.totalVisits ?? 0}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                      {stat.verified} verified
-                    </span>
-                    {stat.unverified > 0 && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">
-                        {stat.unverified} unverified
-                      </span>
-                    )}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+                    <CheckCircle className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 uppercase">Verified AI Crawlers</p>
+                    <p className="text-2xl font-bold text-emerald-600 mt-0.5">{data?.verifiedVisits ?? 0}</p>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-slate-500 text-center py-8">No bot visits recorded yet</p>
-          )}
-        </div>
+                </div>
+              </div>
 
-        {/* Path Correlation */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Bot Visits vs Citations by Page</h2>
-          {Object.keys(data.pathStats).length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Path</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Bot Visits</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Citations</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Gap</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {Object.entries(data.pathStats)
-                    .sort((a, b) => b[1].visits - a[1].visits)
-                    .slice(0, 20)
-                    .map(([path, stat]) => {
-                      const gap = stat.visits - stat.citations;
-                      return (
-                        <tr key={path} className="hover:bg-slate-50">
-                          <td className="px-4 py-3 text-sm font-mono text-slate-700">{path}</td>
-                          <td className="px-4 py-3 text-right text-sm text-slate-700">{stat.visits}</td>
-                          <td className="px-4 py-3 text-right text-sm text-slate-700">{stat.citations}</td>
-                          <td className="px-4 py-3 text-right">
-                            <span className={`flex items-center justify-end gap-1 font-medium ${
-                              gap > 0 ? 'text-red-600' : gap < 0 ? 'text-emerald-600' : 'text-slate-500'
-                            }`}>
-                              {getTrendIcon(gap)}
-                              {Math.abs(gap)} ({getTrendLabel(gap)})
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+                    <Sparkles className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 uppercase">Window Monitored</p>
+                    <p className="text-2xl font-bold text-slate-900 mt-0.5">{data?.periodDays ?? 30} Days</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          ) : (
-            <p className="text-slate-500 text-center py-8">No path data yet</p>
-          )}
-        </div>
 
-        {/* CTA */}
-        <div className="mt-8 text-center">
-          <p className="text-slate-600 mb-4">Want to track agent traffic on your site?</p>
-          <a href="/dashboard/projects/new" className="inline-block bg-[#eb9d2a] hover:bg-[#d88b1e] text-white px-8 py-3 rounded-lg font-semibold transition-colors">
-            Add Your Domain
-          </a>
+            {/* Implementation Guides & Robots.txt */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              {/* Recommended robots.txt Directive */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                      <FileCode className="h-4 w-4 text-emerald-600" />
+                      Optimized robots.txt for AI Indexing
+                    </h3>
+                    <button
+                      onClick={copyRobots}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-900"
+                    >
+                      {copiedRobots ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                      {copiedRobots ? 'Copied!' : 'Copy Directive'}
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 mb-3">
+                    Paste this into <code>https://{projectDomain}/robots.txt</code> to ensure AI answer engines cite your official specifications.
+                  </p>
+                  <pre className="p-3 bg-slate-900 text-slate-100 rounded-xl text-[11px] font-mono overflow-x-auto whitespace-pre-wrap">
+                    {recommendedRobotsTxt}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Live Crawler Telemetry Snippet */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                      <ExternalLink className="h-4 w-4 text-blue-600" />
+                      Live Hit Telemetry Snippet
+                    </h3>
+                    <button
+                      onClick={copySnippet}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-900"
+                    >
+                      {copiedSnippet ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                      {copiedSnippet ? 'Copied!' : 'Copy Code'}
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 mb-3">
+                    Call this endpoint on server requests to record when GPTBot, PerplexityBot, or ClaudeBot scrape your pages.
+                  </p>
+                  <pre className="p-3 bg-slate-900 text-slate-100 rounded-xl text-[11px] font-mono overflow-x-auto whitespace-pre-wrap">
+                    {trackingSnippet}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </main>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

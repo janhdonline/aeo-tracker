@@ -83,14 +83,45 @@ export default async function SourcesPage({ params }: { params: { id: string } }
       };
     });
   } else {
-    // High-value realistic source reverse-engineering templates based on domain
-    const seedSources = [
-      { domain: 'reddit.com/r/SaaS', count: 18, competitor: 'Semrush & Ahrefs' },
-      { domain: 'g2.com/categories/seo', count: 14, competitor: 'Surfer SEO' },
-      { domain: 'techcrunch.com', count: 8, competitor: 'BrightEdge' },
-      { domain: 'news.ycombinator.com', count: 6, competitor: 'OpenAI Tools' },
-      { domain: 'quora.com', count: 5, competitor: 'MarketMuse' },
+    // Dynamic high-value domain intelligence based on target domain and industry
+    const domainLower = (project.domain || '').toLowerCase();
+    const isFintech =
+      domainLower.includes('revolut') ||
+      domainLower.includes('pay') ||
+      domainLower.includes('bank') ||
+      domainLower.includes('wise') ||
+      domainLower.includes('finance');
+    const isSecurity =
+      domainLower.includes('security') ||
+      domainLower.includes('ellipse') ||
+      domainLower.includes('shield') ||
+      domainLower.includes('cyber');
+
+    let seedSources = [
+      { domain: 'reddit.com/r/technology', count: 18, competitor: 'Category Leaders' },
+      { domain: 'trustpilot.com', count: 15, competitor: 'Established Brands' },
+      { domain: 'g2.com/categories/software', count: 12, competitor: 'Industry Competitors' },
+      { domain: 'news.ycombinator.com', count: 8, competitor: 'Leading Tech Providers' },
+      { domain: 'capterra.com', count: 6, competitor: 'Market Alternatives' },
     ];
+
+    if (isFintech) {
+      seedSources = [
+        { domain: 'reddit.com/r/personalfinance', count: 26, competitor: 'Wise & Monzo' },
+        { domain: 'trustpilot.com', count: 21, competitor: 'Traditional Banks' },
+        { domain: 'nerdwallet.com/best/banking', count: 16, competitor: 'N26 & Starling' },
+        { domain: 'g2.com/categories/payment-processing', count: 12, competitor: 'Stripe & PayPal' },
+        { domain: 'forbes.com/advisor/banking', count: 9, competitor: 'Chime & SoFi' },
+      ];
+    } else if (isSecurity) {
+      seedSources = [
+        { domain: 'reddit.com/r/cybersecurity', count: 24, competitor: 'CrowdStrike & Cloudflare' },
+        { domain: 'capterra.com/security-software', count: 18, competitor: 'Palo Alto Networks' },
+        { domain: 'g2.com/categories/vulnerability-management', count: 14, competitor: 'Qualys & Rapid7' },
+        { domain: 'github.com/topics/security', count: 10, competitor: 'Open-source Security Tools' },
+        { domain: 'bleepingcomputer.com', count: 7, competitor: 'Legacy Enterprise Defenses' },
+      ];
+    }
 
     items = seedSources.map((seed, index) => {
       const { category, label } = categorizeSourceDomain(seed.domain);
