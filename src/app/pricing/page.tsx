@@ -10,32 +10,34 @@ export const metadata: Metadata = {
   description: 'Simple, transparent pricing for AI visibility tracking.',
 };
 
+const DEFAULT_STARTER_URL =
+  'https://aeo-tracker.lemonsqueezy.com/checkout/buy/482b92a7-0f99-4689-9653-d58fb35bc3cf';
+const DEFAULT_PRO_URL =
+  'https://aeo-tracker.lemonsqueezy.com/checkout/buy/41f8ba70-e418-48da-8554-e25210808053';
+
 export default function PricingPage() {
-  const starterVariant = getEnv('LEMONSQUEEZY_STARTER_VARIANT_ID') || process.env.LEMONSQUEEZY_STARTER_VARIANT_ID;
-  const proVariant = getEnv('LEMONSQUEEZY_PRO_VARIANT_ID') || process.env.LEMONSQUEEZY_PRO_VARIANT_ID;
-  const starterCustomUrl = getEnv('LEMONSQUEEZY_STARTER_URL') || process.env.LEMONSQUEEZY_STARTER_URL;
-  const proCustomUrl = getEnv('LEMONSQUEEZY_PRO_URL') || process.env.LEMONSQUEEZY_PRO_URL;
+  const starterUrl =
+    getEnv('LEMONSQUEEZY_STARTER_URL') ||
+    process.env.LEMONSQUEEZY_STARTER_URL ||
+    DEFAULT_STARTER_URL;
 
-  // Resolve checkout link safely:
-  // If a valid custom URL or variant ID is configured, use direct Lemon Squeezy checkout.
-  // Otherwise, fallback to /contact or /dashboard without dead/suspended links.
-  const getPlanHref = (variant: string | undefined, customUrl: string | undefined, planSlug: string) => {
-    if (customUrl) return customUrl;
-    if (variant && variant !== '2337849' && variant !== 'placeholder') {
-      return `https://store.lemonsqueezy.com/buy/${variant}`;
-    }
-    return `/contact?plan=${planSlug}`;
-  };
-
-  const starterHref = getPlanHref(starterVariant, starterCustomUrl, 'Starter');
-  const proHref = getPlanHref(proVariant, proCustomUrl, 'Pro');
+  const proUrl =
+    getEnv('LEMONSQUEEZY_PRO_URL') ||
+    process.env.LEMONSQUEEZY_PRO_URL ||
+    DEFAULT_PRO_URL;
 
   const plans = [
     {
       name: 'Free',
       price: '$0',
       description: 'Perfect for getting started with AI visibility tracking.',
-      features: ['10 Keywords', 'Gemini AI Engine', 'Monthly Automated Scans', 'Standard Visibility Score', 'CSV & PDF Report Export'],
+      features: [
+        '10 Monitored Keywords',
+        'Google Gemini AI Engine',
+        'Monthly Automated Scans',
+        'Standard Visibility Score',
+        'CSV & PDF Report Export',
+      ],
       cta: 'Get Started Free',
       href: '/login',
       highlight: false,
@@ -53,8 +55,8 @@ export default function PricingPage() {
         'Brand Sentiment Analysis',
         'Competitor SoV Benchmarks',
       ],
-      cta: starterHref.includes('lemonsqueezy') ? 'Subscribe to Starter' : 'Get Starter Access',
-      href: starterHref,
+      cta: 'Subscribe to Starter',
+      href: starterUrl,
       highlight: true,
     },
     {
@@ -69,8 +71,8 @@ export default function PricingPage() {
         'Competitor Leak Detection',
         'VIP Priority Support',
       ],
-      cta: proHref.includes('lemonsqueezy') ? 'Subscribe to Pro' : 'Contact Sales for Pro',
-      href: proHref,
+      cta: 'Subscribe to Pro',
+      href: proUrl,
       highlight: false,
     },
   ];

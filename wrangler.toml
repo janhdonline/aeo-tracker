@@ -12,6 +12,10 @@ NEXT_PUBLIC_SUPABASE_URL = "https://uuvtjpgabgdlzazxynou.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_THIU8OepAv1Pel4L7us2PA_Mj-lECn-"
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_THIU8OepAv1Pel4L7us2PA_Mj-lECn-"
 NEXT_PUBLIC_APP_URL = "https://aeo-tracker.janhdonline.workers.dev"
+LEMONSQUEEZY_STARTER_VARIANT_ID = "2337849"
+LEMONSQUEEZY_PRO_VARIANT_ID = "2337852"
+LEMONSQUEEZY_STARTER_URL = "https://aeo-tracker.lemonsqueezy.com/checkout/buy/482b92a7-0f99-4689-9653-d58fb35bc3cf"
+LEMONSQUEEZY_PRO_URL = "https://aeo-tracker.lemonsqueezy.com/checkout/buy/41f8ba70-e418-48da-8554-e25210808053"
 
 # Secret variables (set in Cloudflare dashboard):
 # SUPABASE_SERVICE_ROLE_KEY
