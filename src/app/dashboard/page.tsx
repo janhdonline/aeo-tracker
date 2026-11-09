@@ -704,7 +704,8 @@ export default function DashboardPage() {
             </Link>
 
             <a
-              href="/api/export/csv"
+              href={projects.length > 0 ? `/api/export/csv?projectId=${projects[0].id}` : '/api/export/csv'}
+              download
               className="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
             >
               <Download className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
