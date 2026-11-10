@@ -49,12 +49,14 @@ export class GeminiAdapter implements EngineAdapter {
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
+    const startTime = Date.now();
     const key = await this.resolveKey();
     if (!key) {
       throw new Error("GEMINI_API_KEY not configured");
     }
 
     const defaultModel = await getDefaultModel('gemini', 'scan');
+    let resolvedModel = defaultModel || 'gemini-2.0-flash';
 
     // Wrap prompt with instructions to include sources/citations in markdown format
     const enhancedPrompt = `${query.prompt}\n\nPlease include authoritative reference sources, comparison points, and format links as markdown [Source Name](https://domain.com) where applicable.`;
@@ -64,18 +66,19 @@ export class GeminiAdapter implements EngineAdapter {
     try {
       // 1. Try with search tool if supported
       if (searchGroundingSupported) {
-        response = await this.callApi(key, enhancedPrompt, true, defaultModel);
+        response = await this.callApi(key, enhancedPrompt, true, resolvedModel);
         if (!response.ok && (response.status === 400 || response.status === 403)) {
           // Free tier API keys do not support Google Search grounding. Remember this to avoid wasting time.
           searchGroundingSupported = false;
-          response = await this.callApi(key, enhancedPrompt, false, defaultModel);
+          response = await this.callApi(key, enhancedPrompt, false, resolvedModel);
         }
       } else {
-        response = await this.callApi(key, enhancedPrompt, false, defaultModel);
+        response = await this.callApi(key, enhancedPrompt, false, resolvedModel);
       }
 
       // 2. If primary model fails (quota or deprecation), fallback to stable gemini-1.5-flash
       if (!response.ok) {
+        resolvedModel = 'gemini-1.5-flash';
         response = await this.callApi(key, enhancedPrompt, false, 'gemini-1.5-flash');
       }
 
@@ -94,11 +97,16 @@ export class GeminiAdapter implements EngineAdapter {
       const inputTokens = data.usageMetadata?.promptTokenCount || 0;
       const outputTokens = data.usageMetadata?.candidatesTokenCount || 0;
       const costUsd = (inputTokens * 0.075 / 1_000_000) + (outputTokens * 0.30 / 1_000_000);
+      const latencyMs = Date.now() - startTime;
 
       return {
         answerText,
         citations,
         costUsd,
+        tokensIn: inputTokens,
+        tokensOut: outputTokens,
+        modelName: resolvedModel,
+        latencyMs,
       };
     } catch (err: any) {
       await markApiKeyError('gemini', 'scan', String(err));

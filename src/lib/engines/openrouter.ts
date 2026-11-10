@@ -45,6 +45,7 @@ export class OpenRouterAdapter implements EngineAdapter {
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
+    const startTime = Date.now();
     // If using Gemini directly, use GeminiAdapter
     const geminiKey = await getApiKey('gemini', 'scan');
     if (this.id === 'gemini' && geminiKey) {
@@ -104,10 +105,16 @@ export class OpenRouterAdapter implements EngineAdapter {
     const costs = MODEL_COSTS[modelToUse] || { input: 0, output: 0 };
     const costUsd = (inputTokens * costs.input / 1_000_000) + (outputTokens * costs.output / 1_000_000);
 
+    const latencyMs = Date.now() - startTime;
+
     return {
       answerText,
       citations,
       costUsd,
+      tokensIn: inputTokens,
+      tokensOut: outputTokens,
+      modelName: modelToUse,
+      latencyMs,
     };
   }
 

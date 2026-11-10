@@ -52,6 +52,10 @@ function generateSyntheticAnswer(
     answerText,
     citations,
     costUsd: 0.001,
+    tokensIn: 850,
+    tokensOut: 220,
+    modelName: `benchmark-${engine}`,
+    latencyMs: 220,
   };
 }
 
@@ -247,7 +251,15 @@ export async function processChunk(runId: string): Promise<ChunkResult> {
       return { runId, processed, remaining: queries.length - processed, status: 'failed' };
     }
     
-    let response: { answerText: string; citations: any[]; costUsd: number };
+    let response: {
+      answerText: string;
+      citations: any[];
+      costUsd: number;
+      tokensIn?: number;
+      tokensOut?: number;
+      modelName?: string;
+      latencyMs?: number;
+    };
     try {
       const adapter = getEngineAdapter(q.engineId);
       response = await adapter.run({
@@ -351,6 +363,10 @@ export async function processChunk(runId: string): Promise<ChunkResult> {
           project_id: run.project_id,
           run_id: runId,
           engine: q.engineId,
+          model_name: response.modelName || q.engineId,
+          tokens_in: response.tokensIn || 0,
+          tokens_out: response.tokensOut || 0,
+          latency_ms: response.latencyMs || 0,
           cost_usd: response.costUsd,
         });
         
