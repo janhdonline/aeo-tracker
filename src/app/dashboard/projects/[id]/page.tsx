@@ -101,18 +101,20 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     .order('created_at', { ascending: false });
 
   // Compute beginner-friendly score metrics
-  const visibilityScore = latestScore ? latestScore.visibility_score : 84;
-  const shareOfVoicePct = latestScore ? latestScore.share_of_voice_pct : 42;
-  const totalMentions = latestScore ? latestScore.total_mentions : 36;
-  const coveredCount = latestScore ? latestScore.keywords_covered : (keywords?.length || 5);
-  const totalKeywords = latestScore ? latestScore.keywords_total : (keywords?.length || 5);
+  const hasEverScanned = Boolean(latestScore || latestRun);
+  const visibilityScore = latestScore ? latestScore.visibility_score : null;
+  const shareOfVoicePct = latestScore ? latestScore.share_of_voice_pct : 0;
+  const totalMentions = latestScore ? latestScore.total_mentions : 0;
+  const coveredCount = latestScore ? latestScore.keywords_covered : 0;
+  const totalKeywords = latestScore ? latestScore.keywords_total : (keywords?.length || 0);
 
-  const scoreBadge =
-    visibilityScore >= 75
-      ? 'Strong AI Visibility'
-      : visibilityScore >= 50
-      ? 'Moderate Visibility'
-      : 'Optimization Needed';
+  const scoreBadge = !hasEverScanned
+    ? 'Ready to Scan'
+    : visibilityScore !== null && visibilityScore >= 75
+    ? 'Strong AI Visibility'
+    : visibilityScore !== null && visibilityScore >= 50
+    ? 'Moderate Visibility'
+    : 'Optimization Needed';
 
   return (
     <AppShell user={{ email: user.email }}>
@@ -184,30 +186,53 @@ export default async function ProjectPage({ params }: { params: { id: string } }
               items={[
                 {
                   label: 'AI Visibility Score',
-                  value: `${visibilityScore}/100`,
+                  value: visibilityScore !== null ? `${visibilityScore}/100` : '—/100',
                   badge: scoreBadge,
-                  subtext: 'How often AI recommends your site',
+                  subtext: hasEverScanned ? 'How often AI recommends your site' : 'Click "Run Scan" to calculate',
                 },
                 {
                   label: 'Share of Voice',
-                  value: `${shareOfVoicePct}%`,
+                  value: hasEverScanned ? `${shareOfVoicePct}%` : '—%',
                   badge: 'Market Share',
                   subtext: 'Your share vs tracked competitors',
                 },
                 {
                   label: 'Direct Mentions',
-                  value: totalMentions,
+                  value: hasEverScanned ? totalMentions : 0,
                   badge: 'Citations',
                   subtext: 'Verified citations in AI answers',
                 },
                 {
                   label: 'Queries Audited',
-                  value: `${coveredCount}/${totalKeywords}`,
+                  value: hasEverScanned ? `${coveredCount}/${totalKeywords}` : `0/${totalKeywords}`,
                   badge: 'Coverage',
                   subtext: 'Commercial buyer prompts tested',
                 },
               ]}
             />
+
+            {!hasEverScanned && (
+              <div className="rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50/70 via-teal-50/40 to-white p-5 sm:p-6 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3.5">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-xs">
+                      <Sparkles className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <h3 className="font-display text-base font-bold text-slate-900">
+                        Launch your first automated AI Visibility Audit
+                      </h3>
+                      <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                        Query ChatGPT, Perplexity, and Gemini in real-time for <strong>{project.domain}</strong>, auto-generate commercial keyword seeds, and establish your brand&apos;s baseline AEO visibility index.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="shrink-0">
+                    <RunScanButton projectId={params.id} />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* AI ANSWER ENGINE STRIP: Clean & Explanatory */}
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -270,7 +295,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                       </p>
                     </div>
                     <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                      Score: {visibilityScore}/100
+                      Score: {visibilityScore !== null ? `${visibilityScore}/100` : 'Pending Initial Scan'}
                     </span>
                   </div>
 
