@@ -37,6 +37,9 @@ import {
   Calendar,
   Layers,
   Zap,
+  Mail,
+  Send,
+  RotateCcw,
 } from 'lucide-react';
 
 export default function AdminPortalPage() {
@@ -187,6 +190,13 @@ export default function AdminPortalPage() {
   const [selectedTemplateKey, setSelectedTemplateKey] = useState('email_template_scan_complete');
   const [templateContentInput, setTemplateContentInput] = useState('');
 
+  // Email DLQ & Sentinel State
+  const [emailLogs, setEmailLogs] = useState<any[]>([]);
+  const [emailStats, setEmailStats] = useState({ total: 0, delivered: 0, failed: 0, successRate: 100 });
+  const [testEmailTo, setTestEmailTo] = useState('');
+  const [testEmailSubject, setTestEmailSubject] = useState('');
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
+
   // DB & Hygiene State
   const [hygieneStats, setHygieneStats] = useState<any | null>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
@@ -229,6 +239,7 @@ export default function AdminPortalPage() {
         webhooksRes,
         templatesRes,
         hygieneRes,
+        emailsRes,
       ] = await Promise.all([
         fetch('/api/admin/config'),
         fetch('/api/admin/users'),
@@ -240,6 +251,7 @@ export default function AdminPortalPage() {
         fetch('/api/admin/webhooks?failedOnly=true'),
         fetch('/api/admin/templates/email'),
         fetch('/api/admin/hygiene'),
+        fetch('/api/admin/emails'),
       ]);
 
       if (configRes.ok) {
@@ -298,10 +310,30 @@ export default function AdminPortalPage() {
         const data = await hygieneRes.json();
         setHygieneStats(data.stats || null);
       }
+
+      if (emailsRes.ok) {
+        const data = await emailsRes.json();
+        setEmailLogs(data.logs || []);
+        setEmailStats(data.stats || { total: 0, delivered: 0, failed: 0, successRate: 100 });
+      }
     } catch (err: any) {
       console.error('Failed to load admin data:', err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Load Outbound Email DLQ
+  async function loadEmailData() {
+    try {
+      const res = await fetch('/api/admin/emails');
+      if (res.ok) {
+        const data = await res.json();
+        setEmailLogs(data.logs || []);
+        setEmailStats(data.stats || { total: 0, delivered: 0, failed: 0, successRate: 100 });
+      }
+    } catch (err: any) {
+      console.error('Failed to refresh email logs:', err);
     }
   }
 
@@ -375,6 +407,10 @@ export default function AdminPortalPage() {
       await fetchRealtimeMetrics();
     } else if (actionType === 'view_webhooks') {
       setActiveTab('security');
+    } else if (actionType === 'view_emails') {
+      setActiveTab('config');
+    } else if (actionType === 'view_keys') {
+      setActiveTab('keys');
     }
   }
 
@@ -691,10 +727,9 @@ export default function AdminPortalPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        action: 'add_key',
         service: newKeyService,
-        keyName: newKeyName,
-        keyValue: newKeyValue,
+        key_name: newKeyName,
+        key_value: newKeyValue,
         purpose: newKeyPurpose,
         priority: Number(newKeyPriority),
       }),
@@ -704,15 +739,16 @@ export default function AdminPortalPage() {
       setAddingKey(false);
       setNewKeyValue('');
       loadAllAdminData();
+    } else {
+      const data = await res.json();
+      setStatusMessage({ type: 'error', text: data.error || 'Failed to add API key' });
     }
   }
 
   // Delete API Key
   async function handleDeleteKey(keyId: string) {
-    const res = await fetch('/api/admin/keys', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete_key', keyId }),
+    const res = await fetch(`/api/admin/keys?id=${keyId}`, {
+      method: 'DELETE',
     });
     if (res.ok) {
       setStatusMessage({ type: 'success', text: 'API key removed' });
@@ -723,16 +759,113 @@ export default function AdminPortalPage() {
   // Toggle API Key Active State
   async function handleToggleKeyActive(keyId: string, currentActive: boolean) {
     const res = await fetch('/api/admin/keys', {
-      method: 'POST',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        action: 'toggle_active',
-        keyId,
-        isActive: !currentActive,
+        id: keyId,
+        is_active: !currentActive,
       }),
     });
     if (res.ok) {
       loadAllAdminData();
+    }
+  }
+
+  // Reset Single Key Errors
+  async function handleResetKeyErrors(keyId: string) {
+    const res = await fetch('/api/admin/keys', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: keyId, reset_errors: true }),
+    });
+    if (res.ok) {
+      setStatusMessage({ type: 'success', text: 'Reset key error counter to 0' });
+      loadAllAdminData();
+    }
+  }
+
+  // Reset Entire Key Rotation Pool
+  async function handleResetAllKeyPool(service?: string) {
+    const res = await fetch('/api/admin/keys', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reset_all_pool', service }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setStatusMessage({ type: 'success', text: `Key pool revived! (${data.resetCount} keys reset)` });
+      loadAllAdminData();
+    }
+  }
+
+  // Email DLQ Retry Single
+  async function handleRetryEmail(id: string) {
+    try {
+      const res = await fetch('/api/admin/emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'retry', id }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: `Email dispatched successfully to ${data.recipient || 'recipient'}` });
+        loadEmailData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to retry email' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Email DLQ Retry All Failed
+  async function handleRetryAllFailedEmails() {
+    try {
+      const res = await fetch('/api/admin/emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'retry_all_failed' }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: `Dispatched retry for ${data.retriedCount || 0} failed notifications` });
+        loadEmailData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to retry emails' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Send Test Verification Email
+  async function handleSendTestEmail(e: React.FormEvent) {
+    e.preventDefault();
+    if (!testEmailTo) return;
+    setSendingTestEmail(true);
+    try {
+      const res = await fetch('/api/admin/emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'test_send',
+          to: testEmailTo,
+          subject: testEmailSubject || 'AEO Tracker Verification Test',
+          templateKey: selectedTemplateKey,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: `Test email dispatched to ${testEmailTo}` });
+        setTestEmailTo('');
+        loadEmailData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to send test email' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    } finally {
+      setSendingTestEmail(false);
     }
   }
 
@@ -2062,20 +2195,29 @@ export default function AdminPortalPage() {
           {/* ============================================================== */}
           {activeTab === 'keys' && (
             <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-black text-slate-950">API Keys & Fallback Rotation Pool</h2>
                   <p className="text-xs text-slate-500">
-                    Priority 1 is utilized first. On 5 consecutive errors, auto-rotates to priority 2.
+                    Priority 1 is utilized first. Auto-rotates round-robin on consecutive provider errors with lowest-error failover.
                   </p>
                 </div>
-                <button
-                  onClick={() => setAddingKey(!addingKey)}
-                  className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add API Key
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleResetAllKeyPool()}
+                    className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-lime-600" />
+                    Revive Pool & Reset Errors
+                  </button>
+                  <button
+                    onClick={() => setAddingKey(!addingKey)}
+                    className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add API Key
+                  </button>
+                </div>
               </div>
 
               {addingKey && (
@@ -2161,6 +2303,18 @@ export default function AdminPortalPage() {
                           <span className="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full">
                             Priority {k.priority}
                           </span>
+                          <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">
+                            {k.purpose || 'scan'}
+                          </span>
+                          {k.error_count > 0 ? (
+                            <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                              {k.error_count} Errors
+                            </span>
+                          ) : (
+                            <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
+                              Active & Healthy
+                            </span>
+                          )}
                         </div>
                         <button
                           onClick={() => handleToggleKeyActive(k.id, k.is_active)}
@@ -2180,8 +2334,16 @@ export default function AdminPortalPage() {
                       </p>
 
                       {k.error_count > 0 && (
-                        <div className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2 mb-2">
-                          Errors: {k.error_count}/5 • Last: {k.last_error || 'Transient failure'}
+                        <div className="flex items-center justify-between text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-2">
+                          <div className="max-w-[70%]">
+                            <span className="font-bold">Errors: {k.error_count}/5</span> • Last: {k.last_error || 'Transient failure'}
+                          </div>
+                          <button
+                            onClick={() => handleResetKeyErrors(k.id)}
+                            className="px-2.5 py-1 bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold rounded-md text-[10px] transition shrink-0"
+                          >
+                            Reset Errors
+                          </button>
                         </div>
                       )}
                     </div>
@@ -2317,10 +2479,184 @@ export default function AdminPortalPage() {
           )}
 
           {/* ============================================================== */}
-          {/* TAB 7: CONFIG & LIVE EMAIL TEMPLATES                           */}
+          {/* TAB 7: CONFIG, EMAIL DLQ & LIVE TEMPLATES                      */}
           {/* ============================================================== */}
           {activeTab === 'config' && (
             <div className="space-y-6">
+              {/* Outbound Email DLQ & Delivery Sentinel */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">Outbound Email DLQ & Delivery Sentinel</h2>
+                      <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Resend Relay
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Monitor outbound transactional emails, dead-letter queue failures, and re-dispatch failed notifications with 1 click.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={loadEmailData}
+                      className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Refresh DLQ
+                    </button>
+                    {emailStats.failed > 0 && (
+                      <button
+                        onClick={handleRetryAllFailedEmails}
+                        className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        Retry All {emailStats.failed} Failed
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Metric Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Dispatches</p>
+                    <p className="text-2xl font-black text-slate-950 mt-1">{emailStats.total}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Recorded outbound logs</p>
+                  </div>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Delivered</p>
+                    <p className="text-2xl font-black text-emerald-600 mt-1">{emailStats.delivered}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Successfully sent</p>
+                  </div>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Failed in DLQ</p>
+                    <p className={`text-2xl font-black mt-1 ${emailStats.failed > 0 ? 'text-rose-600' : 'text-slate-950'}`}>
+                      {emailStats.failed}
+                    </p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Dead-letter failures</p>
+                  </div>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Delivery Rate</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-2xl font-black text-slate-950">{emailStats.successRate}%</p>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${emailStats.successRate >= 90 ? 'bg-[#D4F63C] text-black' : 'bg-rose-100 text-rose-800'}`}>
+                        {emailStats.successRate >= 90 ? 'HEALTHY' : 'ATTENTION'}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Reliability ratio</p>
+                  </div>
+                </div>
+
+                {/* Send Test Email Quick Form */}
+                <form onSubmit={handleSendTestEmail} className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-3 shadow-xs">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-700 whitespace-nowrap">
+                    <Mail className="w-4 h-4 text-slate-500" />
+                    <span>Test Dispatch:</span>
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="recipient@example.com"
+                    value={testEmailTo}
+                    onChange={(e) => setTestEmailTo(e.target.value)}
+                    className="flex-1 px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C] w-full"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Optional custom subject"
+                    value={testEmailSubject}
+                    onChange={(e) => setTestEmailSubject(e.target.value)}
+                    className="flex-1 px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C] w-full"
+                  />
+                  <button
+                    type="submit"
+                    disabled={sendingTestEmail || !testEmailTo}
+                    className="px-5 py-2 bg-slate-950 hover:bg-slate-800 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition whitespace-nowrap shadow-xs flex items-center gap-1.5"
+                  >
+                    <Send className="w-3.5 h-3.5 text-[#D4F63C]" />
+                    {sendingTestEmail ? 'Sending...' : 'Send Test'}
+                  </button>
+                </form>
+
+                {/* DLQ Logs Table */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
+                  <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+                    <h3 className="text-xs font-black text-slate-950 uppercase tracking-wider">Outbound Dispatch Logs</h3>
+                    <span className="text-[11px] text-slate-400 font-mono">Recent records</span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
+                        <tr>
+                          <th className="px-5 py-3">Recipient</th>
+                          <th className="px-5 py-3">Event Type</th>
+                          <th className="px-5 py-3">Subject</th>
+                          <th className="px-5 py-3">Status</th>
+                          <th className="px-5 py-3">Sent At</th>
+                          <th className="px-5 py-3 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {emailLogs.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="px-5 py-8 text-center text-slate-400">
+                              No notification logs recorded yet.
+                            </td>
+                          </tr>
+                        ) : (
+                          emailLogs.map((log) => (
+                            <tr key={log.id} className="hover:bg-slate-50 transition">
+                              <td className="px-5 py-3.5 font-semibold text-slate-900 font-mono">{log.recipient}</td>
+                              <td className="px-5 py-3.5">
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                                  {log.event_type}
+                                </span>
+                              </td>
+                              <td className="px-5 py-3.5 text-slate-600 max-w-[200px] truncate" title={log.subject}>
+                                {log.subject || '—'}
+                              </td>
+                              <td className="px-5 py-3.5">
+                                {log.status === 'sent' || log.status === 'delivered' ? (
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                                    <CheckCircle2 className="w-3.5 h-3.5" /> Delivered
+                                  </span>
+                                ) : (
+                                  <div>
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600">
+                                      <AlertTriangle className="w-3.5 h-3.5" /> Failed
+                                    </span>
+                                    {log.error_message && (
+                                      <p className="text-[10px] text-rose-500 font-mono max-w-[220px] truncate" title={log.error_message}>
+                                        {log.error_message}
+                                      </p>
+                                    )}
+                                  </div>
+                                )}
+                              </td>
+                              <td className="px-5 py-3.5 text-slate-400 font-mono text-[11px]">
+                                {log.sent_at ? new Date(log.sent_at).toLocaleTimeString() : 'Pending'}
+                              </td>
+                              <td className="px-5 py-3.5 text-right">
+                                {log.status === 'failed' ? (
+                                  <button
+                                    onClick={() => handleRetryEmail(log.id)}
+                                    className="px-3 py-1 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-[11px] transition shadow-xs"
+                                  >
+                                    Retry Send
+                                  </button>
+                                ) : (
+                                  <span className="text-[11px] text-slate-400 font-medium">Delivered</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
               {/* Live Email Template Editor */}
               <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
                 <h2 className="text-xl font-black text-slate-950 mb-1">Live Email Template Customizer</h2>

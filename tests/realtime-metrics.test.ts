@@ -60,8 +60,25 @@ vi.mock('@/lib/supabase/admin', () => ({
           eq: vi.fn().mockResolvedValue({ data: [] }),
         };
       }
+      if (table === 'notification_logs') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockResolvedValue({ data: [{ id: 'email-failed-1' }] }),
+        };
+      }
+      if (table === 'api_keys') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          gt: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockResolvedValue({ data: [{ id: 'key-1', error_count: 2 }] }),
+        };
+      }
       return {
         select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gt: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue({ data: [] }),
       };
     }),
   })),

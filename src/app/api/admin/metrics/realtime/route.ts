@@ -12,7 +12,7 @@ export interface RealtimeWarning {
   title: string;
   message: string;
   metricValue?: string;
-  actionType: 'kill_stuck' | 'emergency_stop' | 'update_budget' | 'test_engine' | 'view_webhooks' | 'dismiss';
+  actionType: 'kill_stuck' | 'emergency_stop' | 'update_budget' | 'test_engine' | 'view_webhooks' | 'view_emails' | 'view_keys' | 'dismiss';
   actionLabel: string;
   timestamp: string;
 }
@@ -207,6 +207,22 @@ export async function GET(request: NextRequest) {
 
     const failedWebhooksCount = (failedWebhooks || []).length;
 
+    const { data: failedEmails } = await admin
+      .from('notification_logs')
+      .select('id')
+      .eq('status', 'failed')
+      .limit(10);
+
+    const failedEmailsCount = (failedEmails || []).length;
+
+    const { data: errorKeys } = await admin
+      .from('api_keys')
+      .select('id, service, key_name, error_count')
+      .gt('error_count', 0)
+      .eq('is_active', true);
+
+    const errorKeysCount = (errorKeys || []).length;
+
     // 8. Dynamic Real-time Warning Heuristic Engine
     const warnings: RealtimeWarning[] = [];
 
@@ -289,6 +305,34 @@ export async function GET(request: NextRequest) {
         metricValue: `${failedWebhooksCount} failed`,
         actionType: 'view_webhooks',
         actionLabel: 'View Webhooks',
+        timestamp: now.toISOString(),
+      });
+    }
+
+    // Rule F: Outbound Notification Email DLQ
+    if (failedEmailsCount > 0) {
+      warnings.push({
+        id: 'warn-dlq-emails',
+        severity: 'warning',
+        title: `${failedEmailsCount} Outbound Customer Email${failedEmailsCount > 1 ? 's' : ''} Failed in DLQ`,
+        message: 'Payment confirmation or scan completion email delivery failed. 1-Click replay available.',
+        metricValue: `${failedEmailsCount} failed`,
+        actionType: 'view_emails',
+        actionLabel: 'Replay Emails',
+        timestamp: now.toISOString(),
+      });
+    }
+
+    // Rule G: API Key failovers
+    if (errorKeysCount > 0) {
+      warnings.push({
+        id: 'warn-key-failover',
+        severity: 'info',
+        title: `${errorKeysCount} Provider API Key${errorKeysCount > 1 ? 's' : ''} in Failover Pool`,
+        message: 'Provider error recorded. Automatic round-robin rotation switched to fallback keys.',
+        metricValue: `${errorKeysCount} keys`,
+        actionType: 'view_keys',
+        actionLabel: 'Inspect Keys',
         timestamp: now.toISOString(),
       });
     }

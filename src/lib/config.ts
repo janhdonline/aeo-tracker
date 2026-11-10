@@ -241,37 +241,43 @@ export async function getAllPlanConfigs(): Promise<PlanConfig[]> {
 }
 
 /**
- * Get an active API key using priority rotation.
- * Checks api_keys table in DB first; falls back to environment variable.
+ * Resolve an API key dynamically with Multi-Key Pool Rotation & Failover:
+ * 1. Queries DB key pool using round-robin RPC `get_next_api_key_in_pool`.
+ * 2. Selects lowest error, lowest priority, least recently used active key.
+ * 3. Falls back to standard environment variables if no DB keys configured.
  */
 export async function getApiKey(service: string, purpose = 'scan'): Promise<string> {
   try {
     const admin = createAdminClient();
-    let query: any = admin
-      .from('api_keys')
-      .select('key_value, vault_secret_id')
-      .eq('service', service)
-      .eq('is_active', true);
+    // 1. Try stored procedure for load-balanced key rotation
+    if (typeof admin.rpc === 'function') {
+      const { data: rotatedRows, error: rpcErr } = await admin.rpc('get_next_api_key_in_pool', {
+        p_service: service,
+        p_purpose: purpose,
+      });
 
-    if (typeof query.in === 'function') {
-      query = query.in('purpose', [purpose, 'scan']);
-    } else if (typeof query.eq === 'function') {
-      query = query.eq('purpose', purpose);
+      if (!rpcErr && rotatedRows && rotatedRows.length > 0 && rotatedRows[0].key_value) {
+        return rotatedRows[0].key_value.trim();
+      }
     }
 
-    if (typeof query.order === 'function') {
-      query = query.order('priority', { ascending: true });
-    }
-    if (typeof query.limit === 'function') {
-      query = query.limit(1);
-    }
+    // 2. Direct query fallback if RPC is not present or returned nothing
+    if (typeof admin.from === 'function') {
+      const query = admin
+        .from('api_keys')
+        .select('key_value');
+      
+      if (typeof query.eq === 'function') {
+        const { data: keyRows } = await query
+          .eq('service', service)
+          .eq('is_active', true)
+          .order('error_count', { ascending: true })
+          .order('priority', { ascending: true })
+          .limit(1);
 
-    const { data: keyRows } = await query;
-
-    if (keyRows && keyRows.length > 0) {
-      const row = keyRows[0];
-      if (row.key_value && row.key_value.trim().length > 0) {
-        return row.key_value.trim();
+        if (keyRows && keyRows.length > 0 && keyRows[0].key_value) {
+          return keyRows[0].key_value.trim();
+        }
       }
     }
   } catch (err) {
@@ -282,6 +288,31 @@ export async function getApiKey(service: string, purpose = 'scan'): Promise<stri
   const envKey = `${service.toUpperCase()}_API_KEY`;
   const val = getEnv(envKey) || (typeof process !== 'undefined' ? process.env[envKey] : '');
   return val || '';
+}
+
+/**
+ * 1-Click Reset API Key Errors & Re-enable Pool
+ */
+export async function resetApiKeyPool(service?: string): Promise<number> {
+  try {
+    const admin = createAdminClient();
+    if (typeof admin.rpc === 'function') {
+      const { data } = await admin.rpc('reset_api_key_pool', {
+        p_service: service || null,
+      });
+      return Number(data) || 0;
+    }
+    const query = admin.from('api_keys').update({ error_count: 0, is_active: true, last_error: null });
+    if (service) {
+      await query.eq('service', service);
+    } else {
+      await query.neq('id', '00000000-0000-0000-0000-000000000000');
+    }
+    return 1;
+  } catch (err) {
+    console.warn('Failed to reset API key pool:', err);
+    return 0;
+  }
 }
 
 /**

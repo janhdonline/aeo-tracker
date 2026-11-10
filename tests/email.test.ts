@@ -16,6 +16,7 @@ const insertMock = vi.fn().mockResolvedValue({ error: null });
 
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
     from: (...args: any[]) => {
       fromMock(...args);
       return {

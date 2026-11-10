@@ -30,7 +30,36 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { service, key_name, key_value, priority, purpose, notes } = body;
+
+    // Legacy action-based handlers fallback
+    if (body.action === 'delete_key') {
+      const id = body.keyId || body.id;
+      if (!id) return NextResponse.json({ error: 'keyId is required' }, { status: 400 });
+      const admin = createAdminClient();
+      await admin.from('api_keys').delete().eq('id', id);
+      return NextResponse.json({ success: true, deletedId: id });
+    }
+
+    if (body.action === 'toggle_active') {
+      const id = body.keyId || body.id;
+      if (!id) return NextResponse.json({ error: 'keyId is required' }, { status: 400 });
+      const admin = createAdminClient();
+      const { data: updated, error } = await admin
+        .from('api_keys')
+        .update({ is_active: body.isActive ?? body.is_active })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return NextResponse.json({ success: true, key: updated });
+    }
+
+    const service = body.service;
+    const key_name = body.key_name || body.keyName || 'primary';
+    const key_value = body.key_value || body.keyValue;
+    const priority = body.priority;
+    const purpose = body.purpose || 'scan';
+    const notes = body.notes;
 
     if (!service || !key_value) {
       return NextResponse.json({ error: 'service and key_value are required' }, { status: 400 });
@@ -73,6 +102,13 @@ export async function PATCH(request: NextRequest) {
 
   try {
     const body = await request.json();
+
+    if (body.action === 'reset_all_pool') {
+      const { resetApiKeyPool } = await import('@/lib/config');
+      const count = await resetApiKeyPool(body.service);
+      return NextResponse.json({ success: true, resetCount: count });
+    }
+
     const { id, is_active, priority, purpose, notes, reset_errors } = body;
 
     if (!id) {
