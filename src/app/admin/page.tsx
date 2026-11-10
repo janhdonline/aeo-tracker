@@ -2,36 +2,41 @@
 
 import { useState, useEffect } from 'react';
 import {
-  ShieldAlert,
-  ShieldCheck,
-  Key,
+  Activity,
   Users,
+  Key,
+  Clock,
+  Cpu,
+  ShieldAlert,
   Settings,
-  ToggleLeft,
-  ToggleRight,
-  RefreshCw,
+  Database,
+  Search,
   Plus,
   Trash2,
   Lock,
   LogOut,
   AlertTriangle,
   CheckCircle2,
-  Database,
-  Search,
-  Sparkles,
-  Layers,
-  Activity,
-  CreditCard,
-  Cpu,
-  Terminal,
-  Mail,
-  Zap,
-  Radio,
-  Download,
+  RefreshCw,
   Play,
   StopCircle,
   UserCheck,
-  Clock,
+  CreditCard,
+  Download,
+  ToggleLeft,
+  ToggleRight,
+  Heart,
+  Sparkles,
+  ChevronDown,
+  ArrowUpRight,
+  BarChart3,
+  Flame,
+  Check,
+  Sliders,
+  Bell,
+  Calendar,
+  Layers,
+  Zap,
 } from 'lucide-react';
 
 export default function AdminPortalPage() {
@@ -594,39 +599,43 @@ export default function AdminPortalPage() {
   }
 
   // =========================================================================
-  // VIEW 1: AUTHENTICATION GATE (Password Lock Screen)
+  // VIEW 1: AUTHENTICATION GATE (Matching Design Schema)
   // =========================================================================
   if (isAuthenticated === false) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center px-4 selection:bg-emerald-500 selection:text-slate-950">
-        <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+      <div className="min-h-screen bg-[#edf0f5] flex flex-col justify-center items-center px-4 py-12 selection:bg-[#D4F63C] selection:text-black font-sans text-slate-800">
+        <div className="w-full max-w-md bg-white border border-slate-200/80 rounded-[36px] p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06)] relative overflow-hidden">
+          {/* Top Asterisk Accent */}
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4 text-emerald-400 shadow-inner">
-              <Lock className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-full bg-[#D4F63C] flex items-center justify-center text-slate-950 font-black text-2xl shadow-sm mb-4">
+              ✱
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-white">Ops Control Center</h1>
-            <p className="text-xs text-slate-400 mt-1.5 font-medium">
-              100% Password-Protected Backend Operations System
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">AEO Operations</div>
+            <h1 className="text-3xl font-black text-slate-950 tracking-tight mt-1">Control Portal</h1>
+            <p className="text-xs text-slate-500 mt-2 font-medium">
+              Enter master credentials to unlock administrative system controls
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
                 Master Admin Password
               </label>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Enter password..."
-                autoFocus
-                className="w-full px-4 py-3 bg-slate-950/80 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-mono"
-              />
+              <div className="relative">
+                <input
+                  type="password"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="••••••••••••"
+                  autoFocus
+                  className="w-full px-5 py-3.5 bg-[#f6f7f9] border border-slate-200/90 rounded-2xl text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#D4F63C] transition-all font-mono"
+                />
+              </div>
             </div>
 
             {authError && (
-              <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-2.5 text-xs text-rose-300 font-medium animate-shake">
+              <div className="p-3.5 bg-rose-50 border border-rose-200/80 rounded-2xl flex items-center gap-2.5 text-xs text-rose-600 font-semibold">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>{authError}</span>
               </div>
@@ -635,21 +644,25 @@ export default function AdminPortalPage() {
             <button
               type="submit"
               disabled={submittingAuth || !passwordInput}
-              className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all shadow-md shadow-slate-950/20 disabled:opacity-40 flex items-center justify-center gap-2 mt-2"
             >
               {submittingAuth ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  Verifying Credentials...
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#D4F63C]" />
+                  Verifying...
                 </>
               ) : (
                 <>
-                  <ShieldCheck className="w-4 h-4" />
-                  Access Admin Portal
+                  Unlock Operations Portal →
                 </>
               )}
             </button>
           </form>
+
+          <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Edge Session Protected</span>
+            <span className="font-mono">v2.0 Ops</span>
+          </div>
         </div>
       </div>
     );
@@ -660,9 +673,11 @@ export default function AdminPortalPage() {
   // =========================================================================
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
-        <RefreshCw className="w-6 h-6 animate-spin text-emerald-400 mr-3" />
-        Authenticating Admin Context...
+      <div className="min-h-screen bg-[#edf0f5] flex items-center justify-center text-slate-500 text-xs font-semibold">
+        <div className="w-10 h-10 rounded-full bg-[#D4F63C] flex items-center justify-center mr-3 animate-spin text-black font-black">
+          ✱
+        </div>
+        Connecting to AEO Cloud Edge...
       </div>
     );
   }
@@ -677,550 +692,827 @@ export default function AdminPortalPage() {
     );
   });
 
-  // Calculate budget %
   const spendPct = Math.min(100, Math.round((costData.todaySpendUsd / (costData.dailyCapUsd || 25)) * 100));
 
   // =========================================================================
-  // VIEW 3: FULL ADMIN PORTAL COMMAND CENTER
+  // VIEW 3: FULL ADMIN PORTAL COMMAND CENTER (IMAGE DESIGN SCHEMA)
   // =========================================================================
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950 pb-20">
-      {/* Top Operations Header */}
-      <header className="sticky top-0 z-40 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md px-6 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
-            A
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm font-black tracking-tight text-white uppercase">AEO Operations Portal</h1>
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Phase 2 Super Admin
-              </span>
+    <div className="min-h-screen bg-[#eaedf2] text-slate-800 font-sans selection:bg-[#D4F63C] selection:text-black p-3 sm:p-6 lg:p-8">
+      {/* Outer Floating Dashboard Canvas Container (Matching Image) */}
+      <div className="max-w-[1440px] mx-auto bg-white rounded-[32px] sm:rounded-[40px] shadow-[0_20px_70px_-20px_rgba(0,0,0,0.06)] border border-white/80 p-4 sm:p-6 lg:p-8 flex gap-6 min-h-[92vh]">
+        
+        {/* ================================================================ */}
+        {/* LEFT SLIM ICON DOCK / SIDEBAR (Matching Image Left Rail)        */}
+        {/* ================================================================ */}
+        <aside className="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-between py-2">
+          {/* Brand Logo Asterisk */}
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-11 h-11 rounded-full bg-slate-950 text-white flex items-center justify-center font-black text-xl shadow-sm hover:scale-105 transition cursor-pointer">
+              ✱
             </div>
-            <p className="text-[11px] text-slate-400 font-mono">
-              Live Cloudflare Edge Deployment
-            </p>
+            <span className="text-[9px] font-bold tracking-tighter text-slate-400 uppercase">AI-BL</span>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          {costData.emergencyAiStop && (
-            <span className="flex items-center gap-1.5 bg-rose-500/20 border border-rose-500/40 text-rose-300 px-3 py-1 rounded-lg text-xs font-bold animate-pulse">
-              <AlertTriangle className="w-3.5 h-3.5" /> Emergency AI Stop Active
-            </span>
+          {/* Middle Icon Dock Pill */}
+          <div className="w-full bg-[#f4f5f8] border border-slate-200/60 rounded-[28px] p-1.5 flex flex-col items-center gap-2 shadow-inner my-6">
+            {[
+              { id: 'overview', icon: Activity, label: 'Overview' },
+              { id: 'users', icon: Users, label: 'Users' },
+              { id: 'queue', icon: Clock, label: 'Queue' },
+              { id: 'watchdog', icon: Cpu, label: 'Engine' },
+              { id: 'keys', icon: Key, label: 'Keys' },
+              { id: 'security', icon: ShieldAlert, label: 'Shield' },
+              { id: 'config', icon: Settings, label: 'Config' },
+              { id: 'db', icon: Database, label: 'Database' },
+            ].map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  title={item.label}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                    isActive
+                      ? 'bg-[#D4F63C] text-slate-950 font-black shadow-sm scale-105'
+                      : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200/60'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Bottom Rail Controls */}
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-[10px] font-mono text-slate-400 font-bold">13:34</span>
+            <button
+              onClick={() => loadAllAdminData()}
+              title="Refresh Live Data"
+              className="w-9 h-9 rounded-full bg-slate-950 text-white flex items-center justify-center hover:bg-slate-800 transition shadow-sm"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#D4F63C]' : ''}`} />
+            </button>
+          </div>
+        </aside>
+
+        {/* ================================================================ */}
+        {/* MAIN OPERATIONS CONTENT AREA                                     */}
+        {/* ================================================================ */}
+        <main className="flex-1 min-w-0 flex flex-col">
+          
+          {/* TOP BAR: Profile Pill + Greeting + Time & Logout (Matching Image) */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-100">
+            {/* Left User Profile Badge Pill */}
+            <div className="flex items-center gap-3">
+              <div className="bg-[#f4f5f8] border border-slate-200/80 rounded-full px-3.5 py-1.5 flex items-center gap-3 shadow-xs">
+                <div className="w-7 h-7 rounded-full bg-slate-950 text-white flex items-center justify-center font-black text-xs">
+                  A
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-slate-900 leading-tight">Master Admin</div>
+                  <div className="text-[10px] text-slate-400 font-mono">@janhd · SuperOps</div>
+                </div>
+                <div className="flex items-center gap-1 text-slate-400 pl-1 border-l border-slate-200">
+                  <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                </div>
+              </div>
+            </div>
+
+            {/* Middle Welcome Greeting */}
+            <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-slate-600">
+              <Sparkles className="w-4 h-4 text-emerald-500" />
+              <span>Hi Admin, Welcome to AEO Control Systems</span>
+            </div>
+
+            {/* Right Date & Logout Pill Controls */}
+            <div className="flex items-center gap-2.5">
+              <div className="bg-[#f4f5f8] border border-slate-200/80 rounded-full px-4 py-1.5 flex items-center gap-2 text-xs font-bold text-slate-700 shadow-xs">
+                <Bell className="w-3.5 h-3.5 text-slate-400" />
+                <span>Wed, 11 Nov</span>
+                <span className="w-5 h-5 rounded-full bg-slate-950 text-white text-[10px] flex items-center justify-center font-bold">
+                  {queueStats.stuck + failedWebhooksCount}
+                </span>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-600 flex items-center justify-center transition"
+                title="Lock Portal"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* DASHBOARD HEADER: Title Stack + Circular Asterisk + Date Pickers */}
+          <div className="flex flex-wrap items-end justify-between gap-4 py-6">
+            <div className="flex items-center gap-3.5">
+              <div>
+                <div className="text-2xl sm:text-3xl font-light text-slate-400 tracking-tight leading-none">
+                  Operations Control
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mt-1">
+                  Dashboard
+                </div>
+              </div>
+
+              {/* The Signature Neon-Lime Circular Asterisk Button */}
+              <button
+                onClick={() => setActiveTab('overview')}
+                className="w-11 h-11 rounded-full bg-[#D4F63C] flex items-center justify-center text-slate-950 font-black text-xl shadow-sm hover:scale-105 transition"
+                title="Command Center"
+              >
+                ✱
+              </button>
+            </div>
+
+            {/* Sub-header Filter Controls (Matching Image Right Pills) */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="bg-[#f4f5f8] border border-slate-200/80 rounded-full px-4 py-2 text-xs font-bold text-slate-700 flex items-center gap-2 shadow-xs cursor-pointer hover:bg-slate-100 transition">
+                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <span>Nov 04 – Nov 11</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </div>
+
+              <div className="bg-[#f4f5f8] border border-slate-200/80 rounded-full px-3.5 py-2 text-xs font-bold text-slate-700 flex items-center gap-1.5 shadow-xs">
+                <span>24h</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </div>
+
+              <button
+                onClick={() => setActiveTab(activeTab === 'overview' ? 'queue' : 'overview')}
+                className="bg-slate-950 hover:bg-slate-800 text-white rounded-full px-4 py-2 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              >
+                <span>Live View</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Status Toast Banner if Present */}
+          {statusMessage && (
+            <div
+              className={`mb-6 p-4 rounded-2xl border flex items-center justify-between text-xs font-bold ${
+                statusMessage.type === 'success'
+                  ? 'bg-[#ecfccb]/70 border-[#bef264] text-lime-900'
+                  : 'bg-rose-50 border-rose-200 text-rose-800'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {statusMessage.type === 'success' ? (
+                  <CheckCircle2 className="w-4 h-4 text-lime-600 shrink-0" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                )}
+                <span>{statusMessage.text}</span>
+              </div>
+              <button onClick={() => setStatusMessage(null)} className="font-mono text-slate-400 hover:text-black">
+                ✕
+              </button>
+            </div>
           )}
 
-          <button
-            onClick={() => loadAllAdminData()}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition"
-            title="Refresh Live Telemetry"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-rose-950/60 hover:text-rose-300 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700/80 transition"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            Lock Portal
-          </button>
-        </div>
-      </header>
-
-      {/* Global Status Banner */}
-      {statusMessage && (
-        <div
-          className={`mx-6 mt-4 p-3.5 rounded-xl border flex items-center justify-between text-xs font-semibold transition-all ${
-            statusMessage.type === 'success'
-              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-              : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            {statusMessage.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-            ) : (
-              <AlertTriangle className="w-4 h-4 shrink-0" />
-            )}
-            <span>{statusMessage.text}</span>
-          </div>
-          <button onClick={() => setStatusMessage(null)} className="text-slate-400 hover:text-white font-mono">
-            ×
-          </button>
-        </div>
-      )}
-
-      {/* Main Navigation Tabs */}
-      <div className="max-w-7xl mx-auto px-6 pt-6">
-        <nav className="flex gap-1.5 p-1 bg-slate-900/80 border border-slate-800 rounded-2xl overflow-x-auto">
-          {[
-            { id: 'overview', label: 'Command Center', icon: Activity },
-            { id: 'users', label: 'Users & Subscriptions', icon: Users },
-            { id: 'queue', label: 'Scan Queue', icon: Clock, badge: queueStats.stuck > 0 ? `${queueStats.stuck} stuck` : undefined },
-            { id: 'watchdog', label: 'Engine Latency & Prompts', icon: Cpu },
-            { id: 'keys', label: 'API Keys & Rotation', icon: Key },
-            { id: 'security', label: 'IP Shield & Webhooks', icon: ShieldAlert, badge: failedWebhooksCount > 0 ? `${failedWebhooksCount} failed` : undefined },
-            { id: 'config', label: 'Config & Email Templates', icon: Settings },
-            { id: 'db', label: 'DB Hygiene & Audits', icon: Database },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-                  isActive
-                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-                {tab.badge && (
-                  <span className="text-[10px] bg-rose-500 text-white font-black px-1.5 py-0.2 rounded-full uppercase">
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* ============================================================== */}
-        {/* TAB 1: OVERVIEW & COST GUARD                                   */}
-        {/* ============================================================== */}
-        {activeTab === 'overview' && (
-          <div className="mt-6 space-y-6">
-            {/* Top Stat Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Card 1: Today AI Spend & Cap */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-slate-400 mb-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider">Today AI Cost Guard</span>
-                  <Zap className="w-4 h-4 text-amber-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-white">
-                    ${costData.todaySpendUsd.toFixed(2)}{' '}
-                    <span className="text-xs text-slate-500 font-normal">/ ${costData.dailyCapUsd.toFixed(2)} cap</span>
-                  </div>
-                  <div className="w-full bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
-                    <div
-                      className={`h-full transition-all ${
-                        spendPct > 80 ? 'bg-rose-500' : spendPct > 50 ? 'bg-amber-400' : 'bg-emerald-400'
-                      }`}
-                      style={{ width: `${spendPct}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>{spendPct}% of daily budget used</span>
-                  <button
-                    onClick={() => {
-                      const newCap = prompt('Enter new daily spend cap (USD):', String(costData.dailyCapUsd));
-                      if (newCap && !isNaN(Number(newCap))) handleUpdateBudget(Number(newCap));
-                    }}
-                    className="text-emerald-400 hover:underline font-semibold"
-                  >
-                    Adjust Cap
-                  </button>
-                </div>
-              </div>
-
-              {/* Card 2: Emergency AI Stop Kill-switch */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-slate-400 mb-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider">AI Master Killswitch</span>
-                  <StopCircle className={`w-4 h-4 ${costData.emergencyAiStop ? 'text-rose-400 animate-pulse' : 'text-slate-500'}`} />
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-white">
-                    {costData.emergencyAiStop ? 'Emergency Halted' : 'Engines Active'}
-                  </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {costData.emergencyAiStop
-                      ? 'All outgoing Gemini, OpenAI, & Perplexity scans are blocked.'
-                      : 'All automated background scans operating normally.'}
-                  </p>
-                </div>
-                <div className="mt-4">
-                  <button
-                    onClick={() => handleToggleEmergencyAi(costData.emergencyAiStop)}
-                    className={`w-full py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                      costData.emergencyAiStop
-                        ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'
-                        : 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40'
-                    }`}
-                  >
-                    {costData.emergencyAiStop ? 'Resume AI Scans' : 'Engage Emergency AI Stop'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Card 3: Live Scan Jobs */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-slate-400 mb-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider">Scan Runs (24h)</span>
-                  <Clock className="w-4 h-4 text-emerald-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-white">{queueStats.completedToday}</div>
-                  <div className="flex items-center gap-2 mt-2 text-xs">
-                    <span className="text-emerald-400 font-semibold">{queueStats.running} running</span>
-                    <span className="text-slate-600">•</span>
-                    <span className="text-amber-400 font-semibold">{queueStats.pending} queued</span>
-                    {queueStats.stuck > 0 && (
-                      <>
-                        <span className="text-slate-600">•</span>
-                        <span className="text-rose-400 font-bold">{queueStats.stuck} stuck</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveTab('queue')}
-                  className="mt-3 text-left text-xs text-emerald-400 hover:underline font-semibold"
-                >
-                  View Scan Inspector →
-                </button>
-              </div>
-
-              {/* Card 4: Total Users */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-slate-400 mb-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider">Total Registered</span>
-                  <Users className="w-4 h-4 text-blue-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-white">{users.length}</div>
-                  <p className="text-xs text-slate-400 mt-1">Active accounts across Starter, Growth, & Agency</p>
-                </div>
-                <button
-                  onClick={() => setActiveTab('users')}
-                  className="mt-3 text-left text-xs text-blue-400 hover:underline font-semibold"
-                >
-                  Manage Customers →
-                </button>
-              </div>
-            </div>
-
-            {/* 7-Day Cost Graph & Engine Breakdown */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-                <h3 className="text-sm font-bold text-white mb-4">7-Day AI Spend Trajectory</h3>
-                <div className="h-44 flex items-end gap-3 pt-6">
-                  {costData.dailyHistory.map((d) => {
-                    const heightPct = Math.max(8, Math.min(100, (d.costUsd / (costData.dailyCapUsd || 25)) * 100));
-                    return (
-                      <div key={d.date} className="flex-1 flex flex-col items-center gap-2 group">
-                        <span className="text-[10px] text-slate-500 font-mono opacity-0 group-hover:opacity-100 transition">
-                          ${d.costUsd.toFixed(2)}
-                        </span>
-                        <div className="w-full bg-slate-800/80 rounded-t-lg overflow-hidden flex items-end h-28">
-                          <div
-                            className="w-full bg-gradient-to-t from-emerald-600 to-teal-400 rounded-t-lg transition-all"
-                            style={{ height: `${heightPct}%` }}
-                          />
-                        </div>
-                        <span className="text-[10px] text-slate-400 font-mono">{d.date.slice(5)}</span>
+          {/* ============================================================== */}
+          {/* TAB 1: OVERVIEW (EXACT CARD SCHEMA MATCHING IMAGE)              */}
+          {/* ============================================================== */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              {/* TOP ROW: 3 MAIN CARDS (Matching Image Top 3 Sections) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                {/* -------------------------------------------------------- */}
+                {/* CARD 1: COST GUARD (Wellness / 19,365.29 in Image)       */}
+                {/* -------------------------------------------------------- */}
+                <div className="lg:col-span-3 bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    {/* Top Pill Switchers */}
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="flex items-center gap-1.5 bg-white border border-slate-200/80 rounded-full px-3 py-1 shadow-xs">
+                        <span className="w-2 h-2 rounded-full bg-[#D4F63C]" />
+                        <span className="text-[11px] font-bold text-slate-800">AI Spend</span>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                      <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-medium">
+                        <span className="w-2 h-2 rounded-full bg-slate-900" />
+                        <span>Budget</span>
+                      </div>
+                    </div>
 
-              {/* Engine Breakdown */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-white mb-3">Engine Spend Share (Today)</h3>
-                  <div className="space-y-3">
-                    {costData.engineBreakdown.length === 0 ? (
-                      <p className="text-xs text-slate-500 py-4">No AI calls recorded today.</p>
-                    ) : (
-                      costData.engineBreakdown.map((e) => (
-                        <div key={e.engine} className="flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                            <span className="font-mono capitalize text-slate-300">{e.engine}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="font-bold text-white">${e.costUsd.toFixed(3)}</span>
-                            <span className="text-slate-500 text-[10px] ml-1.5">({e.count} calls)</span>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                    {/* Big Bold Metric */}
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-3xl font-black text-slate-950 tracking-tight">
+                        ${costData.todaySpendUsd.toFixed(2)}
+                      </div>
+                      <span className="text-[10px] font-black bg-[#D4F63C] text-black px-1.5 py-0.5 rounded-full">
+                        ↗ {spendPct}%
+                      </span>
+                    </div>
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">
+                      USD Today (Daily Cap: ${costData.dailyCapUsd.toFixed(2)})
+                    </div>
+
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-6">
+                      AI COST GUARD ENGINE · ACTIVE
+                    </div>
+
+                    {/* Sub Metric Row */}
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-200/60">
+                      <div>
+                        <div className="text-2xl font-black text-slate-950">{queueStats.completedToday}</div>
+                        <div className="text-[10px] text-slate-400 uppercase font-bold">Scans Run</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-black text-slate-950">{queueStats.running}</div>
+                        <div className="text-[10px] text-slate-400 uppercase font-bold">Active Now</div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={() => {
+                            const newCap = prompt('Enter daily USD spend cap:', String(costData.dailyCapUsd));
+                            if (newCap && !isNaN(Number(newCap))) handleUpdateBudget(Number(newCap));
+                          }}
+                          className="w-6 h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs font-bold hover:bg-slate-100 shadow-xs"
+                          title="Increase budget cap"
+                        >
+                          +
+                        </button>
+                        <button
+                          onClick={() => handleUpdateBudget(Math.max(5, costData.dailyCapUsd - 5))}
+                          className="w-6 h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs font-bold hover:bg-slate-100 shadow-xs"
+                          title="Lower budget cap"
+                        >
+                          –
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 pt-3 border-t border-slate-200/60">
+                    <button
+                      onClick={() => handleToggleEmergencyAi(costData.emergencyAiStop)}
+                      className={`w-full py-2.5 rounded-full text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                        costData.emergencyAiStop
+                          ? 'bg-[#D4F63C] text-black shadow-sm'
+                          : 'bg-slate-950 text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      {costData.emergencyAiStop ? 'Resume AI Scans' : 'Emergency AI Stop'}
+                    </button>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800">
-                  <button
-                    onClick={() => setActiveTab('watchdog')}
-                    className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition"
-                  >
-                    Check Engine Latency →
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                {/* -------------------------------------------------------- */}
+                {/* CARD 2: ANALYTICS BAR CHART (Matching Image Center Card) */}
+                {/* -------------------------------------------------------- */}
+                <div className="lg:col-span-6 bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    {/* Top Metric Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#D4F63C]" />
+                        <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Analytics</span>
+                      </div>
 
-        {/* ============================================================== */}
-        {/* TAB 2: USERS & SUBSCRIPTION MANAGEMENT                         */}
-        {/* ============================================================== */}
-        {activeTab === 'users' && (
-          <div className="mt-6 space-y-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-500" />
-                <input
-                  type="text"
-                  placeholder="Search users by email, name, or UUID..."
-                  value={userSearch}
-                  onChange={(e) => setUserSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                />
-              </div>
-              <div className="text-xs text-slate-400 font-mono">Showing {filteredUsers.length} users</div>
-            </div>
-
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold">
-                    <tr>
-                      <th className="px-5 py-3.5">Customer</th>
-                      <th className="px-5 py-3.5">Tier Plan</th>
-                      <th className="px-5 py-3.5">Status</th>
-                      <th className="px-5 py-3.5">Joined</th>
-                      <th className="px-5 py-3.5 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/60">
-                    {filteredUsers.map((u) => (
-                      <tr key={u.id} className="hover:bg-slate-800/30 transition">
-                        <td className="px-5 py-4">
-                          <div className="font-bold text-white">{u.email}</div>
-                          <div className="text-slate-500 font-mono text-[10px]">{u.id}</div>
-                        </td>
-                        <td className="px-5 py-4">
-                          <span
-                            className={`px-2.5 py-1 rounded-full font-bold uppercase text-[10px] tracking-wider ${
-                              u.plan === 'agency'
-                                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                                : u.plan === 'growth'
-                                ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                                : u.plan === 'starter'
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                : 'bg-slate-800 text-slate-400'
-                            }`}
-                          >
-                            {u.plan || 'free'}
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <span className="text-xs text-slate-400 font-semibold mr-1.5">Today</span>
+                          <span className="text-base font-black text-slate-950">${costData.todaySpendUsd.toFixed(2)}</span>
+                          <span className="ml-1 text-[10px] font-black bg-[#D4F63C] text-black px-1.5 py-0.5 rounded-full">
+                            ↗ 30min
                           </span>
-                        </td>
-                        <td className="px-5 py-4">
-                          {u.is_banned ? (
-                            <span className="text-rose-400 font-semibold bg-rose-500/10 px-2 py-0.5 rounded text-[10px]">
-                              Suspended
-                            </span>
-                          ) : (
-                            <span className="text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded text-[10px]">
-                              Active
+                        </div>
+                        <div>
+                          <span className="text-base font-black text-slate-950">99.98%</span>
+                          <span className="ml-1 text-[10px] font-black bg-[#D4F63C] text-black px-1.5 py-0.5 rounded-full">
+                            ↗ 0.7%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Rounded Bar Chart (Replicating Image Aesthetics) */}
+                    <div className="h-36 flex items-end justify-between gap-2.5 px-3 pt-6 pb-2">
+                      {[
+                        { label: 'Jan', val: 25, isPeak: false },
+                        { label: 'Feb', val: 40, isPeak: false },
+                        { label: 'Mar', val: 90, isPeak: true }, // The Peak Neon Green Bar
+                        { label: 'Apr', val: 65, isPeak: false },
+                        { label: 'May', val: 30, isPeak: false },
+                        { label: 'Jun', val: 20, isPeak: false },
+                        { label: 'Jul', val: 22, isPeak: false },
+                        { label: 'Aug', val: 18, isPeak: false },
+                        { label: 'Sep', val: 26, isPeak: false },
+                        { label: 'Oct', val: 32, isPeak: false },
+                        { label: 'Nov', val: 45, isPeak: false },
+                        { label: 'Dec', val: 78, isPeak: false },
+                      ].map((bar, idx) => (
+                        <div key={idx} className="flex-1 flex flex-col items-center gap-1.5">
+                          {bar.isPeak && (
+                            <span className="text-[9px] font-black bg-[#D4F63C] text-black px-1.5 py-0.2 rounded-full border border-black/10">
+                              Peak
                             </span>
                           )}
-                        </td>
-                        <td className="px-5 py-4 text-slate-400">
-                          {u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}
-                        </td>
-                        <td className="px-5 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {/* Impersonate Button */}
-                            <button
-                              onClick={() => handleImpersonateUser(u.id)}
-                              className="px-2.5 py-1.5 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-[11px] font-bold transition flex items-center gap-1"
-                              title="Log in as this user to diagnose issues"
-                            >
-                              <UserCheck className="w-3.5 h-3.5" />
-                              Log In As
-                            </button>
-
-                            {/* Grant Plan Button */}
-                            <button
-                              onClick={() => setGrantModalUser(u)}
-                              className="px-2.5 py-1.5 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/30 rounded-lg text-[11px] font-bold transition flex items-center gap-1"
-                            >
-                              <CreditCard className="w-3.5 h-3.5" />
-                              Grant Plan
-                            </button>
-
-                            {/* Ban / Unban */}
-                            <button
-                              onClick={() => handleToggleBan(u.id, u.is_banned)}
-                              className={`px-2 py-1.5 rounded-lg text-[11px] font-bold transition ${
-                                u.is_banned
-                                  ? 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'
-                                  : 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'
-                              }`}
-                            >
-                              {u.is_banned ? 'Unban' : 'Ban'}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Manual Grant Plan Modal */}
-            {grantModalUser && (
-              <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-                  <h3 className="text-base font-bold text-white mb-1">Manual Plan Grant</h3>
-                  <p className="text-xs text-slate-400 mb-4">
-                    Grant or override subscription for <strong>{grantModalUser.email}</strong>
-                  </p>
-
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Select Tier</label>
-                      <select
-                        value={grantPlan}
-                        onChange={(e) => setGrantPlan(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                      >
-                        <option value="starter">Starter Plan ($49/mo value)</option>
-                        <option value="growth">Growth Plan ($149/mo value)</option>
-                        <option value="agency">Agency Plan ($299/mo value)</option>
-                        <option value="free">Free Tier</option>
-                      </select>
+                          <div
+                            className={`w-3.5 sm:w-4 rounded-full transition-all ${
+                              bar.isPeak ? 'bg-[#D4F63C] shadow-sm' : 'bg-slate-900'
+                            }`}
+                            style={{ height: `${bar.val}%` }}
+                          />
+                        </div>
+                      ))}
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Duration (Days)</label>
-                      <input
-                        type="number"
-                        value={grantDuration}
-                        onChange={(e) => setGrantDuration(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Reason / Notes</label>
-                      <input
-                        type="text"
-                        value={grantReason}
-                        onChange={(e) => setGrantReason(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                      />
+                    <div className="flex justify-between text-[10px] font-bold text-slate-400 px-2 mt-2">
+                      <span>Nov 04</span>
+                      <span>Nov 06</span>
+                      <span>Nov 08</span>
+                      <span>Nov 11</span>
                     </div>
                   </div>
 
-                  <div className="mt-6 flex justify-end gap-2">
+                  {/* Bottom Sub-Pill Chips (Matching Image Sub-Pills) */}
+                  <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-200/60 mt-4">
                     <button
-                      onClick={() => setGrantModalUser(null)}
-                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition"
+                      onClick={() => setActiveTab('overview')}
+                      className="bg-[#D4F63C] text-slate-950 font-bold px-3.5 py-1.5 rounded-full text-xs shadow-xs"
                     >
-                      Cancel
+                      Command Center
                     </button>
                     <button
-                      onClick={handleExecuteGrantPlan}
-                      className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-bold transition"
+                      onClick={() => setActiveTab('users')}
+                      className="bg-white border border-slate-200/80 hover:bg-slate-100 text-slate-700 font-bold px-3.5 py-1.5 rounded-full text-xs transition"
                     >
-                      Confirm Grant
+                      Users & Plans
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('queue')}
+                      className="bg-white border border-slate-200/80 hover:bg-slate-100 text-slate-700 font-bold px-3.5 py-1.5 rounded-full text-xs transition"
+                    >
+                      Scan Queue
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('watchdog')}
+                      className="bg-white border border-slate-200/80 hover:bg-slate-100 text-slate-700 font-bold px-3.5 py-1.5 rounded-full text-xs transition"
+                    >
+                      AI Watchdog
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('security')}
+                      className="bg-white border border-slate-200/80 hover:bg-slate-100 text-slate-700 font-bold px-3.5 py-1.5 rounded-full text-xs transition"
+                    >
+                      IP Shield
+                    </button>
+                  </div>
+                </div>
+
+                {/* -------------------------------------------------------- */}
+                {/* CARD 3: PROGRESS & CHECKLIST (Progress 139 in Image)     */}
+                {/* -------------------------------------------------------- */}
+                <div className="lg:col-span-3 bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#D4F63C]" />
+                        <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Health Audit</span>
+                      </div>
+                      <span className="text-xs text-slate-400">•••</span>
+                    </div>
+
+                    {/* Progress Metric Box */}
+                    <div className="bg-white rounded-2xl p-4 border border-slate-200/60 shadow-xs flex items-center justify-between mb-4">
+                      <div>
+                        <div className="text-[11px] font-bold text-slate-400 uppercase">Operational Score</div>
+                        <div className="text-2xl font-black text-slate-950">98.5%</div>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-[#D4F63C] text-black font-black flex items-center justify-center text-sm shadow-xs">
+                        ✓
+                      </div>
+                    </div>
+
+                    {/* Checkbox List (Matching Image Checkbox Section) */}
+                    <div className="space-y-2">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Core Telemetry</div>
+
+                      <div className="flex items-center justify-between py-1.5 text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-slate-950 text-white flex items-center justify-center text-[10px]">✓</div>
+                          <span className="font-semibold text-slate-800">Gemini 2.5 Flash</span>
+                        </div>
+                        <span className="text-[10px] font-black bg-[#D4F63C] text-black px-1.5 py-0.2 rounded-full">Ready</span>
+                      </div>
+
+                      <div className="flex items-center justify-between py-1.5 text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-slate-950 text-white flex items-center justify-center text-[10px]">✓</div>
+                          <span className="font-semibold text-slate-800">OpenAI GPT-4o-mini</span>
+                        </div>
+                        <span className="text-[10px] font-black bg-[#D4F63C] text-black px-1.5 py-0.2 rounded-full">Ready</span>
+                      </div>
+
+                      <div className="flex items-center justify-between py-1.5 text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-slate-950 text-white flex items-center justify-center text-[10px]">✓</div>
+                          <span className="font-semibold text-slate-800">Daily Spend Cap</span>
+                        </div>
+                        <span className="text-[11px] font-mono text-slate-500">${costData.dailyCapUsd}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between py-1.5 text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded bg-slate-950 text-white flex items-center justify-center text-[10px]">✓</div>
+                          <span className="font-semibold text-slate-800">Cron Worker Triggers</span>
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-mono">2 Active</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200/60 mt-3">
+                    <button
+                      onClick={() => setActiveTab('watchdog')}
+                      className="w-full py-2 bg-white border border-slate-200/80 hover:bg-slate-100 rounded-full text-xs font-bold text-slate-800 transition"
+                    >
+                      Run Synthetic Probes →
                     </button>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
-        )}
 
-        {/* ============================================================== */}
-        {/* TAB 3: SCAN QUEUE & STUCK JOB KILLER                           */}
-        {/* ============================================================== */}
-        {activeTab === 'queue' && (
-          <div className="mt-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-base font-bold text-white">Live Scan Inspector & Queue</h2>
-                <p className="text-xs text-slate-400">
-                  Inspect active worker jobs. Jobs running &gt; 10 minutes are flagged as stuck.
-                </p>
+              {/* BOTTOM ROW: 3 CARDS (Matching Image Bottom 3 Sections) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                {/* -------------------------------------------------------- */}
+                {/* CARD 4: EXPOSURE & PRECISION (Get more exposure in Image) */}
+                {/* -------------------------------------------------------- */}
+                <div className="lg:col-span-5 bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#D4F63C]" />
+                      <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">AEO Search Engine Dominance</span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-6">
+                      <div className="space-y-3">
+                        <h3 className="text-xl font-black text-slate-950 leading-tight">
+                          Manage visibility & crawler precision with zero code
+                        </h3>
+                        <p className="text-xs text-slate-500 leading-relaxed">
+                          Control fallback rotation, inspect stuck scan queues, and protect margins with autonomous budget caps.
+                        </p>
+                        <div className="flex items-center gap-2 pt-1">
+                          <button
+                            onClick={() => setActiveTab('config')}
+                            className="bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full px-5 py-2 text-xs transition shadow-sm"
+                          >
+                            Edit App Config
+                          </button>
+                          <button
+                            onClick={() => setActiveTab('keys')}
+                            className="text-xs font-bold text-slate-700 hover:text-black hover:underline px-3"
+                          >
+                            API Keys Pool →
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Neon Heart Rate Gauge Component (Replicating Image) */}
+                      <div className="shrink-0 w-28 h-28 rounded-full bg-white border border-slate-200/80 p-3 shadow-xs flex flex-col items-center justify-center relative">
+                        <div className="absolute inset-1.5 rounded-full border-4 border-[#D4F63C] border-t-transparent animate-spin-slow" />
+                        <div className="text-xl font-black text-slate-950">99.8%</div>
+                        <div className="text-[9px] font-bold uppercase text-slate-400">Health</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* -------------------------------------------------------- */}
+                {/* CARD 5: TAKE A BREATH / PROBE (Take a breath now in Image)*/}
+                {/* -------------------------------------------------------- */}
+                <div className="lg:col-span-4 bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs font-black text-slate-950 uppercase tracking-wider">
+                        SYNTHETIC ENGINE LATENCY
+                      </div>
+                      <span className="text-[10px] text-slate-400">Probe Latency</span>
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      All models verified under 1500ms average roundtrip latency.
+                    </div>
+
+                    {/* Small vertical pin chart (Matching Image Pin Chart) */}
+                    <div className="h-20 flex items-end justify-between px-4 pt-4 my-2">
+                      {['gemini', 'openai', 'perplexity', 'grok'].map((eng, idx) => (
+                        <div key={eng} className="flex flex-col items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#D4F63C] shadow-xs" />
+                          <div className="w-1 bg-slate-300 rounded-full" style={{ height: `${35 + idx * 12}px` }} />
+                          <span className="text-[10px] font-bold text-slate-500 capitalize">{eng}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-200/60 text-xs">
+                      <div>
+                        <div className="text-[10px] text-slate-400 uppercase font-bold">Gemini 2.5</div>
+                        <div className="text-base font-black text-slate-950">
+                          {watchdogSummary.gemini?.latencyMs ? `${watchdogSummary.gemini.latencyMs}ms` : 'Healthy'}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-slate-400 uppercase font-bold">OpenAI 4o-mini</div>
+                        <div className="text-base font-black text-slate-950">
+                          {watchdogSummary.openai?.latencyMs ? `${watchdogSummary.openai.latencyMs}ms` : 'Healthy'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* -------------------------------------------------------- */}
+                {/* CARD 6: LIVE QUEUE WIDGET (Workout in Image)              */}
+                {/* -------------------------------------------------------- */}
+                <div className="lg:col-span-3 bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#D4F63C]" />
+                        <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Queue Status</span>
+                      </div>
+                      <span className="text-[10px] font-black bg-[#D4F63C] text-black px-1.5 py-0.2 rounded-full">
+                        {queueStats.running} Running
+                      </span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-4 border border-slate-200/60 shadow-xs my-3">
+                      <div className="text-[11px] font-bold text-slate-400 uppercase">Stuck Scans (&gt;10m)</div>
+                      <div className="text-2xl font-black text-slate-950">{queueStats.stuck}</div>
+                    </div>
+
+                    <p className="text-xs text-slate-500">
+                      {queueStats.stuck > 0
+                        ? `${queueStats.stuck} background worker job is stalled. Click below to terminate.`
+                        : 'All scan queues flowing cleanly without stalls.'}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200/60">
+                    <button
+                      onClick={() => setActiveTab('queue')}
+                      className="w-full py-2 bg-slate-950 hover:bg-slate-800 text-white rounded-full text-xs font-bold transition shadow-sm"
+                    >
+                      Open Queue Inspector →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================== */}
+          {/* TAB 2: USERS & SUBSCRIPTIONS (Clean White Cards)                */}
+          {/* ============================================================== */}
+          {activeTab === 'users' && (
+            <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="w-4 h-4 absolute left-4 top-3 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search customers by email, name, or UUID..."
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-full text-xs text-slate-950 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#D4F63C] shadow-xs"
+                  />
+                </div>
+                <div className="text-xs font-bold text-slate-500">{filteredUsers.length} Customers Enrolled</div>
               </div>
 
-              {queueStats.stuck > 0 && (
-                <button
-                  onClick={handleKillAllStuck}
-                  className="px-3.5 py-2 bg-rose-500 hover:bg-rose-400 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
-                >
-                  <StopCircle className="w-4 h-4" />
-                  Kill All {queueStats.stuck} Stuck Jobs
-                </button>
+              <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
+                      <tr>
+                        <th className="px-5 py-3.5">Customer Profile</th>
+                        <th className="px-5 py-3.5">Active Tier</th>
+                        <th className="px-5 py-3.5">Account State</th>
+                        <th className="px-5 py-3.5">Registered</th>
+                        <th className="px-5 py-3.5 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {filteredUsers.map((u) => (
+                        <tr key={u.id} className="hover:bg-slate-50 transition">
+                          <td className="px-5 py-4">
+                            <div className="font-bold text-slate-950">{u.email}</div>
+                            <div className="text-slate-400 font-mono text-[10px]">{u.id}</div>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span
+                              className={`px-3 py-1 rounded-full font-black uppercase text-[10px] tracking-wider ${
+                                u.plan === 'agency'
+                                  ? 'bg-purple-100 text-purple-800'
+                                  : u.plan === 'growth'
+                                  ? 'bg-[#D4F63C] text-black'
+                                  : u.plan === 'starter'
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : 'bg-slate-100 text-slate-600'
+                              }`}
+                            >
+                              {u.plan || 'free'}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4">
+                            {u.is_banned ? (
+                              <span className="text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded text-[10px]">
+                                Suspended
+                              </span>
+                            ) : (
+                              <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded text-[10px]">
+                                Active
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-5 py-4 text-slate-500">
+                            {u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              {/* Log In As User (Impersonate) */}
+                              <button
+                                onClick={() => handleImpersonateUser(u.id)}
+                                className="px-3 py-1.5 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black rounded-full text-xs font-bold transition shadow-xs flex items-center gap-1"
+                                title="Login as user to diagnose support issues"
+                              >
+                                <UserCheck className="w-3.5 h-3.5" />
+                                Log In As
+                              </button>
+
+                              {/* Grant Plan Override */}
+                              <button
+                                onClick={() => setGrantModalUser(u)}
+                                className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-white rounded-full text-xs font-bold transition flex items-center gap-1 shadow-xs"
+                              >
+                                <CreditCard className="w-3.5 h-3.5" />
+                                Grant Plan
+                              </button>
+
+                              {/* Ban / Unban */}
+                              <button
+                                onClick={() => handleToggleBan(u.id, u.is_banned)}
+                                className={`px-2.5 py-1.5 rounded-full text-xs font-bold transition ${
+                                  u.is_banned
+                                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                                    : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
+                                }`}
+                              >
+                                {u.is_banned ? 'Unban' : 'Ban'}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Grant Plan Modal */}
+              {grantModalUser && (
+                <div className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4">
+                  <div className="bg-white border border-slate-200 rounded-[32px] max-w-md w-full p-8 shadow-2xl">
+                    <h3 className="text-xl font-black text-slate-950 mb-1">Manual Plan Grant</h3>
+                    <p className="text-xs text-slate-500 mb-5">
+                      Grant subscription tier override to <strong>{grantModalUser.email}</strong>
+                    </p>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">Select Tier</label>
+                        <select
+                          value={grantPlan}
+                          onChange={(e) => setGrantPlan(e.target.value)}
+                          className="w-full px-4 py-2.5 bg-[#f4f5f8] border border-slate-200 rounded-2xl text-xs text-slate-950 font-semibold"
+                        >
+                          <option value="starter">Starter Plan ($49/mo)</option>
+                          <option value="growth">Growth Plan ($149/mo)</option>
+                          <option value="agency">Agency Plan ($299/mo)</option>
+                          <option value="free">Free Tier</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">Duration (Days)</label>
+                        <input
+                          type="number"
+                          value={grantDuration}
+                          onChange={(e) => setGrantDuration(e.target.value)}
+                          className="w-full px-4 py-2.5 bg-[#f4f5f8] border border-slate-200 rounded-2xl text-xs text-slate-950 font-semibold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">Reason / Support Notes</label>
+                        <input
+                          type="text"
+                          value={grantReason}
+                          onChange={(e) => setGrantReason(e.target.value)}
+                          className="w-full px-4 py-2.5 bg-[#f4f5f8] border border-slate-200 rounded-2xl text-xs text-slate-950"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-8 flex justify-end gap-2.5">
+                      <button
+                        onClick={() => setGrantModalUser(null)}
+                        className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-xs font-bold transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleExecuteGrantPlan}
+                        className="px-5 py-2.5 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black rounded-full text-xs font-black transition shadow-xs"
+                      >
+                        Confirm Grant
+                      </button>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
+          )}
 
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold">
-                    <tr>
-                      <th className="px-5 py-3.5">Scan ID</th>
-                      <th className="px-5 py-3.5">Project / Brand</th>
-                      <th className="px-5 py-3.5">Status</th>
-                      <th className="px-5 py-3.5">Started At</th>
-                      <th className="px-5 py-3.5">Queries / Cost</th>
-                      <th className="px-5 py-3.5 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/60">
-                    {queueRuns.length === 0 ? (
+          {/* ============================================================== */}
+          {/* TAB 3: SCAN QUEUE (Inspector & Stuck Killer)                   */}
+          {/* ============================================================== */}
+          {activeTab === 'queue' && (
+            <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-black text-slate-950">Live Scan Inspector & Queue</h2>
+                  <p className="text-xs text-slate-500">
+                    Active background worker jobs. Runs exceeding 10 minutes are flagged as stuck.
+                  </p>
+                </div>
+
+                {queueStats.stuck > 0 && (
+                  <button
+                    onClick={handleKillAllStuck}
+                    className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                  >
+                    <StopCircle className="w-4 h-4" />
+                    Kill All {queueStats.stuck} Stuck Scans
+                  </button>
+                )}
+              </div>
+
+              <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
                       <tr>
-                        <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
-                          No scan runs recorded.
-                        </td>
+                        <th className="px-5 py-3.5">Scan Run ID</th>
+                        <th className="px-5 py-3.5">Brand / Target Domain</th>
+                        <th className="px-5 py-3.5">Worker State</th>
+                        <th className="px-5 py-3.5">Started At</th>
+                        <th className="px-5 py-3.5">Queries / Cost</th>
+                        <th className="px-5 py-3.5 text-right">Actions</th>
                       </tr>
-                    ) : (
-                      queueRuns.map((r) => (
-                        <tr key={r.id} className="hover:bg-slate-800/30 transition">
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {queueRuns.map((r) => (
+                        <tr key={r.id} className="hover:bg-slate-50 transition">
                           <td className="px-5 py-4 font-mono text-slate-400 text-[11px]">{r.id.slice(0, 8)}...</td>
                           <td className="px-5 py-4">
-                            <div className="font-bold text-white">{r.brandName}</div>
-                            <div className="text-slate-500 text-[10px]">{r.domain}</div>
+                            <div className="font-bold text-slate-950">{r.brandName}</div>
+                            <div className="text-slate-400 text-[10px]">{r.domain}</div>
                           </td>
                           <td className="px-5 py-4">
                             {r.isStuck ? (
-                              <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 border border-rose-500/40 rounded font-black text-[10px] animate-pulse">
+                              <span className="px-2.5 py-0.5 bg-rose-100 text-rose-800 rounded-full font-black text-[10px] animate-pulse">
                                 STUCK (&gt;10m)
                               </span>
                             ) : r.status === 'running' ? (
-                              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded font-bold text-[10px]">
+                              <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black rounded-full font-bold text-[10px]">
                                 RUNNING
                               </span>
-                            ) : r.status === 'pending' ? (
-                              <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded font-bold text-[10px]">
-                                QUEUED
-                              </span>
                             ) : r.status === 'done' ? (
-                              <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">
+                              <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]">
                                 DONE
                               </span>
                             ) : (
-                              <span className="px-2 py-0.5 bg-slate-800 text-slate-400 rounded font-bold text-[10px]">
+                              <span className="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-full font-bold text-[10px]">
                                 FAILED
                               </span>
                             )}
                           </td>
-                          <td className="px-5 py-4 text-slate-400">
+                          <td className="px-5 py-4 text-slate-500">
                             {r.startedAt ? new Date(r.startedAt).toLocaleTimeString() : '-'}
                           </td>
-                          <td className="px-5 py-4 text-slate-300 font-mono">
+                          <td className="px-5 py-4 text-slate-700 font-mono">
                             {r.totalQueries} q / ${(r.apiCostUsd || 0).toFixed(3)}
                           </td>
                           <td className="px-5 py-4 text-right">
@@ -1228,7 +1520,7 @@ export default function AdminPortalPage() {
                               {r.status === 'running' || r.isStuck ? (
                                 <button
                                   onClick={() => handleKillScan(r.id)}
-                                  className="px-2.5 py-1.5 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/30 rounded-lg text-[11px] font-bold transition"
+                                  className="px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-full text-[11px] font-bold transition"
                                 >
                                   Force Kill
                                 </button>
@@ -1237,671 +1529,659 @@ export default function AdminPortalPage() {
                               {r.status === 'failed' || r.isStuck ? (
                                 <button
                                   onClick={() => handleRetryScan(r.id)}
-                                  className="px-2.5 py-1.5 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 rounded-lg text-[11px] font-bold transition flex items-center gap-1"
+                                  className="px-3 py-1.5 bg-[#D4F63C] text-black hover:bg-[#c6ea2f] rounded-full text-[11px] font-black transition flex items-center gap-1 shadow-xs"
                                 >
                                   <RefreshCw className="w-3 h-3" />
-                                  Retry
+                                  Retry Scan
                                 </button>
                               ) : null}
                             </div>
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================== */}
-        {/* TAB 4: ENGINE WATCHDOG & PROMPT PLAYGROUND                     */}
-        {/* ============================================================== */}
-        {activeTab === 'watchdog' && (
-          <div className="mt-6 space-y-6">
-            {/* Top Watchdog Latency Bar */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-base font-bold text-white">AI Engine Health & Latency Watchdog</h2>
-                  <p className="text-xs text-slate-400">
-                    Live synthetic uptime probes against Gemini, OpenAI, Perplexity, and Grok.
-                  </p>
-                </div>
-                <button
-                  onClick={handlePingEngines}
-                  disabled={testingEngines}
-                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-2 disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${testingEngines ? 'animate-spin' : ''}`} />
-                  {testingEngines ? 'Probing All Engines...' : 'Probe Engines Now'}
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {['gemini', 'openai', 'perplexity', 'grok'].map((eng) => {
-                  const data = watchdogSummary[eng] || {};
-                  const isHealthy = data.status === 'healthy';
-                  const isDegraded = data.status === 'degraded';
-                  const isDown = data.status === 'down';
-                  return (
-                    <div key={eng} className="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-sm text-white capitalize">{eng}</span>
-                        <span
-                          className={`w-2.5 h-2.5 rounded-full ${
-                            isHealthy
-                              ? 'bg-emerald-400 shadow-lg shadow-emerald-400/50'
-                              : isDegraded
-                              ? 'bg-amber-400 animate-pulse'
-                              : isDown
-                              ? 'bg-rose-500 animate-ping'
-                              : 'bg-slate-600'
-                          }`}
-                        />
-                      </div>
-                      <div className="text-xl font-mono font-black text-white">
-                        {data.latencyMs ? `${data.latencyMs}ms` : '-'}
-                      </div>
-                      <div className="text-[11px] text-slate-400 mt-1 capitalize">
-                        {data.status || 'Not checked'}
-                      </div>
-                      {data.errorMessage && (
-                        <div className="text-[10px] text-rose-400 mt-1 truncate" title={data.errorMessage}>
-                          {data.errorMessage}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Prompt A/B Evaluation Playground */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-              <h2 className="text-base font-bold text-white mb-1">Prompt A/B Testing Playground</h2>
-              <p className="text-xs text-slate-400 mb-4">
-                Execute test prompts against live AI models without touching customer scan records.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Target Engine</label>
-                  <select
-                    value={playgroundEngine}
-                    onChange={(e) => setPlaygroundEngine(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                  >
-                    <option value="gemini">Google Gemini 2.5 Flash</option>
-                    <option value="openai">OpenAI GPT-4o-mini</option>
-                    <option value="perplexity">Perplexity Sonar</option>
-                    <option value="grok">Grok Beta</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Sample Brand & Domain</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={playgroundBrand}
-                      onChange={(e) => setPlaygroundBrand(e.target.value)}
-                      placeholder="Brand Name"
-                      className="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                    />
-                    <input
-                      type="text"
-                      value={playgroundDomain}
-                      onChange={(e) => setPlaygroundDomain(e.target.value)}
-                      placeholder="domain.com"
-                      className="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Target Search Keyword</label>
-                  <input
-                    type="text"
-                    value={playgroundKeyword}
-                    onChange={(e) => setPlaygroundKeyword(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Prompt Template (Supports <code className="text-emerald-400 font-mono">{"{{brand}}"}</code>,{' '}
-                  <code className="text-emerald-400 font-mono">{"{{domain}}"}</code>,{' '}
-                  <code className="text-emerald-400 font-mono">{"{{keyword}}"}</code>)
-                </label>
-                <textarea
-                  rows={3}
-                  value={promptInput}
-                  onChange={(e) => setPromptInput(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-mono"
-                />
-              </div>
-
-              <div className="mt-3 flex justify-end">
-                <button
-                  onClick={handleRunPlayground}
-                  disabled={runningPlayground || !promptInput}
-                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-2 disabled:opacity-50"
-                >
-                  <Play className={`w-3.5 h-3.5 ${runningPlayground ? 'animate-spin' : ''}`} />
-                  {runningPlayground ? 'Simulating Query...' : 'Run Simulation'}
-                </button>
-              </div>
-
-              {playgroundResult && (
-                <div className="mt-6 p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
-                  <div className="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
-                    <span className="font-bold text-white capitalize">
-                      Response from {playgroundResult.engine} ({playgroundResult.latencyMs}ms)
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-emerald-400 font-semibold">
-                        Mentions: {playgroundResult.mentionsCount}
-                      </span>
-                      <span className="text-blue-400 font-semibold">
-                        Sentiment: {playgroundResult.sentiment?.label} ({playgroundResult.sentiment?.score})
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap">
-                    {playgroundResult.rawAnswer}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================== */}
-        {/* TAB 5: API KEYS & ROTATION                                     */}
-        {/* ============================================================== */}
-        {activeTab === 'keys' && (
-          <div className="mt-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-base font-bold text-white">API Keys & Fallback Rotation Pool</h2>
-                <p className="text-xs text-slate-400">
-                  Manage multiple engine keys. Priority 1 is used first; on 5 errors, auto-rotates to priority 2.
-                </p>
-              </div>
-              <button
-                onClick={() => setAddingKey(!addingKey)}
-                className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-1.5"
-              >
-                <Plus className="w-4 h-4" />
-                Add API Key
-              </button>
-            </div>
-
-            {addingKey && (
-              <form onSubmit={handleAddKey} className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4">
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">New API Key Entry</h3>
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                  <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">Service</label>
-                    <select
-                      value={newKeyService}
-                      onChange={(e) => setNewKeyService(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                    >
-                      <option value="gemini">Google Gemini</option>
-                      <option value="openai">OpenAI</option>
-                      <option value="perplexity">Perplexity</option>
-                      <option value="grok">xAI Grok</option>
-                      <option value="openrouter">OpenRouter</option>
-                      <option value="resend">Resend (Email)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">Key Label</label>
-                    <input
-                      type="text"
-                      value={newKeyName}
-                      onChange={(e) => setNewKeyName(e.target.value)}
-                      placeholder="e.g. primary-tier-1"
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block text-[11px] text-slate-400 mb-1">Secret Key Value</label>
-                    <input
-                      type="password"
-                      value={newKeyValue}
-                      onChange={(e) => setNewKeyValue(e.target.value)}
-                      placeholder="sk-proj-..."
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-mono"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">Priority</label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={newKeyPriority}
-                      onChange={(e) => setNewKeyPriority(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setAddingKey(false)}
-                    className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs"
-                  >
-                    Save Key
-                  </button>
-                </div>
-              </form>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {apiKeys.map((k) => (
-                <div key={k.id} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-white capitalize">{k.service}</span>
-                        <span className="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
-                          Priority {k.priority}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleToggleKeyActive(k.id, k.is_active)}
-                        className="p-1 text-slate-400 hover:text-white"
-                      >
-                        {k.is_active ? (
-                          <ToggleRight className="w-7 h-7 text-emerald-400" />
-                        ) : (
-                          <ToggleLeft className="w-7 h-7 text-slate-600" />
-                        )}
-                      </button>
-                    </div>
-
-                    <p className="font-mono text-xs text-slate-400 mb-2">
-                      Label: <span className="text-white">{k.key_name}</span> • Purpose:{' '}
-                      <span className="text-slate-300">{k.purpose}</span>
-                    </p>
-
-                    {k.error_count > 0 && (
-                      <div className="text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded p-2 mb-2">
-                        Errors: {k.error_count}/5 • Last: {k.last_error || 'Transient error'}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-[11px] text-slate-500">
-                    <span>Used: {k.last_used_at ? new Date(k.last_used_at).toLocaleTimeString() : 'Never'}</span>
-                    <button
-                      onClick={() => handleDeleteKey(k.id)}
-                      className="text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" /> Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================== */}
-        {/* TAB 6: IP SHIELD & WEBHOOK DLQ                                 */}
-        {/* ============================================================== */}
-        {activeTab === 'security' && (
-          <div className="mt-6 space-y-6">
-            {/* IP Blacklist Shield */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-              <h2 className="text-base font-bold text-white mb-1">Anti-Scraping IP Blacklist Shield</h2>
-              <p className="text-xs text-slate-400 mb-4">
-                Blocked IPs receive immediate 403 Forbidden across public search check endpoints.
-              </p>
-
-              <form onSubmit={handleAddBlacklist} className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="IP Address (e.g. 192.168.1.1)"
-                    value={newIpAddress}
-                    onChange={(e) => setNewIpAddress(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-mono"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Reason (e.g. automated scraper)"
-                    value={newIpReason}
-                    onChange={(e) => setNewIpReason(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="number"
-                    placeholder="Expires in hours (e.g. 24)"
-                    value={newIpHours}
-                    onChange={(e) => setNewIpHours(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={!newIpAddress || !newIpReason}
-                  className="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 disabled:opacity-50"
-                >
-                  <ShieldAlert className="w-4 h-4" /> Block IP
-                </button>
-              </form>
-
-              <div className="divide-y divide-slate-800">
-                {blacklistedIps.length === 0 ? (
-                  <p className="text-xs text-slate-500 py-3">No active IP blocks.</p>
-                ) : (
-                  blacklistedIps.map((ip) => (
-                    <div key={ip.id} className="py-3 flex items-center justify-between text-xs">
-                      <div>
-                        <div className="font-mono font-bold text-white">{ip.ip_address}</div>
-                        <div className="text-slate-400 text-[11px]">{ip.reason}</div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-slate-500 text-[10px]">
-                          {ip.expires_at ? `Expires: ${new Date(ip.expires_at).toLocaleTimeString()}` : 'Permanent'}
-                        </span>
-                        <button
-                          onClick={() => handleRemoveBlacklist(ip.ip_address)}
-                          className="text-emerald-400 hover:underline font-semibold"
-                        >
-                          Unblock
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Webhook Dead-Letter Queue */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-              <h2 className="text-base font-bold text-white mb-1">Webhook Dead-Letter Queue (LemonSqueezy)</h2>
-              <p className="text-xs text-slate-400 mb-4">
-                Failed billing webhook events. Retry to reconcile customer plan updates safely.
-              </p>
-
-              <div className="divide-y divide-slate-800">
-                {webhookEvents.length === 0 ? (
-                  <p className="text-xs text-emerald-400/80 py-4 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4" /> Dead-letter queue is clear. No failed webhooks detected.
-                  </p>
-                ) : (
-                  webhookEvents.map((w) => (
-                    <div key={w.id} className="py-3.5 flex items-center justify-between text-xs">
-                      <div>
-                        <div className="font-bold text-white flex items-center gap-2">
-                          <span className="font-mono text-emerald-400">#{w.id}</span>
-                          <span>{w.event_name}</span>
-                          <span className="text-[10px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded font-mono">
-                            Attempts: {w.attempt_count}
-                          </span>
-                        </div>
-                        <p className="text-rose-400 text-[11px] mt-1">{w.error || w.last_error}</p>
-                      </div>
-                      <button
-                        onClick={() => handleRetryWebhook(w.id)}
-                        className="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 rounded-lg text-xs font-bold transition"
-                      >
-                        Retry & Resolve
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================== */}
-        {/* TAB 7: CONFIG & LIVE EMAIL TEMPLATES                           */}
-        {/* ============================================================== */}
-        {activeTab === 'config' && (
-          <div className="mt-6 space-y-6">
-            {/* Live Email Template Editor */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-              <h2 className="text-base font-bold text-white mb-1">Live Email Template Customizer</h2>
-              <p className="text-xs text-slate-400 mb-4">
-                Modify Markdown templates sent by AEO Tracker with dynamic variable interpolation.
-              </p>
-
-              <div className="flex gap-2 mb-4">
-                {Object.keys(emailTemplates).map((key) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setSelectedTemplateKey(key);
-                      setTemplateContentInput(emailTemplates[key].currentValue);
-                    }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                      selectedTemplateKey === key
-                        ? 'bg-emerald-500 text-slate-950'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {emailTemplates[key].name}
-                  </button>
-                ))}
-              </div>
-
-              {emailTemplates[selectedTemplateKey] && (
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-1.5 text-[11px] text-slate-400">
-                    <span className="font-semibold text-slate-300">Supported Variables:</span>
-                    {emailTemplates[selectedTemplateKey].variables.map((v: string) => (
-                      <code key={v} className="bg-slate-950 text-emerald-400 px-1.5 py-0.5 rounded border border-slate-800">
-                        {v}
-                      </code>
-                    ))}
-                  </div>
-
-                  <textarea
-                    rows={6}
-                    value={templateContentInput}
-                    onChange={(e) => setTemplateContentInput(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-mono"
-                  />
-
-                  <div className="flex justify-end">
-                    <button
-                      onClick={handleSaveTemplate}
-                      className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition"
-                    >
-                      Save Email Template
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Global System Settings */}
-            <div>
-              <h2 className="text-base font-bold text-white mb-1">Global System Settings</h2>
-              <p className="text-xs text-slate-400 mb-4">
-                Parameters stored in <code className="text-emerald-400 font-mono">public.app_config</code>.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {appConfigs.map((cfg) => (
-                  <div key={cfg.key} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-mono text-xs font-bold text-emerald-400">{cfg.key}</span>
-                        <span className="text-[10px] uppercase font-bold text-slate-500 bg-slate-950 px-2 py-0.5 rounded">
-                          {cfg.value_type}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-400 mb-3">{cfg.description || 'System parameter'}</p>
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-2">
-                      <input
-                        type={cfg.is_secret ? 'password' : 'text'}
-                        defaultValue={cfg.value}
-                        id={`cfg-${cfg.key}`}
-                        className="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                      />
-                      <button
-                        onClick={() => {
-                          const el = document.getElementById(`cfg-${cfg.key}`) as HTMLInputElement;
-                          if (el) handleUpdateConfig(cfg.key, el.value);
-                        }}
-                        className="px-3.5 py-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold hover:bg-emerald-500/30 transition-colors"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Runtime Feature Flags */}
-            <div>
-              <h2 className="text-base font-bold text-white mb-1">Runtime Feature Flags</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                {featureFlags.map((flag) => (
-                  <div key={flag.flag_key} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-white">{flag.flag_key}</span>
-                        <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">
-                          {flag.applies_to}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1">{flag.description || 'Feature toggle'}</p>
-                    </div>
-
-                    <button
-                      onClick={() => handleToggleFlag(flag.flag_key, flag.is_enabled)}
-                      className="p-1 text-slate-400 hover:text-white"
-                    >
-                      {flag.is_enabled ? (
-                        <ToggleRight className="w-8 h-8 text-emerald-400" />
-                      ) : (
-                        <ToggleLeft className="w-8 h-8 text-slate-600" />
-                      )}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================== */}
-        {/* TAB 8: DB HYGIENE, BACKUPS & AUDITS                           */}
-        {/* ============================================================== */}
-        {activeTab === 'db' && (
-          <div className="mt-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* 1-Click JSON Backup */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-white mb-1">1-Click Database JSON Backup</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Instantly stream a full JSON snapshot of all customer profiles, projects, keywords, app configs, and active API keys.
-                  </p>
-                </div>
-                <div className="mt-6">
-                  <a
-                    href="/api/admin/backup"
-                    download
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-emerald-500/20"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download Full JSON Snapshot
-                  </a>
-                </div>
-              </div>
-
-              {/* Database Hygiene Pruner */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-white mb-1">Storage & Database Hygiene</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Safely purge transient AI scan output responses older than 90 days and old error logs to reclaim table storage.
-                  </p>
-                  {hygieneStats && (
-                    <div className="mt-3 text-xs text-slate-300 font-mono">
-                      Reclaimable records: <span className="text-emerald-400 font-bold">{hygieneStats.totalReclaimableRows}</span> rows
-                    </div>
-                  )}
-                </div>
-                <div className="mt-6">
-                  <button
-                    onClick={handleExecuteHygienePrune}
-                    className="px-4 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold rounded-xl text-xs transition"
-                  >
-                    Execute Hygiene Prune (Delete &gt;90d)
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Audit Logs Table */}
-            <div>
-              <h2 className="text-base font-bold text-white mb-1">Security & Action Audit Logs</h2>
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl mt-3">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold">
-                      <tr>
-                        <th className="px-5 py-3.5">Action</th>
-                        <th className="px-5 py-3.5">Target Type</th>
-                        <th className="px-5 py-3.5">Target ID</th>
-                        <th className="px-5 py-3.5">Timestamp</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800/60">
-                      {auditLogs.length === 0 ? (
-                        <tr>
-                          <td colSpan={4} className="px-6 py-8 text-center text-slate-500">
-                            No audit records logged yet.
-                          </td>
-                        </tr>
-                      ) : (
-                        auditLogs.map((log) => (
-                          <tr key={log.id} className="hover:bg-slate-800/30 transition">
-                            <td className="px-5 py-4 font-mono font-bold text-emerald-400">{log.action}</td>
-                            <td className="px-5 py-4 text-slate-300">{log.target_type}</td>
-                            <td className="px-5 py-4 font-mono text-[11px] text-slate-400">{log.target_id || '-'}</td>
-                            <td className="px-5 py-4 text-slate-500">{new Date(log.created_at).toLocaleString()}</td>
-                          </tr>
-                        ))
-                      )}
+                      ))}
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {/* ============================================================== */}
+          {/* TAB 4: ENGINE WATCHDOG & PROMPT PLAYGROUND                     */}
+          {/* ============================================================== */}
+          {activeTab === 'watchdog' && (
+            <div className="space-y-6">
+              {/* Top Engine Latency Cards */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-950">AI Engine Latency Watchdog</h2>
+                    <p className="text-xs text-slate-500">
+                      Live synthetic probes testing Gemini, OpenAI, Perplexity, and Grok roundtrip speeds.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handlePingEngines}
+                    disabled={testingEngines}
+                    className="px-5 py-2.5 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-2 shadow-sm disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${testingEngines ? 'animate-spin text-[#D4F63C]' : ''}`} />
+                    {testingEngines ? 'Probing All Engines...' : 'Probe All Engines Now'}
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {['gemini', 'openai', 'perplexity', 'grok'].map((eng) => {
+                    const data = watchdogSummary[eng] || {};
+                    const isHealthy = data.status === 'healthy';
+                    const isDegraded = data.status === 'degraded';
+                    const isDown = data.status === 'down';
+                    return (
+                      <div key={eng} className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-black text-sm text-slate-950 capitalize">{eng}</span>
+                          <span
+                            className={`w-3 h-3 rounded-full ${
+                              isHealthy
+                                ? 'bg-[#D4F63C] ring-4 ring-lime-200/50'
+                                : isDegraded
+                                ? 'bg-amber-400 ring-4 ring-amber-100'
+                                : isDown
+                                ? 'bg-rose-500 ring-4 ring-rose-100'
+                                : 'bg-slate-300'
+                            }`}
+                          />
+                        </div>
+                        <div className="text-2xl font-black text-slate-950 font-mono">
+                          {data.latencyMs ? `${data.latencyMs}ms` : '–'}
+                        </div>
+                        <div className="text-[11px] font-bold text-slate-400 mt-1 capitalize">
+                          {data.status || 'Ready for test'}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Prompt A/B Testing Playground */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
+                <h2 className="text-xl font-black text-slate-950 mb-1">Prompt A/B Testing Playground</h2>
+                <p className="text-xs text-slate-500 mb-5">
+                  Evaluate experimental prompts against live AI engines without writing to customer project history.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Target Engine</label>
+                    <select
+                      value={playgroundEngine}
+                      onChange={(e) => setPlaygroundEngine(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 font-semibold"
+                    >
+                      <option value="gemini">Google Gemini 2.5 Flash</option>
+                      <option value="openai">OpenAI GPT-4o-mini</option>
+                      <option value="perplexity">Perplexity Sonar</option>
+                      <option value="grok">Grok Beta</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Sample Brand & Domain</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={playgroundBrand}
+                        onChange={(e) => setPlaygroundBrand(e.target.value)}
+                        placeholder="Brand Name"
+                        className="px-3.5 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950"
+                      />
+                      <input
+                        type="text"
+                        value={playgroundDomain}
+                        onChange={(e) => setPlaygroundDomain(e.target.value)}
+                        placeholder="domain.com"
+                        className="px-3.5 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Target Search Query</label>
+                    <input
+                      type="text"
+                      value={playgroundKeyword}
+                      onChange={(e) => setPlaygroundKeyword(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Prompt Template (Interpolates: <code className="text-black bg-lime-100 px-1 py-0.5 rounded font-mono">{"{{brand}}"}</code>,{' '}
+                    <code className="text-black bg-lime-100 px-1 py-0.5 rounded font-mono">{"{{domain}}"}</code>,{' '}
+                    <code className="text-black bg-lime-100 px-1 py-0.5 rounded font-mono">{"{{keyword}}"}</code>)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={promptInput}
+                    onChange={(e) => setPromptInput(e.target.value)}
+                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 font-mono"
+                  />
+                </div>
+
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={handleRunPlayground}
+                    disabled={runningPlayground || !promptInput}
+                    className="px-6 py-2.5 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-xs transition flex items-center gap-2 shadow-xs disabled:opacity-50"
+                  >
+                    <Play className={`w-3.5 h-3.5 ${runningPlayground ? 'animate-spin' : ''}`} />
+                    {runningPlayground ? 'Simulating Query...' : 'Run Simulation'}
+                  </button>
+                </div>
+
+                {playgroundResult && (
+                  <div className="mt-5 p-5 bg-white border border-slate-200/80 rounded-2xl shadow-xs space-y-3">
+                    <div className="flex items-center justify-between text-xs border-b border-slate-100 pb-2">
+                      <span className="font-black text-slate-950 capitalize">
+                        Response from {playgroundResult.engine} ({playgroundResult.latencyMs}ms)
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-black font-bold bg-lime-100 px-2 py-0.5 rounded-full">
+                          Mentions: {playgroundResult.mentionsCount}
+                        </span>
+                        <span className="text-blue-800 font-bold bg-blue-100 px-2 py-0.5 rounded-full">
+                          Sentiment: {playgroundResult.sentiment?.label} ({playgroundResult.sentiment?.score})
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-700 leading-relaxed font-mono whitespace-pre-wrap">
+                      {playgroundResult.rawAnswer}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================== */}
+          {/* TAB 5: API KEYS & ROTATION                                     */}
+          {/* ============================================================== */}
+          {activeTab === 'keys' && (
+            <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-black text-slate-950">API Keys & Fallback Rotation Pool</h2>
+                  <p className="text-xs text-slate-500">
+                    Priority 1 is utilized first. On 5 consecutive errors, auto-rotates to priority 2.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setAddingKey(!addingKey)}
+                  className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add API Key
+                </button>
+              </div>
+
+              {addingKey && (
+                <form onSubmit={handleAddKey} className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs">
+                  <h3 className="text-xs font-black text-slate-950 uppercase tracking-wider">New API Key Entry</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Service</label>
+                      <select
+                        value={newKeyService}
+                        onChange={(e) => setNewKeyService(e.target.value)}
+                        className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-semibold"
+                      >
+                        <option value="gemini">Google Gemini</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="perplexity">Perplexity</option>
+                        <option value="grok">xAI Grok</option>
+                        <option value="openrouter">OpenRouter</option>
+                        <option value="resend">Resend (Email)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Key Label</label>
+                      <input
+                        type="text"
+                        value={newKeyName}
+                        onChange={(e) => setNewKeyName(e.target.value)}
+                        placeholder="e.g. primary-tier-1"
+                        className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Secret Key</label>
+                      <input
+                        type="password"
+                        value={newKeyValue}
+                        onChange={(e) => setNewKeyValue(e.target.value)}
+                        placeholder="sk-..."
+                        className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Priority</label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={10}
+                        value={newKeyPriority}
+                        onChange={(e) => setNewKeyPriority(e.target.value)}
+                        className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-semibold"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setAddingKey(false)}
+                      className="px-4 py-2 bg-slate-100 text-slate-700 rounded-full text-xs font-bold"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-5 py-2 bg-[#D4F63C] text-black font-black rounded-full text-xs shadow-xs"
+                    >
+                      Save Key
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {apiKeys.map((k) => (
+                  <div key={k.id} className="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-black text-sm text-slate-950 capitalize">{k.service}</span>
+                          <span className="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full">
+                            Priority {k.priority}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleToggleKeyActive(k.id, k.is_active)}
+                          className="p-1 text-slate-400 hover:text-black"
+                        >
+                          {k.is_active ? (
+                            <ToggleRight className="w-8 h-8 text-lime-500" />
+                          ) : (
+                            <ToggleLeft className="w-8 h-8 text-slate-400" />
+                          )}
+                        </button>
+                      </div>
+
+                      <p className="font-mono text-xs text-slate-500 mb-2">
+                        Label: <span className="text-slate-900 font-bold">{k.key_name}</span> • Purpose:{' '}
+                        <span className="text-slate-700">{k.purpose}</span>
+                      </p>
+
+                      {k.error_count > 0 && (
+                        <div className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2 mb-2">
+                          Errors: {k.error_count}/5 • Last: {k.last_error || 'Transient failure'}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[11px] text-slate-400">
+                      <span>Used: {k.last_used_at ? new Date(k.last_used_at).toLocaleTimeString() : 'Never'}</span>
+                      <button
+                        onClick={() => handleDeleteKey(k.id)}
+                        className="text-rose-600 hover:text-rose-700 flex items-center gap-1 font-bold"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================== */}
+          {/* TAB 6: IP SHIELD & WEBHOOK DLQ                                 */}
+          {/* ============================================================== */}
+          {activeTab === 'security' && (
+            <div className="space-y-6">
+              {/* Anti Scraping IP Blacklist */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
+                <h2 className="text-xl font-black text-slate-950 mb-1">Anti-Scraping IP Blacklist Shield</h2>
+                <p className="text-xs text-slate-500 mb-5">
+                  Blocked IPs immediately receive 403 Forbidden across public search check endpoints.
+                </p>
+
+                <form onSubmit={handleAddBlacklist} className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="IP Address (e.g. 192.168.1.1)"
+                      value={newIpAddress}
+                      onChange={(e) => setNewIpAddress(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 font-mono shadow-xs"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Reason (e.g. scraper abuse)"
+                      value={newIpReason}
+                      onChange={(e) => setNewIpReason(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 shadow-xs"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      placeholder="Expires in hours (e.g. 24)"
+                      value={newIpHours}
+                      onChange={(e) => setNewIpHours(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 shadow-xs"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={!newIpAddress || !newIpReason}
+                    className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-full text-xs transition flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50"
+                  >
+                    <ShieldAlert className="w-4 h-4" /> Block IP
+                  </button>
+                </form>
+
+                <div className="divide-y divide-slate-100 bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs">
+                  {blacklistedIps.length === 0 ? (
+                    <p className="text-xs text-slate-400 py-3 text-center">No active IP blocks in place.</p>
+                  ) : (
+                    blacklistedIps.map((ip) => (
+                      <div key={ip.id} className="py-3 px-3 flex items-center justify-between text-xs">
+                        <div>
+                          <div className="font-mono font-bold text-slate-950">{ip.ip_address}</div>
+                          <div className="text-slate-500 text-[11px]">{ip.reason}</div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="text-slate-400 text-[10px]">
+                            {ip.expires_at ? `Expires: ${new Date(ip.expires_at).toLocaleTimeString()}` : 'Permanent'}
+                          </span>
+                          <button
+                            onClick={() => handleRemoveBlacklist(ip.ip_address)}
+                            className="text-emerald-700 hover:underline font-bold"
+                          >
+                            Unblock
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Webhook Dead-Letter Queue */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
+                <h2 className="text-xl font-black text-slate-950 mb-1">Webhook Dead-Letter Queue (LemonSqueezy)</h2>
+                <p className="text-xs text-slate-500 mb-5">
+                  Failed billing events. Retry to reconcile customer plan updates safely.
+                </p>
+
+                <div className="bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs divide-y divide-slate-100">
+                  {webhookEvents.length === 0 ? (
+                    <p className="text-xs text-emerald-700 py-4 px-3 flex items-center gap-2 font-bold">
+                      <CheckCircle2 className="w-4 h-4" /> Dead-letter queue is clear. No failed webhooks detected.
+                    </p>
+                  ) : (
+                    webhookEvents.map((w) => (
+                      <div key={w.id} className="py-3.5 px-3 flex items-center justify-between text-xs">
+                        <div>
+                          <div className="font-bold text-slate-950 flex items-center gap-2">
+                            <span className="font-mono text-emerald-600">#{w.id}</span>
+                            <span>{w.event_name}</span>
+                            <span className="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-mono font-bold">
+                              Attempts: {w.attempt_count}
+                            </span>
+                          </div>
+                          <p className="text-rose-600 text-[11px] mt-1">{w.error || w.last_error}</p>
+                        </div>
+                        <button
+                          onClick={() => handleRetryWebhook(w.id)}
+                          className="px-3.5 py-1.5 bg-[#D4F63C] text-black hover:bg-[#c6ea2f] rounded-full text-xs font-black transition shadow-xs"
+                        >
+                          Retry & Resolve
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================== */}
+          {/* TAB 7: CONFIG & LIVE EMAIL TEMPLATES                           */}
+          {/* ============================================================== */}
+          {activeTab === 'config' && (
+            <div className="space-y-6">
+              {/* Live Email Template Editor */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
+                <h2 className="text-xl font-black text-slate-950 mb-1">Live Email Template Customizer</h2>
+                <p className="text-xs text-slate-500 mb-4">
+                  Modify Markdown templates sent by AEO Tracker with dynamic variable tags.
+                </p>
+
+                <div className="flex gap-2 mb-4">
+                  {Object.keys(emailTemplates).map((key) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setSelectedTemplateKey(key);
+                        setTemplateContentInput(emailTemplates[key].currentValue);
+                      }}
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                        selectedTemplateKey === key
+                          ? 'bg-slate-950 text-white shadow-xs'
+                          : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      {emailTemplates[key].name}
+                    </button>
+                  ))}
+                </div>
+
+                {emailTemplates[selectedTemplateKey] && (
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-1.5 text-[11px] text-slate-500">
+                      <span className="font-bold text-slate-800">Supported Variables:</span>
+                      {emailTemplates[selectedTemplateKey].variables.map((v: string) => (
+                        <code key={v} className="bg-white text-slate-950 px-2 py-0.5 rounded-full border border-slate-200 font-mono font-bold">
+                          {v}
+                        </code>
+                      ))}
+                    </div>
+
+                    <textarea
+                      rows={6}
+                      value={templateContentInput}
+                      onChange={(e) => setTemplateContentInput(e.target.value)}
+                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 font-mono shadow-xs"
+                    />
+
+                    <div className="flex justify-end">
+                      <button
+                        onClick={handleSaveTemplate}
+                        className="px-5 py-2.5 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-xs transition shadow-xs"
+                      >
+                        Save Email Template
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Global System Settings */}
+              <div>
+                <h2 className="text-xl font-black text-slate-950 mb-1">Global System Settings</h2>
+                <p className="text-xs text-slate-500 mb-4">
+                  Dynamic variables stored in <code className="font-mono text-slate-900 font-bold">public.app_config</code>.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {appConfigs.map((cfg) => (
+                    <div key={cfg.key} className="bg-[#f8f9fb] border border-slate-200/70 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-mono text-xs font-black text-slate-950">{cfg.key}</span>
+                          <span className="text-[10px] uppercase font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
+                            {cfg.value_type}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 mb-3">{cfg.description || 'System setting'}</p>
+                      </div>
+
+                      <div className="flex items-center gap-2 mt-2">
+                        <input
+                          type={cfg.is_secret ? 'password' : 'text'}
+                          defaultValue={cfg.value}
+                          id={`cfg-${cfg.key}`}
+                          className="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-950 font-mono shadow-xs focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                        />
+                        <button
+                          onClick={() => {
+                            const el = document.getElementById(`cfg-${cfg.key}`) as HTMLInputElement;
+                            if (el) handleUpdateConfig(cfg.key, el.value);
+                          }}
+                          className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Runtime Feature Flags */}
+              <div>
+                <h2 className="text-xl font-black text-slate-950 mb-1">Runtime Feature Flags</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                  {featureFlags.map((flag) => (
+                    <div key={flag.flag_key} className="bg-[#f8f9fb] border border-slate-200/70 rounded-2xl p-5 flex items-center justify-between shadow-xs">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-black text-slate-950">{flag.flag_key}</span>
+                          <span className="text-[10px] bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-mono font-bold">
+                            {flag.applies_to}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">{flag.description || 'Feature switch'}</p>
+                      </div>
+
+                      <button
+                        onClick={() => handleToggleFlag(flag.flag_key, flag.is_enabled)}
+                        className="p-1 text-slate-400 hover:text-black"
+                      >
+                        {flag.is_enabled ? (
+                          <ToggleRight className="w-8 h-8 text-lime-500" />
+                        ) : (
+                          <ToggleLeft className="w-8 h-8 text-slate-400" />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================== */}
+          {/* TAB 8: DB HYGIENE, BACKUPS & AUDITS                           */}
+          {/* ============================================================== */}
+          {activeTab === 'db' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 1-Click JSON Snapshot Backup */}
+                <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    <h3 className="text-xl font-black text-slate-950 mb-1">1-Click Database JSON Backup</h3>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                      Stream a full JSON snapshot of all customer profiles, projects, keywords, app configs, and active API keys.
+                    </p>
+                  </div>
+                  <div className="mt-6">
+                    <a
+                      href="/api/admin/backup"
+                      download
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition shadow-sm"
+                    >
+                      <Download className="w-4 h-4 text-[#D4F63C]" />
+                      Download Full JSON Snapshot
+                    </a>
+                  </div>
+                </div>
+
+                {/* Database Storage Hygiene */}
+                <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+                  <div>
+                    <h3 className="text-xl font-black text-slate-950 mb-1">Storage & Database Hygiene</h3>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                      Safely purge transient AI scan output responses older than 90 days and error logs to reclaim table storage.
+                    </p>
+                    {hygieneStats && (
+                      <div className="mt-3 text-xs text-slate-600 font-mono">
+                        Reclaimable rows: <span className="text-slate-950 font-black">{hygieneStats.totalReclaimableRows}</span> records
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-6">
+                    <button
+                      onClick={handleExecuteHygienePrune}
+                      className="px-5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-full text-xs transition shadow-xs"
+                    >
+                      Execute Hygiene Prune (Delete &gt;90d)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Audit Logs */}
+              <div>
+                <h2 className="text-xl font-black text-slate-950 mb-1">Security & Action Audit Logs</h2>
+                <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs mt-3">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
+                        <tr>
+                          <th className="px-5 py-3.5">Action</th>
+                          <th className="px-5 py-3.5">Target Type</th>
+                          <th className="px-5 py-3.5">Target ID</th>
+                          <th className="px-5 py-3.5">Timestamp</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {auditLogs.map((log) => (
+                          <tr key={log.id} className="hover:bg-slate-50 transition">
+                            <td className="px-5 py-4 font-mono font-bold text-slate-900">{log.action}</td>
+                            <td className="px-5 py-4 text-slate-600">{log.target_type}</td>
+                            <td className="px-5 py-4 font-mono text-[11px] text-slate-400">{log.target_id || '-'}</td>
+                            <td className="px-5 py-4 text-slate-500">{new Date(log.created_at).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </main>
       </div>
     </div>
   );

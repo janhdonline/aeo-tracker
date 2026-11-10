@@ -7,6 +7,10 @@ import { createClient } from '@/lib/supabase/client';
 import { AppShell } from '@/components/AppShell';
 import { LogoLoader } from '@/components/LogoLoader';
 import { AnimatedDashboardStats } from './AnimatedDashboardStats';
+import { DailyAnalyticsChart } from './components/DailyAnalyticsChart';
+import { PrioritizedTasksWidget } from './components/PrioritizedTasksWidget';
+import { CompetitorLeaderboardWidget } from './components/CompetitorLeaderboardWidget';
+import { ExecutiveExportDigestModal } from './components/ExecutiveExportDigestModal';
 import {
   Plus,
   ArrowRight,
@@ -339,8 +343,17 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Quick Track Input Box */}
-            <div className="w-full lg:max-w-sm shrink-0">
+            {/* Quick Track Input Box & Executive Controls */}
+            <div className="w-full lg:max-w-md shrink-0 space-y-3">
+              <div className="flex items-center justify-start lg:justify-end">
+                <ExecutiveExportDigestModal
+                  userEmail={user?.email || 'janhdonline@gmail.com'}
+                  userPlan={plan}
+                  projectCount={projects.length}
+                  avgScore={avgScore > 0 ? avgScore : 84}
+                />
+              </div>
+
               <form onSubmit={handleQuickAdd} className="space-y-1.5">
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
@@ -437,6 +450,12 @@ export default function DashboardPage() {
               subtext: 'Real-time telemetry & latency sync',
             },
           ]}
+        />
+
+        {/* DAILY ANALYTICS & HISTORICAL TRENDS (Matches aeochecker Daily Analytics) */}
+        <DailyAnalyticsChart
+          domain={projects[0]?.domain || 'notion.so'}
+          currentScore={avgScore > 0 ? avgScore : 84}
         />
 
         {/* PRIMARY SECTION: Tracked Web Properties (Front & Center!) */}
@@ -638,6 +657,15 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
+
+        {/* PRIORITIZED ACTIONABLE TASKS & QUICK WINS (Matches aeochecker Tasks) */}
+        <PrioritizedTasksWidget />
+
+        {/* COMPETITOR INTELLIGENCE & SHARE OF VOICE LEADERBOARD */}
+        <CompetitorLeaderboardWidget
+          currentDomain={projects[0]?.domain || 'notion.so'}
+          userScore={avgScore > 0 ? avgScore : 84}
+        />
 
         {/* ANSWER ENGINE RADAR STATUS STRIP (With Model Latency Telemetry) */}
         <section className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs space-y-3">
