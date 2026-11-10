@@ -1,4 +1,5 @@
 import { EngineAdapter, EngineQuery, EngineResponse } from './types';
+import { getApiKey, getConfigBoolean, markApiKeyError } from '@/lib/config';
 
 /**
  * OpenRouter Adapter - Free Tier Compatible
@@ -9,13 +10,13 @@ import { EngineAdapter, EngineQuery, EngineResponse } from './types';
 
 // Free model mappings (cost = $0)
 const FREE_MODEL_MAP: Record<string, string> = {
-  'perplexity': 'meta-llama/llama-3.1-8b-instruct:free',  // Free alternative
-  'openai': 'meta-llama/llama-3.1-8b-instruct:free',      // Free alternative  
-  'gemini': 'google/gemini-flash-1.5',                     // Use Gemini directly (has free tier)
-  'grok': 'meta-llama/llama-3.1-8b-instruct:free',        // Free alternative
+  'perplexity': 'meta-llama/llama-3.1-8b-instruct:free',
+  'openai': 'meta-llama/llama-3.1-8b-instruct:free',
+  'gemini': 'google/gemini-flash-1.5',
+  'grok': 'meta-llama/llama-3.1-8b-instruct:free',
 };
 
-// Paid model mappings (when you upgrade)
+// Paid model mappings (when upgraded)
 const PAID_MODEL_MAP: Record<string, string> = {
   'perplexity': 'perplexity/sonar',
   'openai': 'openai/gpt-4o-mini',
@@ -31,46 +32,47 @@ const MODEL_COSTS: Record<string, { input: number; output: number }> = {
 
 export class OpenRouterAdapter implements EngineAdapter {
   id: string;
-  private modelId: string;
-  private apiKey: string;
-  private baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
-  private useFreeModels: boolean;
+  private modelId?: string;
+  private apiKey?: string;
 
   constructor(engineId: string) {
     this.id = engineId;
-    this.apiKey = process.env.OPENROUTER_API_KEY || '';
-    this.useFreeModels = !this.apiKey || process.env.USE_FREE_MODELS === 'true';
-    
-    if (this.useFreeModels) {
-      this.modelId = FREE_MODEL_MAP[engineId] || 'meta-llama/llama-3.1-8b-instruct:free';
-    } else {
-      this.modelId = PAID_MODEL_MAP[engineId] || 'openai/gpt-4o-mini';
-    }
+  }
+
+  private async resolveKey(): Promise<string> {
+    if (this.apiKey) return this.apiKey;
+    return await getApiKey('openrouter', 'scan');
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
-    // If using Gemini directly (has free tier), use GeminiAdapter instead
-    if (this.id === 'gemini' && process.env.GEMINI_API_KEY) {
+    // If using Gemini directly, use GeminiAdapter
+    const geminiKey = await getApiKey('gemini', 'scan');
+    if (this.id === 'gemini' && geminiKey) {
       const { GeminiAdapter } = await import('./gemini');
-      const geminiAdapter = new GeminiAdapter();
+      const geminiAdapter = new GeminiAdapter(geminiKey);
       return geminiAdapter.run(query);
     }
 
-    // Use OpenRouter for other engines
-    if (!this.apiKey) {
+    const key = await this.resolveKey();
+    if (!key) {
       throw new Error(`No API key for ${this.id}. Set OPENROUTER_API_KEY or GEMINI_API_KEY.`);
     }
+
+    const forceFree = await getConfigBoolean('use_free_models', false);
+    const modelToUse = forceFree
+      ? (FREE_MODEL_MAP[this.id] || 'meta-llama/llama-3.1-8b-instruct:free')
+      : (PAID_MODEL_MAP[this.id] || 'openai/gpt-4o-mini');
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        'Authorization': `Bearer ${key}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://aeo-tracker.vercel.app',
         'X-Title': 'AEO Visibility Tracker',
       },
       body: JSON.stringify({
-        model: this.modelId,
+        model: modelToUse,
         messages: [
           {
             role: 'system',
@@ -88,7 +90,8 @@ export class OpenRouterAdapter implements EngineAdapter {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`OpenRouter API error (${this.modelId}): ${response.status} - ${error}`);
+      await markApiKeyError('openrouter', 'scan', error);
+      throw new Error(`OpenRouter API error (${modelToUse}): ${response.status} - ${error}`);
     }
 
     const data = await response.json();
@@ -98,7 +101,7 @@ export class OpenRouterAdapter implements EngineAdapter {
     
     const inputTokens = data.usage?.prompt_tokens || 0;
     const outputTokens = data.usage?.completion_tokens || 0;
-    const costs = MODEL_COSTS[this.modelId] || { input: 0, output: 0 };
+    const costs = MODEL_COSTS[modelToUse] || { input: 0, output: 0 };
     const costUsd = (inputTokens * costs.input / 1_000_000) + (outputTokens * costs.output / 1_000_000);
 
     return {

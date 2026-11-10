@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { runScan, processChunk } from '@/lib/scan';
-import { checkScanFrequency, checkKeywordLimit, checkEngineAccess } from '@/lib/plan';
+import { checkScanFrequency, checkKeywordLimit, getEffectivePlan } from '@/lib/plan';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,41 +26,55 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
     }
     
-    const { data: project, error: projectError } = await supabase
+    const admin = createAdminClient();
+
+    // Check project ownership OR team editor/owner membership
+    const { data: project, error: projectError } = await admin
       .from('projects')
-      .select('id, user_id')
+      .select('id, user_id, team_id')
       .eq('id', projectId)
-      .eq('user_id', user.id)
       .single();
       
     if (projectError || !project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
+
+    let hasAccess = project.user_id === user.id;
+    if (!hasAccess && project.team_id) {
+      const { data: member } = await admin
+        .from('team_members')
+        .select('role')
+        .eq('team_id', project.team_id)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (member && (member.role === 'owner' || member.role === 'editor')) {
+        hasAccess = true;
+      }
+    }
+
+    if (!hasAccess) {
+      return NextResponse.json({ error: 'Unauthorized to run scan on this project' }, { status: 403 });
+    }
     
-    // Get user profile for plan
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('plan, plan_keywords_limit, plan_engines')
-      .eq('id', user.id)
-      .single();
-    
-    const plan = profile?.plan || 'free';
+    // Get effective plan taking into account team and grace periods
+    const plan = await getEffectivePlan(user.id, projectId);
     
     // Get keyword count
-    const { count: keywordCount } = await supabase
+    const { count: keywordCount } = await admin
       .from('keywords')
       .select('id', { count: 'exact', head: true })
       .eq('project_id', projectId)
       .eq('active', true);
     
     // Check keyword limit
-    const keywordCheck = checkKeywordLimit(plan as 'free' | 'starter' | 'pro', keywordCount || 0);
+    const keywordCheck = checkKeywordLimit(plan, keywordCount || 0);
     if (!keywordCheck.allowed) {
       return NextResponse.json({ error: keywordCheck.reason }, { status: 403 });
     }
     
     // Check scan frequency (only against successfully completed runs)
-    const { data: lastRun } = await supabase
+    const { data: lastRun } = await admin
       .from('scan_runs')
       .select('started_at')
       .eq('project_id', projectId)
@@ -67,21 +82,9 @@ export async function POST(request: NextRequest) {
       .order('started_at', { ascending: false })
       .limit(1);
     
-    const frequencyCheck = checkScanFrequency(plan as 'free' | 'starter' | 'pro', lastRun?.[0]?.started_at || null);
+    const frequencyCheck = checkScanFrequency(plan, lastRun?.[0]?.started_at || null);
     if (!frequencyCheck.allowed) {
       return NextResponse.json({ error: frequencyCheck.reason }, { status: 403 });
-    }
-    
-    // Check engine access (will be enforced in scan.ts too, but check early)
-    const { data: keywords } = await supabase
-      .from('keywords')
-      .select('id')
-      .eq('project_id', projectId)
-      .eq('active', true);
-    
-    const planEngines = profile?.plan_engines || ['gemini'];
-    if (planEngines.length === 0) {
-      return NextResponse.json({ error: 'No engines available for your plan' }, { status: 403 });
     }
     
     const result = await runScan(projectId);

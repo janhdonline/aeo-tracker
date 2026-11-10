@@ -1,27 +1,36 @@
 import { EngineAdapter, EngineQuery, EngineResponse } from './types';
+import { getApiKey, getDefaultModel, markApiKeyError } from '@/lib/config';
 
 export class OpenAIAdapter implements EngineAdapter {
   id = 'openai';
-  private apiKey: string;
+  private apiKey?: string;
   private baseUrl = 'https://api.openai.com/v1/chat/completions';
 
-  constructor() {
-    this.apiKey = process.env.OPENAI_API_KEY!;
-    // API key validated at runtime
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey;
+  }
+
+  private async resolveKey(): Promise<string> {
+    if (this.apiKey) return this.apiKey;
+    return await getApiKey('openai', 'scan');
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
-    if (!this.apiKey) {
-      throw new Error("API key not set");
+    const key = await this.resolveKey();
+    if (!key) {
+      throw new Error("OpenAI API key not set");
     }
+
+    const modelName = await getDefaultModel('openai', 'scan');
+
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        'Authorization': `Bearer ${key}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: modelName || 'gpt-4o',
         messages: [
           {
             role: 'system',
@@ -40,6 +49,7 @@ export class OpenAIAdapter implements EngineAdapter {
 
     if (!response.ok) {
       const error = await response.text();
+      await markApiKeyError('openai', 'scan', error);
       throw new Error(`OpenAI API error: ${response.status} - ${error}`);
     }
 

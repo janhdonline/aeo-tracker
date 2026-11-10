@@ -38,6 +38,7 @@ export interface AppShellProject {
 
 export interface AppShellProps {
   user?: { email?: string; id?: string };
+  userPlan?: string;
   projectId?: string;
   domain?: string;
   activeSection?:
@@ -60,6 +61,7 @@ export interface AppShellProps {
 
 export function AppShell({
   user,
+  userPlan,
   projectId,
   domain,
   activeSection = 'dashboard',
@@ -77,7 +79,13 @@ export function AppShell({
   const [projectsList, setProjectsList] = useState<AppShellProject[]>(initialProjects || []);
   const [userProfile, setUserProfile] = useState<{ email?: string; plan?: string }>({
     email: user?.email,
-    plan: 'Free Tier',
+    plan: userPlan
+      ? userPlan === 'pro'
+        ? 'Pro Plan'
+        : userPlan === 'starter'
+        ? 'Starter Plan'
+        : userPlan
+      : undefined,
   });
 
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -97,7 +105,22 @@ export function AppShell({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch projects and profile if not supplied
+  // Sync userPlan prop
+  useEffect(() => {
+    if (userPlan) {
+      setUserProfile((prev) => ({
+        ...prev,
+        plan:
+          userPlan === 'pro'
+            ? 'Pro Plan'
+            : userPlan === 'starter'
+            ? 'Starter Plan'
+            : userPlan,
+      }));
+    }
+  }, [userPlan]);
+
+  // Fetch projects and profile if not supplied or to ensure fresh data
   useEffect(() => {
     async function fetchSessionAndData() {
       try {
@@ -106,21 +129,35 @@ export function AppShell({
           data: { session },
         } = await supabase.auth.getSession();
 
-        if (session?.user) {
-          const email = session.user.email || user?.email || '';
-          setUserProfile((prev) => ({ ...prev, email }));
+        const currentUserId = user?.id || session?.user?.id;
+        const currentEmail = user?.email || session?.user?.email;
 
+        if (currentEmail) {
+          setUserProfile((prev) => ({ ...prev, email: currentEmail }));
+        }
+
+        if (currentUserId) {
           // Load profile for plan
           const { data: prof } = await supabase
             .from('profiles')
             .select('plan')
-            .eq('id', session.user.id)
+            .eq('id', currentUserId)
             .maybeSingle();
 
           if (prof?.plan) {
             setUserProfile((prev) => ({
               ...prev,
-              plan: prof.plan === 'pro' ? 'Pro Plan' : prof.plan === 'starter' ? 'Starter Plan' : 'Free Tier',
+              plan:
+                prof.plan === 'pro'
+                  ? 'Pro Plan'
+                  : prof.plan === 'starter'
+                  ? 'Starter Plan'
+                  : 'Free Tier',
+            }));
+          } else if (!userPlan) {
+            setUserProfile((prev) => ({
+              ...prev,
+              plan: 'Free Tier',
             }));
           }
 
@@ -129,13 +166,18 @@ export function AppShell({
             const { data: projs } = await supabase
               .from('projects')
               .select('id, domain, brand_name')
-              .eq('user_id', session.user.id)
+              .eq('user_id', currentUserId)
               .order('created_at', { ascending: false });
 
             if (projs && projs.length > 0) {
               setProjectsList(projs);
             }
           }
+        } else if (!userPlan) {
+          setUserProfile((prev) => ({
+            ...prev,
+            plan: 'Free Tier',
+          }));
         }
       } catch (err) {
         console.warn('AppShell session load err:', err);
@@ -143,7 +185,7 @@ export function AppShell({
     }
 
     fetchSessionAndData();
-  }, [user?.email, initialProjects]);
+  }, [user?.email, user?.id, userPlan, initialProjects]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -244,6 +286,12 @@ export function AppShell({
   ];
 
   const userInitial = userProfile.email ? userProfile.email.charAt(0).toUpperCase() : 'U';
+  const isPaid =
+    userProfile.plan === 'Pro Plan' ||
+    userProfile.plan === 'Starter Plan' ||
+    userProfile.plan === 'pro' ||
+    userProfile.plan === 'starter';
+  const isPro = userProfile.plan === 'Pro Plan' || userProfile.plan === 'pro';
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-900 flex antialiased selection:bg-slate-900 selection:text-white">
@@ -554,12 +602,40 @@ export function AppShell({
               <span>Public Report</span>
             </Link>
 
-            <Link
-              href="/pricing"
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 px-4 sm:px-5 py-2 text-xs font-extrabold text-white shadow-xs hover:opacity-95 transition-all uppercase tracking-wide cursor-pointer"
-            >
-              UPGRADE
-            </Link>
+            {userProfile.plan === undefined ? (
+              <div className="h-8 w-24 rounded-xl bg-slate-100 animate-pulse" />
+            ) : isPaid ? (
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-extrabold tracking-wide uppercase shadow-2xs ${
+                    isPro
+                      ? 'border-emerald-500/25 bg-emerald-50 text-emerald-700'
+                      : 'border-blue-500/25 bg-blue-50 text-blue-700'
+                  }`}
+                >
+                  <span
+                    className={`h-2 w-2 rounded-full ${
+                      isPro ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'
+                    }`}
+                  />
+                  <span>{isPro ? 'PRO ACTIVE' : 'STARTER ACTIVE'}</span>
+                </span>
+                <Link
+                  href="/dashboard/projects/new"
+                  className="hidden md:inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 text-xs font-bold shadow-2xs transition-all"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>+ Track Website</span>
+                </Link>
+              </div>
+            ) : (
+              <Link
+                href="/pricing"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 px-4 sm:px-5 py-2 text-xs font-extrabold text-white shadow-xs hover:opacity-95 transition-all uppercase tracking-wide cursor-pointer"
+              >
+                UPGRADE
+              </Link>
+            )}
           </div>
         </header>
 

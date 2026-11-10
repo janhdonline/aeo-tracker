@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { Metadata } from 'next';
 import { generateFullReportData } from '@/lib/report-generator';
 import { ReportView } from './ReportView';
@@ -48,15 +49,81 @@ export default async function PublicReportPage({ params }: Props) {
 
   // Get current authenticated user if logged in
   let user: any = null;
+  let userPlan: string | null = null;
   try {
     const authRes = await supabase.auth.getUser();
     user = authRes?.data?.user || null;
+    if (user?.id) {
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('plan')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (prof?.plan) {
+        userPlan = prof.plan;
+      }
+    }
   } catch {
     user = null;
+    userPlan = null;
   }
 
-  // Generate full rich analysis dataset for this domain
-  const reportData = generateFullReportData(cleanDomain);
+  // Check public_reports_cache first
+  let reportData: any = null;
+  const admin = createAdminClient();
+  try {
+    const { data: cached } = await admin
+      .from('public_reports_cache')
+      .select('*')
+      .eq('domain', cleanDomain)
+      .maybeSingle();
+
+    if (cached && cached.summary_metrics) {
+      reportData = {
+        domain: cached.domain,
+        brandName: cached.brand_name,
+        score: cached.visibility_score,
+        shareOfVoice: `${cached.share_of_voice_pct}%`,
+        ...cached.summary_metrics,
+        modelAnalyses: cached.model_analyses,
+        promptDetails: cached.prompt_details,
+        productRankings: cached.product_rankings || [],
+        sources: cached.sources || [],
+      };
+    }
+  } catch (err) {
+    console.warn('Error reading public_reports_cache:', err);
+  }
+
+  if (!reportData) {
+    reportData = generateFullReportData(cleanDomain);
+    try {
+      await admin.from('public_reports_cache').upsert(
+        {
+          domain: cleanDomain,
+          brand_name: reportData.brandName,
+          visibility_score: reportData.score,
+          share_of_voice_pct: parseFloat(reportData.shareOfVoice) || 0,
+          summary_metrics: {
+            totalAudited: reportData.totalAudited,
+            scoreBadge: reportData.scoreBadge,
+            engineCoveragePct: reportData.engineCoveragePct,
+            sourceCitationsCount: reportData.sourceCitationsCount,
+            fanoutQueries: reportData.fanoutQueries,
+            competitors: reportData.competitors,
+          },
+          model_analyses: reportData.modelAnalyses,
+          prompt_details: reportData.promptDetails,
+          product_rankings: reportData.productRankings,
+          sources: reportData.sources,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'domain' }
+      );
+    } catch (cacheErr) {
+      console.warn('Failed to cache public report:', cacheErr);
+    }
+  }
 
   // If this domain is already tracked in our database with snapshot scores, overlay real score
   try {
@@ -107,7 +174,7 @@ export default async function PublicReportPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ReportView data={reportData} userEmail={user?.email || null} />
+      <ReportView data={reportData} userEmail={user?.email || null} userPlan={userPlan} />
     </>
   );
 }

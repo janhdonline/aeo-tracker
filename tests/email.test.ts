@@ -12,6 +12,7 @@ vi.mock('resend', () => ({
 const fromMock = vi.fn();
 const selectMock = vi.fn();
 const singleMock = vi.fn();
+const insertMock = vi.fn().mockResolvedValue({ error: null });
 
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
@@ -20,10 +21,16 @@ vi.mock('@/lib/supabase/admin', () => ({
       return {
         select: (...sArgs: any[]) => {
           selectMock(...sArgs);
+          const eqHandler: any = () => ({
+            single: () => singleMock(),
+            maybeSingle: () => singleMock(),
+            eq: eqHandler,
+          });
           return {
-            eq: () => ({ single: () => singleMock() }),
+            eq: eqHandler,
           };
         },
+        insert: insertMock,
       };
     },
   }),

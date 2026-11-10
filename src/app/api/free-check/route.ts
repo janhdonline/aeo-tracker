@@ -4,6 +4,7 @@ import { analyzeSentiment, detectMentions } from '@/lib/parser';
 import { calculateVisibilityScore } from '@/lib/scoring';
 import { generatePrompts } from '@/lib/prompts';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { getConfigNumber } from '@/lib/config';
 import type { DashboardTrendSeries, LiveDashboardData } from '@/lib/types';
 
 interface PromptResult {
@@ -162,7 +163,8 @@ export async function POST(request: NextRequest) {
         .gte('window_start', `${today}T00:00:00Z`)
         .single();
 
-      if (existing && existing.request_count >= 15) {
+      const maxFreeScans = await getConfigNumber('max_free_public_scans', 5);
+      if (existing && existing.request_count >= maxFreeScans) {
         return NextResponse.json(
           { error: 'Rate limit exceeded. Try again tomorrow.' },
           { status: 429 }

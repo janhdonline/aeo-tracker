@@ -1,27 +1,36 @@
 import { EngineAdapter, EngineQuery, EngineResponse } from './types';
+import { getApiKey, getDefaultModel, markApiKeyError } from '@/lib/config';
 
 export class PerplexityAdapter implements EngineAdapter {
   id = 'perplexity';
-  private apiKey: string;
+  private apiKey?: string;
   private baseUrl = 'https://api.perplexity.ai/chat/completions';
 
-  constructor() {
-    this.apiKey = process.env.PERPLEXITY_API_KEY!;
-    // API key validated at runtime
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey;
+  }
+
+  private async resolveKey(): Promise<string> {
+    if (this.apiKey) return this.apiKey;
+    return await getApiKey('perplexity', 'scan');
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
-    if (!this.apiKey) {
-      throw new Error("API key not set");
+    const key = await this.resolveKey();
+    if (!key) {
+      throw new Error("Perplexity API key not set");
     }
+
+    const modelName = await getDefaultModel('perplexity', 'scan');
+
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        'Authorization': `Bearer ${key}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'sonar',
+        model: modelName || 'sonar',
         messages: [
           {
             role: 'user',
@@ -35,6 +44,7 @@ export class PerplexityAdapter implements EngineAdapter {
 
     if (!response.ok) {
       const error = await response.text();
+      await markApiKeyError('perplexity', 'scan', error);
       throw new Error(`Perplexity API error: ${response.status} - ${error}`);
     }
 
@@ -44,8 +54,6 @@ export class PerplexityAdapter implements EngineAdapter {
     // Extract citations from Perplexity response
     const citations = this.extractCitations(data);
     
-    // Estimate cost (Perplexity Sonar pricing: ~$5 per 1M input tokens, $15 per 1M output tokens)
-    // Rough estimation based on token counts
     const inputTokens = data.usage?.prompt_tokens || 0;
     const outputTokens = data.usage?.completion_tokens || 0;
     const costUsd = (inputTokens * 5 / 1_000_000) + (outputTokens * 15 / 1_000_000);

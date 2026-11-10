@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createClient } from '@/lib/supabase/client';
 import {
   Globe,
   ArrowRight,
@@ -37,6 +38,7 @@ import type { FullReportData } from '@/lib/report-generator';
 interface Props {
   data: FullReportData;
   userEmail?: string | null;
+  userPlan?: string | null;
 }
 
 // ============================================================================
@@ -138,7 +140,7 @@ function Counter({ value }: { value: number }) {
 // 2. MAIN REPORT VIEW COMPONENT
 // ============================================================================
 
-export function ReportView({ data, userEmail }: Props) {
+export function ReportView({ data, userEmail, userPlan }: Props) {
   const router = useRouter();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState<'report' | 'prompts' | 'chatbots' | 'strategy' | 'competitors'>('report');
@@ -148,6 +150,34 @@ export function ReportView({ data, userEmail }: Props) {
   const [showDailyBanner, setShowDailyBanner] = useState(true);
   const [activeMilestone, setActiveMilestone] = useState<number | null>(null);
 
+  const [currentPlan, setCurrentPlan] = useState<string | null>(userPlan || null);
+
+  useEffect(() => {
+    if (userPlan) {
+      setCurrentPlan(userPlan);
+      return;
+    }
+    async function checkPlan() {
+      try {
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('plan')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          if (prof?.plan) {
+            setCurrentPlan(prof.plan);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+    checkPlan();
+  }, [userPlan]);
+
   // Accordion toggles
   const [promptsOpen, setPromptsOpen] = useState(true);
   const [productsOpen, setProductsOpen] = useState(true);
@@ -156,9 +186,11 @@ export function ReportView({ data, userEmail }: Props) {
   const [strategyOpen, setStrategyOpen] = useState(true);
 
   const isLoggedIn = Boolean(userEmail);
+  const isPaid = currentPlan === 'pro' || currentPlan === 'starter';
+  const isPro = currentPlan === 'pro';
 
   const handleLockedClick = (featureName: string) => {
-    if (isLoggedIn) {
+    if (isPaid || isLoggedIn) {
       router.push('/dashboard');
       return;
     }
@@ -402,12 +434,37 @@ export function ReportView({ data, userEmail }: Props) {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => handleLockedClick('Pro AEO Intelligence Suite')}
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 px-5 py-2 text-xs font-extrabold text-white shadow-xs hover:opacity-95 transition-all uppercase tracking-wide cursor-pointer"
-            >
-              UPGRADE
-            </button>
+            {isPaid ? (
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-extrabold tracking-wide uppercase shadow-2xs ${
+                    isPro
+                      ? 'border-emerald-500/25 bg-emerald-50 text-emerald-700'
+                      : 'border-blue-500/25 bg-blue-50 text-blue-700'
+                  }`}
+                >
+                  <span
+                    className={`h-2 w-2 rounded-full ${
+                      isPro ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'
+                    }`}
+                  />
+                  <span>{isPro ? 'PRO ACTIVE' : 'STARTER ACTIVE'}</span>
+                </span>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 text-xs font-bold shadow-2xs transition-all"
+                >
+                  Dashboard
+                </Link>
+              </div>
+            ) : (
+              <button
+                onClick={() => handleLockedClick('Pro AEO Intelligence Suite')}
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 px-5 py-2 text-xs font-extrabold text-white shadow-xs hover:opacity-95 transition-all uppercase tracking-wide cursor-pointer"
+              >
+                UPGRADE
+              </button>
+            )}
           </div>
         </header>
 

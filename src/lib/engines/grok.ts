@@ -1,27 +1,36 @@
 import { EngineAdapter, EngineQuery, EngineResponse } from './types';
+import { getApiKey, getDefaultModel, markApiKeyError } from '@/lib/config';
 
 export class GrokAdapter implements EngineAdapter {
   id = 'grok';
-  private apiKey: string;
+  private apiKey?: string;
   private baseUrl = 'https://api.x.ai/v1/chat/completions';
 
-  constructor() {
-    this.apiKey = process.env.GROK_API_KEY!;
-    // API key validated at runtime
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey;
+  }
+
+  private async resolveKey(): Promise<string> {
+    if (this.apiKey) return this.apiKey;
+    return await getApiKey('grok', 'scan');
   }
 
   async run(query: EngineQuery): Promise<EngineResponse> {
-    if (!this.apiKey) {
-      throw new Error("API key not set");
+    const key = await this.resolveKey();
+    if (!key) {
+      throw new Error("Grok API key not set");
     }
+
+    const modelName = await getDefaultModel('grok', 'scan');
+
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        'Authorization': `Bearer ${key}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'grok-2-latest',
+        model: modelName || 'grok-2',
         messages: [
           {
             role: 'user',
@@ -38,6 +47,7 @@ export class GrokAdapter implements EngineAdapter {
 
     if (!response.ok) {
       const error = await response.text();
+      await markApiKeyError('grok', 'scan', error);
       throw new Error(`Grok API error: ${response.status} - ${error}`);
     }
 

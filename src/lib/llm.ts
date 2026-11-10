@@ -1,8 +1,9 @@
-// Cheap LLM helper for short drafting calls (gpt-4o-mini).
+// Cheap LLM helper for short drafting calls.
 // Used by the fix-brief generator to write human-readable gap descriptions.
 // All calls: 30s timeout + 1 retry with exponential backoff. Never throws.
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+import { getApiKey, getDefaultModel, markApiKeyError } from '@/lib/config';
+
 const OPENAI_BASE_URL = 'https://api.openai.com/v1/chat/completions';
 const TIMEOUT_MS = 30_000;
 const MAX_RETRIES = 1;
@@ -20,23 +21,19 @@ export interface LlmResponse {
 }
 
 function estimateCost(inputTokens: number, outputTokens: number): number {
-  // gpt-4o-mini pricing: $0.15/1M input, $0.60/1M output
+  // gpt-4o-mini pricing estimate
   return (inputTokens * 0.15 / 1_000_000) + (outputTokens * 0.60 / 1_000_000);
 }
 
-async function callOnce(req: LlmRequest, signal: AbortSignal): Promise<LlmResponse> {
-  if (!OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY not set');
-  }
-
+async function callOnce(req: LlmRequest, signal: AbortSignal, apiKey: string, modelName: string): Promise<LlmResponse> {
   const response = await fetch(OPENAI_BASE_URL, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: modelName,
       messages: [
         ...(req.system ? [{ role: 'system' as const, content: req.system }] : []),
         { role: 'user' as const, content: req.prompt },
@@ -49,6 +46,7 @@ async function callOnce(req: LlmRequest, signal: AbortSignal): Promise<LlmRespon
 
   if (!response.ok) {
     const error = await response.text();
+    await markApiKeyError('openai', 'briefs', error);
     throw new Error(`OpenAI API error: ${response.status} - ${error}`);
   }
 
@@ -64,11 +62,13 @@ async function callOnce(req: LlmRequest, signal: AbortSignal): Promise<LlmRespon
 }
 
 export async function callLlm(req: LlmRequest): Promise<LlmResponse | null> {
-  if (!OPENAI_API_KEY) {
-    console.warn('llm: OPENAI_API_KEY not set, skipping LLM call');
+  const apiKey = await getApiKey('openai', 'briefs');
+  if (!apiKey) {
+    console.warn('llm: OpenAI API key not set, skipping LLM call');
     return null;
   }
 
+  const modelName = await getDefaultModel('openai', 'briefs');
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -76,7 +76,7 @@ export async function callLlm(req: LlmRequest): Promise<LlmResponse | null> {
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
     try {
-      const result = await callOnce(req, controller.signal);
+      const result = await callOnce(req, controller.signal, apiKey, modelName);
       clearTimeout(timeoutId);
       return result;
     } catch (error) {

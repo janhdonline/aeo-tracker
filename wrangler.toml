@@ -27,3 +27,9 @@ LEMONSQUEEZY_PRO_URL = "https://aeo-tracker.lemonsqueezy.com/checkout/buy/41f8ba
 # LEMONSQUEEZY_STORE_ID
 # CRON_SECRET
 # RESEND_API_KEY
+
+[triggers]
+crons = [
+  "0 3 * * 1",  # Weekly scan scheduler (Monday 03:00 UTC)
+  "0 4 * * *",  # Daily verification run
+]

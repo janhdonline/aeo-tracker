@@ -1,9 +1,11 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 import { Check, ShieldCheck, Zap, Sparkles } from 'lucide-react';
 import { LogoMark } from '@/components/landing/BrandLogos';
-import { getEnv } from '@/lib/env';
 import { LemonOverlay } from '@/components/LemonOverlay';
+import { getPaymentConfig, getAllPlanConfigs } from '@/lib/config';
+import { formatPriceForCountry } from '@/lib/geo-currency';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,32 +19,39 @@ const DEFAULT_STARTER_URL =
 const DEFAULT_PRO_URL =
   'https://aeo-tracker.lemonsqueezy.com/checkout/buy/41f8ba70-e418-48da-8554-e25210808053';
 
-export default function PricingPage() {
-  const rawStarterUrl =
-    getEnv('LEMONSQUEEZY_STARTER_URL') ||
-    process.env.LEMONSQUEEZY_STARTER_URL ||
-    DEFAULT_STARTER_URL;
+export default async function PricingPage() {
+  const headersList = headers();
+  const country = headersList.get('cf-ipcountry') || headersList.get('x-vercel-ip-country') || 'US';
 
-  const rawProUrl =
-    getEnv('LEMONSQUEEZY_PRO_URL') ||
-    process.env.LEMONSQUEEZY_PRO_URL ||
-    DEFAULT_PRO_URL;
+  const rawStarterUrl = (await getPaymentConfig('ls_starter_checkout_url')) || DEFAULT_STARTER_URL;
+  const rawProUrl = (await getPaymentConfig('ls_pro_checkout_url')) || DEFAULT_PRO_URL;
 
   // Add embed=1 parameter so Lemon.js opens in-page overlay modal seamlessly
   const starterUrl = `${rawStarterUrl}${rawStarterUrl.includes('?') ? '&' : '?'}embed=1`;
   const proUrl = `${rawProUrl}${rawProUrl.includes('?') ? '&' : '?'}embed=1`;
 
+  // Localized price estimates
+  const starterLocal = await formatPriceForCountry(49, country);
+  const proLocal = await formatPriceForCountry(79, country);
+
+  // Dynamic plan configs from database
+  const dbPlans = await getAllPlanConfigs();
+  const starterConfig = dbPlans.find((p) => p.plan_name === 'starter');
+  const proConfig = dbPlans.find((p) => p.plan_name === 'pro');
+  const freeConfig = dbPlans.find((p) => p.plan_name === 'free');
+
   const plans = [
     {
-      name: 'Free',
+      name: freeConfig?.display_name || 'Free',
       price: '$0',
-      description: 'Perfect for getting started with AI visibility tracking.',
+      localPrice: null,
+      description: freeConfig?.description || 'Perfect for getting started with AI visibility tracking.',
       features: [
-        '10 Monitored Keywords',
+        `${freeConfig?.keywords_limit || 10} Monitored Keywords`,
         'Google Gemini AI Engine',
         'Monthly Automated Scans',
         'Standard Visibility Score',
-        'CSV & PDF Report Export',
+        'Public Benchmark Audit',
       ],
       cta: 'Get Started Free',
       href: '/login',
@@ -50,11 +59,12 @@ export default function PricingPage() {
       highlight: false,
     },
     {
-      name: 'Starter',
+      name: starterConfig?.display_name || 'Starter',
       price: '$49',
-      description: 'Best for growing businesses, startups, and high-growth brands.',
+      localPrice: starterLocal.startsWith('$') ? null : starterLocal,
+      description: starterConfig?.description || 'Best for growing businesses, startups, and high-growth brands.',
       features: [
-        '50 Monitored Keywords',
+        `${starterConfig?.keywords_limit || 50} Monitored Keywords`,
         'Gemini + Perplexity AI Engines',
         'Weekly Automated Scans',
         'Actionable Fix Briefs',
@@ -68,15 +78,17 @@ export default function PricingPage() {
       highlight: true,
     },
     {
-      name: 'Pro',
+      name: proConfig?.display_name || 'Pro',
       price: '$79',
-      description: 'For power users, agencies, and enterprise brands.',
+      localPrice: proLocal.startsWith('$') ? null : proLocal,
+      description: proConfig?.description || 'For power users, agencies, and enterprise brands.',
       features: [
-        '150 Monitored Keywords',
+        `${proConfig?.keywords_limit || 150} Monitored Keywords`,
         'All AI Engines (Gemini, Perplexity, OpenAI, Grok)',
         'Weekly Automated Scans',
         'Priority Fix Briefs & LLMs.txt Tools',
-        'Competitor Leak Detection',
+        'Agency & Team Workspaces',
+        'Anti-Hallucination Fact Watch',
         'VIP Priority Support',
       ],
       cta: 'Subscribe to Pro',
@@ -99,24 +111,27 @@ export default function PricingPage() {
             </span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">
-              Dashboard
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
+            >
+              Sign In
             </Link>
             <Link
               href="/login"
-              className="text-sm font-medium bg-blue-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              className="inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-colors"
             >
-              Sign In
+              Start Free
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 flex-1">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-4 border border-blue-100">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-4 uppercase tracking-wider">
             <Zap className="w-3.5 h-3.5" />
-            Flexible Pricing
+            Transparent & Flat Pricing
           </div>
           <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
             Simple, Transparent Pricing
@@ -146,9 +161,17 @@ export default function PricingPage() {
 
                 <h2 className="text-xl font-bold text-slate-900 mb-2">{plan.name}</h2>
                 <p className="text-sm text-slate-500 mb-6 min-h-[40px]">{plan.description}</p>
-                <div className="text-4xl font-extrabold text-slate-900 mb-6">
-                  {plan.price}
-                  <span className="text-sm font-normal text-slate-500 ml-1">/month</span>
+                
+                <div className="mb-6">
+                  <div className="text-4xl font-extrabold text-slate-900">
+                    {plan.price}
+                    <span className="text-sm font-normal text-slate-500 ml-1">/month</span>
+                  </div>
+                  {plan.localPrice && (
+                    <div className="text-xs font-medium text-emerald-600 mt-1">
+                      {plan.localPrice}/month
+                    </div>
+                  )}
                 </div>
 
                 <div className="h-px bg-slate-100 mb-6" />
@@ -163,30 +186,36 @@ export default function PricingPage() {
                 </ul>
               </div>
 
-              <a
-                href={plan.href}
-                className={`lemonsqueezy-button block w-full text-center py-3 px-4 rounded-xl font-semibold text-sm transition-colors shadow-sm cursor-pointer ${
-                  plan.highlight
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'bg-slate-900 text-white hover:bg-slate-800'
-                }`}
-              >
-                {plan.cta}
-              </a>
+              {plan.isLemon ? (
+                <a
+                  href={plan.href}
+                  className={`w-full py-3.5 px-4 rounded-xl text-center text-sm font-bold shadow-xs transition-all duration-150 block cursor-pointer lemonsqueezy-button ${
+                    plan.highlight
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/25'
+                      : 'bg-slate-900 text-white hover:bg-slate-800'
+                  }`}
+                >
+                  {plan.cta}
+                </a>
+              ) : (
+                <Link
+                  href={plan.href}
+                  className={`w-full py-3.5 px-4 rounded-xl text-center text-sm font-bold shadow-xs transition-all duration-150 block ${
+                    plan.highlight
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/25'
+                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              )}
             </div>
           ))}
         </div>
 
-        <div className="mt-16 bg-white rounded-2xl border border-slate-200 p-8 text-center max-w-3xl mx-auto shadow-sm">
-          <ShieldCheck className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Money-Back Guarantee & Cancel Anytime</h3>
-          <p className="text-sm text-slate-600">
-            All paid plans can be cancelled anytime with zero hassle. Need enterprise volume or custom keywords?{' '}
-            <Link href="/contact" className="text-blue-600 font-medium hover:underline">
-              Contact our team
-            </Link>
-            .
-          </p>
+        <div className="mt-16 text-center text-sm text-slate-500 flex items-center justify-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          <span>7-Day Money-Back Guarantee. Cancel anytime with a single click.</span>
         </div>
       </main>
     </div>

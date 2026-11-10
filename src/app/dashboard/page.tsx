@@ -76,7 +76,7 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [keywordsCount, setKeywordsCount] = useState(0);
   const [lastScan, setLastScan] = useState<string | null>(null);
-  const [plan, setPlan] = useState('free');
+  const [plan, setPlan] = useState<string | undefined>(undefined);
   const [avgScore, setAvgScore] = useState(0);
 
   // Quick-Add Website State
@@ -246,7 +246,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <AppShell user={{ email: user?.email || 'Loading...' }}>
+      <AppShell user={{ email: user?.email || 'Loading...' }} userPlan={plan}>
         <div className="min-h-[70vh] flex items-center justify-center">
           <LogoLoader
             variant="section"
@@ -261,6 +261,7 @@ export default function DashboardPage() {
   return (
     <AppShell
       user={{ email: user?.email || '', id: user?.id }}
+      userPlan={plan}
       projects={projects}
       activeSection="dashboard"
       breadcrumbs={[{ label: 'Dashboard' }]}
