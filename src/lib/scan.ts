@@ -10,6 +10,7 @@ import { normalizeDomain } from '@/lib/parser/citations';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { paceGeminiRequests, GEMINI_DELAY_MS } from '@/lib/pacing';
 import { captureException, captureWarning } from '@/lib/error-monitor';
+import { checkAiBudgetAllowed } from '@/lib/cost-guard';
 
 export const CHUNK_SIZE = 25;
 export const STUCK_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
@@ -66,6 +67,7 @@ export interface ChunkResult {
   processed: number;
   remaining: number;
   status: 'running' | 'done' | 'failed';
+  reason?: string;
 }
 
 // Process a chunk of queries from a run. Returns whether more remain.
@@ -196,6 +198,23 @@ export async function processChunk(runId: string): Promise<ChunkResult> {
   let totalQueries = run.total_queries || 0;
   
   for (const q of chunk) {
+    // Phase 2 AI Budget Guard & Emergency Stop Check
+    const budgetStatus = await checkAiBudgetAllowed();
+    if (!budgetStatus.allowed) {
+      console.warn('Scan aborted due to AI budget guard:', budgetStatus.reason);
+      await adminClient
+        .from('scan_runs')
+        .update({
+          status: 'failed',
+          finished_at: new Date().toISOString(),
+          total_queries: totalQueries,
+          api_cost_usd: totalCostUsd,
+        })
+        .eq('id', runId);
+
+      return { runId, processed, remaining: queries.length - processed, status: 'failed', reason: budgetStatus.reason };
+    }
+
     // Cost guard
     const monthStart = new Date();
     monthStart.setDate(1);

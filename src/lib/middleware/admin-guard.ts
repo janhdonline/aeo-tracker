@@ -3,16 +3,19 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { getConfig } from '@/lib/config';
 import { NextRequest, NextResponse } from 'next/server';
 
+export type AdminRole = 'super_admin' | 'support_agent' | 'seo_tuner';
+
 export interface AdminUserContext {
   id: string;
   email: string;
   isAdmin: boolean;
+  role: AdminRole;
 }
 
 /**
  * Validates that the request comes from an authenticated admin via either:
- * 1. Admin Master Password cookie (`aeo_admin_token`) or `x-admin-key` header
- * 2. Authenticated Supabase session user with is_admin = true
+ * 1. Admin Master Password cookie (`aeo_admin_token`) or `x-admin-key` header -> super_admin
+ * 2. Authenticated Supabase session user with is_admin = true -> role from admin_roles or super_admin
  */
 export async function requireAdmin(
   request: NextRequest
@@ -27,7 +30,7 @@ export async function requireAdmin(
     if (headerKey && headerKey.trim() === masterPassword.trim()) {
       return {
         errorResponse: null,
-        adminUser: { id: 'master-admin', email: 'admin@system.local', isAdmin: true },
+        adminUser: { id: 'master-admin', email: 'admin@system.local', isAdmin: true, role: 'super_admin' },
       };
     }
 
@@ -37,7 +40,7 @@ export async function requireAdmin(
         if (decoded.endsWith(`:${masterPassword}`)) {
           return {
             errorResponse: null,
-            adminUser: { id: 'master-admin', email: 'admin@system.local', isAdmin: true },
+            adminUser: { id: 'master-admin', email: 'admin@system.local', isAdmin: true, role: 'super_admin' },
           };
         }
       } catch {
@@ -97,12 +100,22 @@ export async function requireAdmin(
       };
     }
 
+    // Fetch granular role if assigned, otherwise default to super_admin
+    const { data: roleRow } = await adminClient
+      .from('admin_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const role: AdminRole = (roleRow?.role as AdminRole) || 'super_admin';
+
     return {
       errorResponse: null,
       adminUser: {
         id: profile.id,
         email: profile.email || user.email || '',
         isAdmin: true,
+        role,
       },
     };
   } catch (err: any) {
@@ -112,4 +125,24 @@ export async function requireAdmin(
       adminUser: null,
     };
   }
+}
+
+export async function requireAdminRole(
+  request: NextRequest,
+  allowedRoles: AdminRole[]
+): Promise<{ errorResponse: NextResponse | null; adminUser: AdminUserContext | null }> {
+  const check = await requireAdmin(request);
+  if (check.errorResponse) return check;
+
+  if (check.adminUser && !allowedRoles.includes(check.adminUser.role) && check.adminUser.role !== 'super_admin') {
+    return {
+      errorResponse: NextResponse.json(
+        { error: `Forbidden: Requires one of these roles: ${allowedRoles.join(', ')}` },
+        { status: 403 }
+      ),
+      adminUser: null,
+    };
+  }
+
+  return check;
 }

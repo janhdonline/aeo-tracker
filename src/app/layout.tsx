@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ChunkErrorRecovery } from "@/components/ChunkErrorRecovery";
+import { GlobalAnnouncementBanner } from "@/components/GlobalAnnouncementBanner";
+import { ImpersonationBanner } from "@/components/ImpersonationBanner";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -211,6 +213,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full scroll-smooth antialiased">
       <body className={`${inter.variable} ${inter.className} flex min-h-full flex-col bg-white text-[#111827]`}>
+        <ImpersonationBanner />
+        <GlobalAnnouncementBanner />
         <ChunkErrorRecovery />
         <script
           type="application/ld+json"

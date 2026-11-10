@@ -3,6 +3,7 @@
 // All calls: 30s timeout + 1 retry with exponential backoff. Never throws.
 
 import { getApiKey, getDefaultModel, markApiKeyError } from '@/lib/config';
+import { checkAiBudgetAllowed } from '@/lib/cost-guard';
 
 const OPENAI_BASE_URL = 'https://api.openai.com/v1/chat/completions';
 const TIMEOUT_MS = 30_000;
@@ -62,6 +63,12 @@ async function callOnce(req: LlmRequest, signal: AbortSignal, apiKey: string, mo
 }
 
 export async function callLlm(req: LlmRequest): Promise<LlmResponse | null> {
+  const budgetCheck = await checkAiBudgetAllowed();
+  if (!budgetCheck.allowed) {
+    console.warn('llm: Skipping AI call due to cost guard:', budgetCheck.reason);
+    return null;
+  }
+
   const apiKey = await getApiKey('openai', 'briefs');
   if (!apiKey) {
     console.warn('llm: OpenAI API key not set, skipping LLM call');

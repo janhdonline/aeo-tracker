@@ -5,6 +5,7 @@ import { calculateVisibilityScore } from '@/lib/scoring';
 import { generatePrompts } from '@/lib/prompts';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getConfigNumber } from '@/lib/config';
+import { extractClientIp, isIpBlacklisted } from '@/lib/security';
 import type { DashboardTrendSeries, LiveDashboardData } from '@/lib/types';
 
 interface PromptResult {
@@ -149,7 +150,12 @@ export async function POST(request: NextRequest) {
   let brandName = '';
 
   try {
-    const ip = request.headers.get('x-forwarded-for') || 'unknown';
+    const ip = extractClientIp(request);
+
+    // Anti-scraping IP blacklist check
+    if (await isIpBlacklisted(ip)) {
+      return NextResponse.json({ error: 'Access blocked by administrator' }, { status: 403 });
+    }
 
     // Rate limiting via Postgres (safe try/catch so database hiccups never block checks)
     try {

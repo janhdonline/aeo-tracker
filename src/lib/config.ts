@@ -157,6 +157,31 @@ export function invalidateConfigCache(): void {
 }
 
 /**
+ * Update or set a runtime configuration variable
+ */
+export async function setConfig(
+  key: string,
+  value: string,
+  valueType = 'string',
+  description = ''
+): Promise<void> {
+  const admin = createAdminClient();
+  await admin
+    .from('app_config')
+    .upsert(
+      {
+        key,
+        value,
+        value_type: valueType,
+        description,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'key' }
+    );
+  invalidateConfigCache();
+}
+
+/**
  * Get generic config string from app_config (fallback to env)
  */
 export async function getConfig(key: string, fallback = ''): Promise<string> {
