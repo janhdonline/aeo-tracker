@@ -149,12 +149,20 @@ export default async function SourcesPage({ params }: { params: { id: string } }
   }
 
   return (
-    <AppShell user={{ email: user.email }}>
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <ProjectSidebar projectId={params.id} domain={project.domain} current="sources" />
+    <AppShell
+      user={{ email: user.email, id: user.id }}
+      projectId={params.id}
+      domain={project.domain}
+      activeSection="sources"
+      breadcrumbs={[
+        { label: project.domain, href: `/dashboard/projects/${params.id}` },
+        { label: 'Sources Intelligence' },
+      ]}
+    >
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
+        <ProjectSidebar projectId={params.id} domain={project.domain} current="sources" />
 
-          <main className="flex-1 min-w-0">
+        <div className="w-full space-y-6">
             {/* Header */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-1">
@@ -201,7 +209,6 @@ export default async function SourcesPage({ params }: { params: { id: string } }
               brandName={project.brand_name || project.domain}
               sources={items}
             />
-          </main>
         </div>
       </div>
     </AppShell>

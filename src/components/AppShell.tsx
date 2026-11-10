@@ -1,40 +1,149 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
-import { LogoMark } from '@/components/landing/BrandLogos';
-import { Menu, X, LogOut, ChevronDown, LayoutDashboard, Plus } from 'lucide-react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import {
+  Globe,
+  BarChart3,
+  MessageSquare,
+  Link2,
+  Layers,
+  TrendingUp,
+  Package,
+  Compass,
+  FileText,
+  Settings,
+  User,
+  LogOut,
+  ChevronDown,
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeft,
+  Plus,
+  Sparkles,
+  ExternalLink,
+  Menu,
+  X,
+  Check,
+} from 'lucide-react';
 
-interface AppShellProps {
-  user: { email?: string };
+export interface AppShellProject {
+  id: string;
+  domain: string;
+  brand_name?: string;
+}
+
+export interface AppShellProps {
+  user?: { email?: string; id?: string };
+  projectId?: string;
+  domain?: string;
+  activeSection?:
+    | 'dashboard'
+    | 'reports'
+    | 'prompts'
+    | 'sources'
+    | 'competitors'
+    | 'traffic'
+    | 'products'
+    | 'presence'
+    | 'brands'
+    | 'tasks'
+    | 'settings'
+    | 'new';
+  breadcrumbs?: Array<{ label: string; href?: string }>;
+  projects?: AppShellProject[];
   children: React.ReactNode;
 }
 
-const mobileMenuVariants = {
-  hidden: { opacity: 0, y: -8 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } },
-};
-
-export function AppShell({ user, children }: AppShellProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+export function AppShell({
+  user,
+  projectId,
+  domain,
+  activeSection = 'dashboard',
+  breadcrumbs,
+  projects: initialProjects,
+  children,
+}: AppShellProps) {
   const router = useRouter();
-  const prefersReducedMotion = useReducedMotion();
+  const pathname = usePathname();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [projectSelectorOpen, setProjectSelectorOpen] = useState(false);
 
-  // Close dropdown on click outside
+  const [projectsList, setProjectsList] = useState<AppShellProject[]>(initialProjects || []);
+  const [userProfile, setUserProfile] = useState<{ email?: string; plan?: string }>({
+    email: user?.email,
+    plan: 'Free Tier',
+  });
+
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const projectSelectorRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setUserDropdownOpen(false);
+    function handleClickOutside(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+      if (projectSelectorRef.current && !projectSelectorRef.current.contains(e.target as Node)) {
+        setProjectSelectorOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Fetch projects and profile if not supplied
+  useEffect(() => {
+    async function fetchSessionAndData() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session?.user) {
+          const email = session.user.email || user?.email || '';
+          setUserProfile((prev) => ({ ...prev, email }));
+
+          // Load profile for plan
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('plan')
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (prof?.plan) {
+            setUserProfile((prev) => ({
+              ...prev,
+              plan: prof.plan === 'pro' ? 'Pro Plan' : prof.plan === 'starter' ? 'Starter Plan' : 'Free Tier',
+            }));
+          }
+
+          // Load projects if not passed
+          if (!initialProjects || initialProjects.length === 0) {
+            const { data: projs } = await supabase
+              .from('projects')
+              .select('id, domain, brand_name')
+              .eq('user_id', session.user.id)
+              .order('created_at', { ascending: false });
+
+            if (projs && projs.length > 0) {
+              setProjectsList(projs);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('AppShell session load err:', err);
+      }
+    }
+
+    fetchSessionAndData();
+  }, [user?.email, initialProjects]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -43,205 +152,498 @@ export function AppShell({ user, children }: AppShellProps) {
     router.refresh();
   };
 
-  const userInitial = user.email ? user.email.charAt(0).toUpperCase() : 'U';
+  // Determine current active project and domain
+  const activeProj =
+    (projectId ? projectsList.find((p) => p.id === projectId) : null) ||
+    projectsList[0] ||
+    (domain ? { id: projectId || 'current', domain, brand_name: domain } : null);
+
+  const currentProjectId = activeProj?.id;
+  const currentDomain = domain || activeProj?.domain || 'revolut.com';
+
+  // Navigation URLs dynamically bound to current active project
+  const navLinks = [
+    {
+      key: 'reports',
+      label: 'AEO Reports',
+      href: `/report/${encodeURIComponent(currentDomain)}`,
+      icon: FileText,
+      isReport: true,
+      active: pathname.startsWith('/report/'),
+    },
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}` : '/dashboard',
+      icon: BarChart3,
+      active: pathname === '/dashboard' || pathname === `/dashboard/projects/${currentProjectId}`,
+    },
+    {
+      key: 'prompts',
+      label: 'Prompts',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/keywords` : '/dashboard',
+      icon: MessageSquare,
+      active: pathname.includes('/keywords'),
+    },
+    {
+      key: 'sources',
+      label: 'Sources',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/sources` : '/dashboard',
+      icon: Link2,
+      active: pathname.includes('/sources'),
+    },
+    {
+      key: 'competitors',
+      label: 'Competitors',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/analytics` : '/dashboard',
+      icon: Layers,
+      active: pathname.includes('/analytics'),
+    },
+    {
+      key: 'traffic',
+      label: 'AI Traffic',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/runs` : '/dashboard',
+      icon: TrendingUp,
+      active: pathname.includes('/runs'),
+    },
+    {
+      key: 'products',
+      label: 'Products',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/facts` : '/dashboard',
+      icon: Package,
+      active: pathname.includes('/facts'),
+    },
+    {
+      key: 'presence',
+      label: 'Online Presence',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/llms` : '/dashboard',
+      icon: Compass,
+      active: pathname.includes('/llms'),
+    },
+    {
+      key: 'brands',
+      label: 'Brands',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/facts` : '/dashboard',
+      icon: Globe,
+      active: false,
+    },
+    {
+      key: 'tasks',
+      label: 'Tasks',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/briefs` : '/dashboard',
+      icon: FileText,
+      active: pathname.includes('/briefs'),
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/settings` : '/dashboard',
+      icon: Settings,
+      active: pathname.includes('/settings'),
+    },
+  ];
+
+  const userInitial = userProfile.email ? userProfile.email.charAt(0).toUpperCase() : 'U';
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dashboard-ambient text-slate-900">
-      <motion.header
-        initial={prefersReducedMotion ? false : { opacity: 0, y: -6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl transition-all"
+    <div className="min-h-screen bg-[#F8F9FA] text-slate-900 flex antialiased selection:bg-slate-900 selection:text-white">
+      {/* ============================================================== */}
+      {/* 1. LEFT UNIFIED SIDEBAR (Matches ReportView & Competitor)     */}
+      {/* ============================================================== */}
+      <aside
+        className={`${
+          sidebarCollapsed ? 'w-16' : 'w-64'
+        } bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 select-none transition-all duration-200 z-30 fixed lg:static inset-y-0 left-0 hidden lg:flex`}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Brand Logo */}
-          <motion.div
-            whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Link href="/dashboard" className="flex items-center gap-2.5 group">
-              <LogoMark className="h-8 w-8 transition-transform duration-200 group-hover:scale-105" />
-              <span className="text-[16px] font-bold tracking-tight text-slate-900">
-                AEO Visibility Tracker
-              </span>
-            </Link>
-          </motion.div>
+        <div className="flex flex-col">
+          {/* Top Logo & Collapse Toggle */}
+          <div className="h-16 px-4 flex items-center justify-between border-b border-slate-100">
+            {!sidebarCollapsed ? (
+              <Link href="/dashboard" className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
+                  <Globe className="h-4 w-4 text-emerald-400" />
+                </span>
+                <span className="font-display text-base font-bold tracking-tight text-slate-900">
+                  AEO Checker
+                </span>
+              </Link>
+            ) : (
+              <Link href="/dashboard" className="mx-auto" title="AEO Checker Dashboard">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
+                  <Globe className="h-4 w-4 text-emerald-400" />
+                </span>
+              </Link>
+            )}
 
-          {/* Desktop Navigation Links (>= lg) */}
-          <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Primary navigation">
-            <Link
-              href="/dashboard"
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/dashboard/projects/new"
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
-            >
-              New Project
-            </Link>
-          </nav>
-
-          {/* Desktop User Avatar Dropdown (Only on >= lg) */}
-          <div className="hidden lg:block relative" ref={dropdownRef}>
             <button
-              type="button"
-              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className="flex items-center gap-1.5 p-1 pl-1 pr-2 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200/80 transition-all cursor-pointer"
-              aria-label="User profile menu"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+              title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
-              <div className="h-6 w-6 rounded-full bg-slate-900 text-white font-bold text-[11px] flex items-center justify-center shrink-0">
-                {userInitial}
-              </div>
-              <ChevronDown className={`h-3 w-3 text-slate-500 transition-transform duration-200 ${userDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {/* Popover Dropdown */}
-            <AnimatePresence>
-              {userDropdownOpen && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 6 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 6 }}
-                  transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-card z-50"
-                >
-                  <div className="px-3 py-2 border-b border-slate-100">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Signed in as</p>
-                    <p className="text-xs font-semibold text-slate-900 truncate mt-0.5">{user.email}</p>
-                  </div>
-
-                  <div className="py-1">
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
-                    >
-                      <LayoutDashboard className="h-3.5 w-3.5 text-slate-400" />
-                      Dashboard
-                    </Link>
-                    <Link
-                      href="/dashboard/projects/new"
-                      onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
-                    >
-                      <Plus className="h-3.5 w-3.5 text-slate-400" />
-                      New Project
-                    </Link>
-                  </div>
-
-                  <div className="border-t border-slate-100 pt-1">
-                    <button
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        handleLogout();
-                      }}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                    >
-                      <LogOut className="h-3.5 w-3.5" />
-                      Sign Out
-                    </button>
-                  </div>
-                </motion.div>
+              {sidebarCollapsed ? (
+                <PanelLeft className="h-4 w-4" />
+              ) : (
+                <PanelLeftClose className="h-4 w-4" />
               )}
-            </AnimatePresence>
+            </button>
           </div>
 
-          {/* Mobile / Tablet Hamburger Toggle (< lg) */}
-          <motion.button
-            type="button"
-            whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
-            whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-xs transition-colors hover:text-slate-900 lg:hidden cursor-pointer"
-            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileMenuOpen}
-            onClick={() => setMobileMenuOpen((open) => !open)}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              {mobileMenuOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X className="h-4 w-4" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Menu className="h-4 w-4" />
-                </motion.div>
+          {/* Active Website / Domain Selector Dropdown */}
+          {!sidebarCollapsed && projectsList.length > 0 && (
+            <div className="p-3 pb-1 relative" ref={projectSelectorRef}>
+              <button
+                type="button"
+                onClick={() => setProjectSelectorOpen(!projectSelectorOpen)}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 text-xs font-semibold text-slate-800 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-900 text-white text-[10px] font-bold shrink-0">
+                    {currentDomain.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="truncate">{currentDomain}</span>
+                </div>
+                <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              </button>
+
+              <AnimatePresence>
+                {projectSelectorOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                    className="absolute left-3 right-3 top-14 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl z-50 space-y-1"
+                  >
+                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Tracked Websites
+                    </div>
+                    {projectsList.map((p) => {
+                      const isSelected = p.domain === currentDomain;
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            setProjectSelectorOpen(false);
+                            router.push(`/dashboard/projects/${p.id}`);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            isSelected
+                              ? 'bg-slate-100 text-slate-950 font-bold'
+                              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                          }`}
+                        >
+                          <span className="truncate">{p.domain}</span>
+                          {isSelected && <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
+                        </button>
+                      );
+                    })}
+
+                    <div className="border-t border-slate-100 pt-1 mt-1">
+                      <Link
+                        href="/dashboard/projects/new"
+                        onClick={() => setProjectSelectorOpen(false)}
+                        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        <span>Track New Website</span>
+                      </Link>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* Primary Navigation Links */}
+          <div className="p-3 space-y-4">
+            {/* AEO Reports Section Header / Item */}
+            <div>
+              <Link
+                href={`/report/${encodeURIComponent(currentDomain)}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  pathname.startsWith('/report/')
+                    ? 'bg-slate-100 text-slate-950 shadow-2xs'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                }`}
+                title="AEO Reports"
+              >
+                <FileText className="h-4 w-4 text-slate-700 shrink-0" />
+                {!sidebarCollapsed && <span>AEO Reports</span>}
+              </Link>
+            </div>
+
+            {/* Daily Analytics Section */}
+            <div className="space-y-0.5">
+              {!sidebarCollapsed && (
+                <div className="flex items-center justify-between px-3 pt-2 pb-1.5">
+                  <span className="text-[11px] font-bold text-slate-400 tracking-wider">
+                    Daily Analytics
+                  </span>
+                  <BarChart3 className="h-3.5 w-3.5 text-slate-300" />
+                </div>
               )}
-            </AnimatePresence>
-          </motion.button>
+
+              {navLinks
+                .filter((item) => !item.isReport)
+                .map((item) => {
+                  const Icon = item.icon;
+                  const isActive = item.active;
+                  return (
+                    <Link
+                      key={item.key}
+                      href={item.href}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs transition-colors ${
+                        isActive
+                          ? 'bg-slate-100 text-slate-950 font-bold shadow-2xs'
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
+                      }`}
+                      title={item.label}
+                    >
+                      <Icon
+                        className={`h-4 w-4 shrink-0 ${
+                          isActive ? 'text-slate-900' : 'text-slate-400'
+                        }`}
+                      />
+                      {!sidebarCollapsed && <span>{item.label}</span>}
+                    </Link>
+                  );
+                })}
+            </div>
+          </div>
         </div>
 
-        {/* Mobile / Tablet Drawer (< lg) */}
-        <AnimatePresence initial={false}>
-          {mobileMenuOpen && (
-            <motion.div
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="show"
-              exit="hidden"
-              className="overflow-hidden border-t border-slate-100 bg-white lg:hidden shadow-lg"
-            >
-              <div className="px-4 pb-4 pt-3 space-y-3">
-                <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
+        {/* Bottom User Account Row */}
+        <div className="p-3 border-t border-slate-100 relative" ref={userMenuRef}>
+          <button
+            type="button"
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+            title="Account"
+          >
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-950 text-white font-bold text-[11px] shadow-2xs">
+                {userInitial}
+              </span>
+              {!sidebarCollapsed && (
+                <span className="truncate max-w-[120px] font-semibold text-slate-800">
+                  {userProfile.email?.split('@')[0] || 'Account'}
+                </span>
+              )}
+            </div>
+            {!sidebarCollapsed && <ChevronDown className="h-3.5 w-3.5 text-slate-400" />}
+          </button>
+
+          {/* Account Dropdown Popover */}
+          <AnimatePresence>
+            {userMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                className="absolute left-3 right-3 bottom-16 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl z-50 space-y-1"
+              >
+                <div className="px-3 py-2 border-b border-slate-100">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Signed in as
+                  </p>
+                  <p className="text-xs font-bold text-slate-900 truncate mt-0.5">
+                    {userProfile.email}
+                  </p>
+                  <span className="inline-block mt-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                    {userProfile.plan}
+                  </span>
+                </div>
+
+                <div className="py-1 space-y-0.5">
                   <Link
                     href="/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                   >
-                    <LayoutDashboard className="h-4 w-4 text-slate-400" />
-                    <span>Dashboard</span>
+                    <BarChart3 className="h-3.5 w-3.5 text-slate-400" />
+                    <span>All Web Properties</span>
                   </Link>
+
                   <Link
                     href="/dashboard/projects/new"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                   >
-                    <Plus className="h-4 w-4 text-slate-400" />
-                    <span>New Project</span>
+                    <Plus className="h-3.5 w-3.5 text-slate-400" />
+                    <span>Track New Website</span>
                   </Link>
-                </nav>
 
-                {/* User info & Logout cleanly positioned ONLY inside the drawer */}
-                <div className="border-t border-slate-100 pt-3 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="h-7 w-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                      {userInitial}
-                    </div>
-                    <span className="text-xs font-medium text-slate-700 truncate">
-                      {user.email}
+                  <Link
+                    href="/pricing"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
+                  >
+                    <Sparkles className="h-3.5 w-3.5 text-slate-400" />
+                    <span>Subscription & Plans</span>
+                  </Link>
+                </div>
+
+                <div className="border-t border-slate-100 pt-1">
+                  <button
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </aside>
+
+      {/* ============================================================== */}
+      {/* 2. MAIN FULL-WIDTH WORKSPACE CANVAS                            */}
+      {/* ============================================================== */}
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA]">
+        {/* Top Header Row with Breadcrumbs & Action Buttons */}
+        <header className="h-16 bg-white border-b border-slate-200/90 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+          {/* Left: Mobile Drawer Button + Breadcrumbs */}
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileDrawerOpen(true)}
+              className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 lg:hidden"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+              <Link href="/dashboard" className="hover:text-slate-900 transition-colors">
+                AEO Reports
+              </Link>
+              <span className="text-slate-300">&gt;</span>
+
+              {breadcrumbs && breadcrumbs.length > 0 ? (
+                breadcrumbs.map((crumb, idx) => (
+                  <span key={crumb.label} className="flex items-center gap-2">
+                    {idx > 0 && <span className="text-slate-300">&gt;</span>}
+                    {crumb.href ? (
+                      <Link href={crumb.href} className="hover:text-slate-900 transition-colors">
+                        {crumb.label}
+                      </Link>
+                    ) : (
+                      <span className="text-slate-900 font-bold">{crumb.label}</span>
+                    )}
+                  </span>
+                ))
+              ) : (
+                <span className="text-slate-900 font-bold capitalize">
+                  {activeSection === 'dashboard' ? currentDomain || 'Dashboard' : activeSection}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href={`/report/${encodeURIComponent(currentDomain)}`}
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors"
+            >
+              <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+              <span>Public Report</span>
+            </Link>
+
+            <Link
+              href="/pricing"
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 px-4 sm:px-5 py-2 text-xs font-extrabold text-white shadow-xs hover:opacity-95 transition-all uppercase tracking-wide cursor-pointer"
+            >
+              UPGRADE
+            </Link>
+          </div>
+        </header>
+
+        {/* Page Content Body (Fluid Edge-to-Edge) */}
+        <main className="w-full flex-1 min-w-0 bg-[#F8F9FA]">{children}</main>
+      </div>
+
+      {/* ============================================================== */}
+      {/* 3. MOBILE SIDEBAR DRAWER OVERLAY (< lg)                       */}
+      {/* ============================================================== */}
+      <AnimatePresence>
+        {mobileDrawerOpen && (
+          <div className="fixed inset-0 z-50 flex lg:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileDrawerOpen(false)}
+              className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs"
+            />
+
+            <motion.aside
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="relative w-72 bg-white flex flex-col justify-between h-full shadow-2xl z-50 p-4"
+            >
+              <div>
+                <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
+                      <Globe className="h-4 w-4 text-emerald-400" />
+                    </span>
+                    <span className="font-display text-base font-bold text-slate-900">
+                      AEO Checker
                     </span>
                   </div>
                   <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100/80 transition-colors shrink-0 cursor-pointer"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600"
                   >
-                    <LogOut className="h-3.5 w-3.5" />
-                    <span>Logout</span>
+                    <X className="h-5 w-5" />
                   </button>
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.header>
 
-      {children}
+                <div className="py-4 space-y-1">
+                  {navLinks.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.key}
+                        href={item.href}
+                        onClick={() => setMobileDrawerOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold ${
+                          item.active
+                            ? 'bg-slate-100 text-slate-950 font-bold'
+                            : 'text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4 text-slate-500" />
+                        <span>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100">
+                <button
+                  onClick={() => {
+                    setMobileDrawerOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </motion.aside>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

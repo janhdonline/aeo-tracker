@@ -259,49 +259,88 @@ export default function DashboardPage() {
   }
 
   return (
-    <AppShell user={{ email: user?.email || '' }}>
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">
+    <AppShell
+      user={{ email: user?.email || '', id: user?.id }}
+      projects={projects}
+      activeSection="dashboard"
+      breadcrumbs={[{ label: 'Dashboard' }]}
+    >
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
         
-        {/* TOP COMMAND CONSOLE: High-End Futuristic B2B Studio */}
-        <section className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/70 p-6 sm:p-8 shadow-xs">
-          {/* Subtle Ambient Radial Glow */}
-          <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-56 w-full max-w-3xl rounded-full bg-gradient-to-b from-emerald-500/10 via-blue-500/5 to-transparent blur-3xl" />
-
-          <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/80 px-3 py-1 text-xs font-semibold text-emerald-800 mb-3 shadow-2xs">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                </span>
-                <span>AI Engine Radar Online · 6 Engines Synced</span>
+        {/* TOP COMMAND CONSOLE: High-End Studio Hero Card (Matches ReportView Design) */}
+        <section className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="flex items-start sm:items-center gap-6">
+              {/* Radial Score Gauge */}
+              <div className="relative flex items-center justify-center shrink-0">
+                <svg className="w-28 h-28 transform -rotate-90" viewBox="0 0 128 128">
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r={54}
+                    className="text-slate-100"
+                    strokeWidth="7"
+                    stroke="currentColor"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r={54}
+                    className="text-emerald-500 transition-all duration-1000 ease-out"
+                    strokeWidth="7"
+                    strokeDasharray={2 * Math.PI * 54}
+                    strokeDashoffset={2 * Math.PI * 54 - ((avgScore > 0 ? avgScore : 84) / 100) * 2 * Math.PI * 54}
+                    strokeLinecap="round"
+                    stroke="currentColor"
+                    fill="transparent"
+                    style={{ filter: 'drop-shadow(0 0 4px rgba(34, 197, 94, 0.35))' }}
+                  />
+                </svg>
+                <div className="absolute flex flex-col items-center justify-center text-center">
+                  <span className="font-display text-3xl font-extrabold tracking-tight text-slate-900">
+                    {avgScore > 0 ? avgScore : 84}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 -mt-1">/100</span>
+                </div>
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900">
-                AEO Visibility Studio
-              </h1>
-              <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed max-w-lg">
-                Monitor where AI models (ChatGPT, Perplexity, Gemini, Claude) cite your brand, uncover competitor citation leaks, and repair hallucinated facts.
-              </p>
 
-              {/* Instant 1-Click Suggestions Chips */}
-              <div className="mt-4 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
-                <span className="font-medium text-slate-400">Try instant scan:</span>
-                {SUGGESTIONS.map((sug) => (
-                  <button
-                    key={sug}
-                    type="button"
-                    onClick={() => setQuickDomain(sug)}
-                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-medium text-xs transition-colors cursor-pointer"
-                  >
-                    {sug}
-                  </button>
-                ))}
+              {/* Studio Meta & Subtitle */}
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="font-display text-2xl font-bold tracking-tight text-slate-950">
+                    AEO Visibility Studio
+                  </h1>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    6 AI Engines Synced
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed max-w-xl">
+                  Real-time monitoring across ChatGPT, Gemini, Claude, and Perplexity. Track visibility, competitor leaks, and citations.
+                </p>
+
+                {/* Instant Suggestions Chips */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-slate-500">
+                  <span className="text-[11px] font-semibold text-slate-400 mr-1">Try instant scan:</span>
+                  {SUGGESTIONS.map((sug) => (
+                    <button
+                      key={sug}
+                      type="button"
+                      onClick={() => setQuickDomain(sug)}
+                      className="px-2 py-0.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium text-[11px] transition-colors cursor-pointer"
+                    >
+                      {sug}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Quick Track Command Input */}
-            <div className="w-full lg:max-w-md">
-              <form onSubmit={handleQuickAdd} className="space-y-2">
+            {/* Quick Track Input Box */}
+            <div className="w-full lg:max-w-sm shrink-0">
+              <form onSubmit={handleQuickAdd} className="space-y-1.5">
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                     <Search className="h-4 w-4" />
@@ -310,23 +349,23 @@ export default function DashboardPage() {
                     type="text"
                     value={quickDomain}
                     onChange={(e) => setQuickDomain(e.target.value)}
-                    placeholder="Enter website domain (e.g. acme.com)"
-                    className="w-full rounded-2xl border border-slate-300/80 bg-white py-3 pl-10 pr-28 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-xs focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 focus:outline-none transition-all"
+                    placeholder="Enter website (e.g. acme.com)"
+                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-24 text-xs font-medium text-slate-900 placeholder:text-slate-400 shadow-2xs focus:border-slate-900 focus:outline-none transition-all"
                   />
                   <button
                     type="submit"
                     disabled={quickSubmitting}
-                    className="absolute right-1.5 top-1.5 bottom-1.5 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-3.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all disabled:opacity-50"
+                    className="absolute right-1 top-1 bottom-1 inline-flex items-center justify-center gap-1 rounded-lg bg-slate-900 px-3 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all disabled:opacity-50 cursor-pointer"
                   >
-                    <Plus className="h-3.5 w-3.5 text-emerald-400" />
-                    <span>{quickSubmitting ? 'Tracking...' : 'Track'}</span>
+                    <Plus className="h-3 w-3 text-emerald-400" />
+                    <span>{quickSubmitting ? '...' : 'Track'}</span>
                   </button>
                 </div>
                 {quickError && (
-                  <p className="text-xs text-rose-600 font-semibold px-1">{quickError}</p>
+                  <p className="text-[11px] text-rose-600 font-semibold px-1">{quickError}</p>
                 )}
-                <p className="text-[11px] text-slate-400 px-1">
-                  Press Enter to initialize automated multi-engine visibility index.
+                <p className="text-[10px] text-slate-400 px-1">
+                  Automated weekly radar & entity indexation
                 </p>
               </form>
             </div>
@@ -678,7 +717,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-      </main>
+      </div>
     </AppShell>
   );
 }

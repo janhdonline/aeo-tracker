@@ -103,16 +103,12 @@ export default function NewProjectPage() {
   };
 
   return (
-    <AppShell user={{ email: userEmail || undefined }}>
-      <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6">
-          <Link href="/dashboard" className="hover:text-slate-900 transition-colors">
-            Dashboard
-          </Link>
-          <span>/</span>
-          <span className="text-slate-900 font-semibold">Track New Property</span>
-        </div>
+    <AppShell
+      user={{ email: userEmail || undefined }}
+      activeSection="new"
+      breadcrumbs={[{ label: 'Track New Website' }]}
+    >
+      <div className="w-full max-w-4xl px-6 sm:px-8 py-8 space-y-6">
 
         {/* Card Header */}
         <div className="rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-card mb-6">

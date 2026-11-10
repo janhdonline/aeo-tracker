@@ -150,12 +150,20 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
   };
 
   return (
-    <AppShell user={{ email: userEmail }}>
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="facts" />
+    <AppShell
+      user={{ email: userEmail }}
+      projectId={params.id}
+      domain={projectDomain || 'domain'}
+      activeSection="products"
+      breadcrumbs={[
+        { label: projectDomain || 'Project', href: `/dashboard/projects/${params.id}` },
+        { label: 'Products & Brand Facts' },
+      ]}
+    >
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
+        <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="facts" />
 
-          <main className="flex-1 min-w-0">
+        <div className="w-full space-y-6">
             {/* Header */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-1">
@@ -387,7 +395,6 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                 </div>
               </div>
             )}
-          </main>
         </div>
       </div>
     </AppShell>

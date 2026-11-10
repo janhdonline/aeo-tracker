@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Globe,
@@ -138,6 +139,7 @@ function Counter({ value }: { value: number }) {
 // ============================================================================
 
 export function ReportView({ data, userEmail }: Props) {
+  const router = useRouter();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState<'report' | 'prompts' | 'chatbots' | 'strategy' | 'competitors'>('report');
   const [showUnlockModal, setShowUnlockModal] = useState(false);
@@ -153,7 +155,13 @@ export function ReportView({ data, userEmail }: Props) {
   const [competitorsOpen, setCompetitorsOpen] = useState(true);
   const [strategyOpen, setStrategyOpen] = useState(true);
 
+  const isLoggedIn = Boolean(userEmail);
+
   const handleLockedClick = (featureName: string) => {
+    if (isLoggedIn) {
+      router.push('/dashboard');
+      return;
+    }
     setModalFeature(featureName);
     setShowUnlockModal(true);
   };

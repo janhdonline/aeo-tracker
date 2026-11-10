@@ -117,12 +117,20 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     : 'Optimization Needed';
 
   return (
-    <AppShell user={{ email: user.email }}>
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <ProjectSidebar projectId={params.id} domain={project.domain} current="overview" />
+    <AppShell
+      user={{ email: user.email, id: user.id }}
+      projectId={params.id}
+      domain={project.domain}
+      activeSection="dashboard"
+      breadcrumbs={[
+        { label: project.domain, href: `/dashboard/projects/${params.id}` },
+        { label: 'Overview' },
+      ]}
+    >
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
+        <ProjectSidebar projectId={params.id} domain={project.domain} current="overview" />
 
-          <main className="flex-1 min-w-0 space-y-6">
+        <div className="w-full space-y-6">
             {/* TOP HEADER: Clean Title & Action Buttons */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -432,7 +440,6 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 </div>
               </div>
             </div>
-          </main>
         </div>
       </div>
     </AppShell>

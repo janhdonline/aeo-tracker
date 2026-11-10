@@ -38,31 +38,38 @@ export default async function ProjectSettingsPage({
   }
 
   return (
-    <AppShell user={{ email: user.email }}>
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <ProjectSidebar projectId={params.id} domain={project.domain} current="settings" />
-          <main className="flex-1 min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <h1 className="font-display text-2xl font-bold text-slate-900">
-                  Settings & Workspace Delivery
-                </h1>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Configure brand precision, client weekly reporting, and optimization targets for <strong>{project.domain}</strong>.
-                </p>
-              </div>
-              <Link
-                href={`/dashboard/projects/${params.id}`}
-                className="inline-flex items-center gap-1.5 border border-slate-200 bg-white px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors self-start sm:self-auto shadow-xs"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                Back to Overview
-              </Link>
+    <AppShell
+      user={{ email: user.email, id: user.id }}
+      projectId={params.id}
+      domain={project.domain}
+      activeSection="settings"
+      breadcrumbs={[
+        { label: project.domain, href: `/dashboard/projects/${params.id}` },
+        { label: 'Settings' },
+      ]}
+    >
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
+        <ProjectSidebar projectId={params.id} domain={project.domain} current="settings" />
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 className="font-display text-2xl font-bold text-slate-900">
+                Settings & Workspace Delivery
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Configure brand precision, client weekly reporting, and optimization targets for <strong>{project.domain}</strong>.
+              </p>
             </div>
+            <Link
+              href={`/dashboard/projects/${params.id}`}
+              className="inline-flex items-center gap-1.5 border border-slate-200 bg-white px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors self-start sm:self-auto shadow-2xs"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Back to Overview
+            </Link>
+          </div>
 
-            <ProjectSettingsManager project={project} userEmail={user.email} />
-          </main>
+          <ProjectSettingsManager project={project} userEmail={user.email} />
         </div>
       </div>
     </AppShell>

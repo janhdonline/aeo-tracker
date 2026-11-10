@@ -159,12 +159,20 @@ fetch("https://aeo-tracker.janhdonline.workers.dev/api/tools/agent-analytics", {
   }
 
   return (
-    <AppShell user={{ email: userEmail }}>
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="analytics" />
+    <AppShell
+      user={{ email: userEmail }}
+      projectId={params.id}
+      domain={projectDomain || 'domain'}
+      activeSection="competitors"
+      breadcrumbs={[
+        { label: projectDomain || 'Project', href: `/dashboard/projects/${params.id}` },
+        { label: 'Competitors & Crawlers' },
+      ]}
+    >
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
+        <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="analytics" />
 
-          <main className="flex-1 min-w-0">
+        <div className="w-full space-y-6">
             {/* Header */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-1">
@@ -306,7 +314,6 @@ fetch("https://aeo-tracker.janhdonline.workers.dev/api/tools/agent-analytics", {
                 </div>
               </div>
             </div>
-          </main>
         </div>
       </div>
     </AppShell>

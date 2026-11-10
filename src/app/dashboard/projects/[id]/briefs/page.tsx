@@ -39,17 +39,27 @@ export default async function BriefsPage({ params }: { params: { id: string } })
     .order('created_at', { ascending: false });
 
   return (
-    <AppShell user={{ email: user.email }}>
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <ProjectSidebar projectId={params.id} domain={project.domain} current="briefs" />
-          <main className="flex-1 min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <h2 className="font-display text-2xl font-bold">Fix Briefs for {project.domain}</h2>
-              <Link href={`/dashboard/projects/${params.id}`} className="border border-slate-200 px-4 py-2 rounded-lg text-sm hover:bg-slate-50">Back to Project</Link>
+    <AppShell
+      user={{ email: user.email, id: user.id }}
+      projectId={params.id}
+      domain={project.domain}
+      activeSection="tasks"
+      breadcrumbs={[
+        { label: project.domain, href: `/dashboard/projects/${params.id}` },
+        { label: 'Prioritized Tasks' },
+      ]}
+    >
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
+        <ProjectSidebar projectId={params.id} domain={project.domain} current="briefs" />
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="font-display text-2xl font-bold text-slate-900">Optimization Tasks & Action Briefs</h2>
+              <p className="text-xs text-slate-500 mt-1">Actions backed by evidence to increase AI visibility for {project.domain}</p>
             </div>
-            <BriefsManager projectId={params.id} initialBriefs={briefs || []} />
-          </main>
+            <Link href={`/dashboard/projects/${params.id}`} className="border border-slate-200 px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs">Back to Overview</Link>
+          </div>
+          <BriefsManager projectId={params.id} initialBriefs={briefs || []} />
         </div>
       </div>
     </AppShell>
