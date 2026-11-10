@@ -522,14 +522,10 @@ export default function Home() {
   }, [router]);
 
   function pickExample(exampleDomain: string) {
-    setDomain(exampleDomain);
-    setError("");
-    setResult(null);
-    setDashboardData(null);
-    requestAnimationFrame(() => {
-      inputRef.current?.focus();
-      inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
+    const normalized = normalizeDomain(exampleDomain);
+    setDomain(normalized);
+    setLoading(true);
+    router.push(`/report/${encodeURIComponent(normalized)}`);
   }
 
   async function handleAnalyze(event: React.FormEvent<HTMLFormElement>) {
@@ -544,36 +540,7 @@ export default function Home() {
     setDomain(normalized);
     setLoading(true);
     setError("");
-    setResult(null);
-    setDashboardData(null);
-
-    try {
-      const response = await fetch("/api/free-check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ domain: normalized }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "We couldn't analyze that website. Please try again.");
-      }
-
-      setResult({
-        domain: data.domain ?? normalized,
-        visibilityScore: data.visibilityScore ?? 0,
-        totalQueries: data.totalQueries ?? 0,
-        totalMentions: data.totalMentions ?? 0,
-      });
-
-      if (isLiveDashboardData(data.dashboard)) {
-        setDashboardData(data.dashboard);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    router.push(`/report/${encodeURIComponent(normalized)}`);
   }
 
   return (

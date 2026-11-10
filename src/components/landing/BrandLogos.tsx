@@ -119,11 +119,12 @@ export type ExampleBrand =
   | "Revolut";
 
 export const heroExamples: Array<{ name: ExampleBrand; domain: string }> = [
-  { name: "Y Combinator", domain: "ycombinator.com" },
   { name: "Zara", domain: "zara.com" },
   { name: "Revolut", domain: "revolut.com" },
   { name: "Uber", domain: "uber.com" },
   { name: "Stripe", domain: "stripe.com" },
+  { name: "Discord", domain: "discord.com" },
+  { name: "Stanley", domain: "stanley1913.com" },
 ];
 
 const brandStyles: Record<ExampleBrand, { initials: string; className: string }> = {
