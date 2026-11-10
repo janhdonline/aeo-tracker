@@ -832,6 +832,45 @@ export default function AdminPortalPage() {
 
   const spendPct = Math.min(100, Math.round((costData.todaySpendUsd / (costData.dailyCapUsd || 25)) * 100));
 
+  // Dynamic Header Titles per Tab Navigation
+  const tabHeaderInfo: Record<
+    string,
+    { category: string; title: string }
+  > = {
+    overview: {
+      category: 'Operations Control',
+      title: 'Dashboard',
+    },
+    users: {
+      category: 'Customer Operations',
+      title: 'Users & Subscriptions',
+    },
+    queue: {
+      category: 'Scan Pipeline',
+      title: 'Live Queue & Stuck Killer',
+    },
+    watchdog: {
+      category: 'AI Engine Health',
+      title: 'Watchdog & Latency',
+    },
+    keys: {
+      category: 'Credential Vault',
+      title: 'API Keys Pool',
+    },
+    security: {
+      category: 'Anti-Abuse Shield',
+      title: 'Security & IP Blacklist',
+    },
+    config: {
+      category: 'System Parameters',
+      title: 'App Config & Banners',
+    },
+    db: {
+      category: 'Data Infrastructure',
+      title: 'Database & Hygiene',
+    },
+  };
+
   // =========================================================================
   // VIEW 3: FULL ADMIN PORTAL COMMAND CENTER (IMAGE DESIGN SCHEMA)
   // =========================================================================
@@ -943,15 +982,15 @@ export default function AdminPortalPage() {
             </div>
           </div>
 
-          {/* DASHBOARD HEADER: Title Stack + Circular Asterisk + Date Pickers */}
+          {/* DASHBOARD HEADER: Dynamic Title Stack + Circular Asterisk + Date Pickers */}
           <div className="flex flex-wrap items-end justify-between gap-4 py-6">
             <div className="flex items-center gap-3.5">
               <div>
-                <div className="text-2xl sm:text-3xl font-light text-slate-400 tracking-tight leading-none">
-                  Operations Control
+                <div className="text-2xl sm:text-3xl font-light text-slate-400 tracking-tight leading-none transition-all duration-300">
+                  {tabHeaderInfo[activeTab]?.category || 'Operations Control'}
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mt-1">
-                  Dashboard
+                <div className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mt-1 transition-all duration-300">
+                  {tabHeaderInfo[activeTab]?.title || 'Dashboard'}
                 </div>
               </div>
 
@@ -959,7 +998,7 @@ export default function AdminPortalPage() {
               <button
                 onClick={() => setActiveTab('overview')}
                 className="w-11 h-11 rounded-full bg-[#D4F63C] flex items-center justify-center text-slate-950 font-black text-xl shadow-sm hover:scale-105 transition"
-                title="Command Center"
+                title="Return to Main Overview Dashboard"
               >
                 ✱
               </button>
