@@ -141,6 +141,58 @@ function hashString(str: string): number {
 
 function getKnownBrandPreset(domain: string) {
   const norm = domain.toLowerCase().replace(/^www\./, '');
+  if (norm.includes('whoop')) {
+    return {
+      brandName: 'Whoop',
+      industry: 'Wearable Fitness Tracker',
+      region: 'Global',
+      score: 68,
+      products: [
+        'WHOOP 5.0',
+        'WHOOP Peak Membership',
+        'WHOOP MG',
+        'WHOOP Body Smart Apparel',
+        'WHOOP Accessories',
+        'WHOOP Strap 4.0',
+        'WHOOP Life Subscription',
+        'WHOOP Team Analytics',
+        'WHOOP Pro Membership',
+        'WHOOP Sleep Coach',
+        'WHOOP Strain Coach',
+        'WHOOP Journal',
+        'WHOOP Battery Pack 4.0',
+        'WHOOP Bicep Band',
+      ],
+      bestProduct: '—',
+      competitors: ['Apple', 'Xiaomi', 'Samsung', 'Huawei', 'Fitbit', 'Garmin', 'Oura', 'Polar', 'Suunto', 'Coros'],
+      productsFoundPct: 10.5,
+      yourProductsPct: 8.3,
+      competitorProductsPct: 100.0,
+      aiPresenceScore: 72,
+      keyPromptsScore: 92,
+      competitorLandscapeScore: 92,
+      strategyReviewScore: 76,
+      aiModels: {
+        chatgpt: { name: 'ChatGPT-4o', score: 50, checked: true },
+        gemini: { name: 'Google Gemini', score: 100, checked: true },
+        claude: { name: 'Claude 3.7', score: 100, checked: true },
+        perplexity: { name: 'Perplexity Pro', score: 83, checked: true },
+      },
+      prompts: [
+        'What are the leading companies in the wearable fitness tracker industry?',
+        'Which fitness trackers offer advanced recovery and sleep tracking features?',
+      ],
+      strategy: {
+        answerability: 42,
+        redditScore: 96,
+        xScore: 0,
+        youtubeScore: 0,
+        wiki: true,
+        structuredData: 70,
+        crawlerAccessibility: 95,
+      },
+    };
+  }
   if (norm.includes('revolut')) {
     return {
       brandName: 'Revolut',
@@ -159,6 +211,32 @@ function getKnownBrandPreset(domain: string) {
       ],
       bestProduct: 'Revolut Customer Support & Multi-Currency',
       competitors: ['Wise', 'TransferWise', 'N26', 'Monese', 'Vivid Money', 'Monzo', 'Starling Bank', 'Bunq', 'BaFin'],
+      productsFoundPct: 5.3,
+      yourProductsPct: 8.3,
+      competitorProductsPct: 9.1,
+      aiPresenceScore: 95,
+      keyPromptsScore: 50,
+      competitorLandscapeScore: 50,
+      strategyReviewScore: 75,
+      aiModels: {
+        chatgpt: { name: 'ChatGPT-4o', score: 95, checked: true },
+        gemini: { name: 'Google Gemini', score: 72, checked: true },
+        claude: { name: 'Claude 3.7', score: 98, checked: true },
+        perplexity: { name: 'Perplexity Pro', score: 98, checked: true },
+      },
+      prompts: [
+        'Which solutions offer multi-currency and commercial scalability for fintech banking?',
+        'What are the best platforms for beginners in Fintech Banking?',
+      ],
+      strategy: {
+        answerability: 49,
+        redditScore: 92,
+        xScore: 24,
+        youtubeScore: 35,
+        wiki: true,
+        structuredData: 70,
+        crawlerAccessibility: 85,
+      },
     };
   }
   if (norm.includes('stripe')) {
@@ -469,6 +547,20 @@ export function generateFullReportData(domain: string): FullReportData {
     { name: preset.competitors[3] || 'Competitor D', mentionRate: 12, sentiment: 45, quadrant: 'Emerging', isYourBrand: false },
   ];
 
+  const aiPresenceScore = (preset as any).aiPresenceScore ?? (80 + (hash % 18));
+  const keyPromptsScore = (preset as any).keyPromptsScore ?? (70 + ((hash >> 1) % 25));
+  const competitorLandscapeScore = (preset as any).competitorLandscapeScore ?? (65 + ((hash >> 2) % 30));
+  const strategyReviewScore = (preset as any).strategyReviewScore ?? (70 + ((hash >> 3) % 20));
+
+  const aiModels = (preset as any).aiModels ?? {
+    chatgpt: { name: 'ChatGPT-4o', score: chatgptScore, checked: true },
+    gemini: { name: 'Google Gemini', score: geminiScore, checked: true },
+    claude: { name: 'Claude 3.7', score: claudeScore, checked: true },
+    perplexity: { name: 'Perplexity Pro', score: perplexityScore, checked: true },
+  };
+
+  const presetStrategy = (preset as any).strategy;
+
   return {
     domain: normDomain,
     brandName: preset.brandName,
@@ -478,22 +570,17 @@ export function generateFullReportData(domain: string): FullReportData {
     score,
     scoreBadge,
     products: preset.products,
-    productsFoundPct: 5.3,
-    yourProductsPct: 8.3,
-    competitorProductsPct: 9.1,
-    bestProduct: preset.bestProduct,
+    productsFoundPct: (preset as any).productsFoundPct ?? 10.5,
+    yourProductsPct: (preset as any).yourProductsPct ?? 8.3,
+    competitorProductsPct: (preset as any).competitorProductsPct ?? 100.0,
+    bestProduct: preset.bestProduct || '—',
 
-    aiPresenceScore: 95,
-    keyPromptsScore: 50,
-    competitorLandscapeScore: 50,
-    strategyReviewScore: 75,
+    aiPresenceScore,
+    keyPromptsScore,
+    competitorLandscapeScore,
+    strategyReviewScore,
 
-    aiModels: {
-      chatgpt: { name: 'ChatGPT-4o', score: chatgptScore, checked: true },
-      gemini: { name: 'Google Gemini', score: geminiScore, checked: true },
-      claude: { name: 'Claude 3.7', score: claudeScore, checked: true },
-      perplexity: { name: 'Perplexity Pro', score: perplexityScore, checked: true },
-    },
+    aiModels,
 
     trajectory90DaysDate: trajectoryDate,
     trajectoryMultiplier: 1.4,
@@ -508,20 +595,20 @@ export function generateFullReportData(domain: string): FullReportData {
 
     strategy: {
       answerability: {
-        score: 49,
+        score: presetStrategy?.answerability ?? 42,
         goodLength: true,
         conversational: true,
         statistics: true,
         citations: true,
       },
       webPresence: {
-        wikipedia: true,
-        redditScore: 92,
-        xScore: 24,
-        youtubeScore: 35,
+        wikipedia: presetStrategy?.wiki ?? true,
+        redditScore: presetStrategy?.redditScore ?? 96,
+        xScore: presetStrategy?.xScore ?? 0,
+        youtubeScore: presetStrategy?.youtubeScore ?? 0,
       },
       structuredData: {
-        score: 70,
+        score: presetStrategy?.structuredData ?? 70,
         schemaMarkup: true,
         schemaType: 'Organization, SoftwareApplication, WebSite',
         tagsFound: 26,
@@ -529,7 +616,7 @@ export function generateFullReportData(domain: string): FullReportData {
         nonSemantics: 318,
       },
       crawlerAccessibility: {
-        score: 85,
+        score: presetStrategy?.crawlerAccessibility ?? 95,
         sitemap: true,
         robotsTxt: true,
         llmsTxt: false,

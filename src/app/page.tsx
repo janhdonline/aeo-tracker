@@ -704,30 +704,12 @@ export default function Home() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.13 }}
               className="mx-auto mt-6 max-w-4xl text-[36px] font-semibold leading-[1.03] tracking-[-0.055em] text-[#111827] sm:text-6xl lg:text-[76px]"
             >
-              Check your website
-              <span className="mt-1 block">
-                <span className="relative inline-block">
-                  <span className="relative z-10">
-                    SEO{" "}
-                    <span className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-blue-600 bg-clip-text text-transparent">
-                      AEO
-                    </span>
-                  </span>
-                  <svg
-                    viewBox="0 0 220 12"
-                    className="absolute -bottom-2 left-0 h-2.5 w-full text-emerald-200 sm:-bottom-3"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M2 8.5C42 3.5 86 2.5 128 5.2C159 7.2 190 6.2 218 3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
+              Check your website{' '}
+              <span className="line-through decoration-slate-400/80 decoration-4 text-slate-300 font-normal">
+                SEO
+              </span>{' '}
+              <span className="font-extrabold text-[#111827]">
+                AEO
               </span>
             </motion.h1>
 
