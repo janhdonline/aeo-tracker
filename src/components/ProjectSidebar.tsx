@@ -12,6 +12,7 @@ import {
   Bot,
   FileCode2,
   Settings,
+  Layers,
 } from 'lucide-react';
 
 interface NavItem {
@@ -29,6 +30,7 @@ interface ProjectSidebarProps {
     | 'overview'
     | 'keywords'
     | 'sources'
+    | 'competitors'
     | 'briefs'
     | 'facts'
     | 'alerts'
@@ -49,6 +51,12 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
       href: `/dashboard/projects/${projectId}/sources`,
       key: 'sources',
       badge: 'PRO',
+    },
+    {
+      label: 'Competitors',
+      icon: Layers,
+      href: `/dashboard/projects/${projectId}/competitors`,
+      key: 'competitors',
     },
     { label: 'Recommendations', icon: BarChart3, href: `/dashboard/projects/${projectId}/briefs`, key: 'briefs' },
   ];

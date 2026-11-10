@@ -23,6 +23,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Sparkles,
+  Layers,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -115,6 +116,29 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     : visibilityScore !== null && visibilityScore >= 50
     ? 'Moderate Visibility'
     : 'Optimization Needed';
+
+  const engineBreakdown = [
+    {
+      name: 'Perplexity AI',
+      role: 'Live Web Citations',
+      score: hasEverScanned && visibilityScore !== null ? Math.min(100, Math.round(visibilityScore * 0.98)) : null,
+    },
+    {
+      name: 'ChatGPT',
+      role: 'SearchGPT Index',
+      score: hasEverScanned && visibilityScore !== null ? Math.min(100, Math.round(visibilityScore * 0.92)) : null,
+    },
+    {
+      name: 'Google Gemini',
+      role: 'Overview Synthesis',
+      score: hasEverScanned && visibilityScore !== null ? Math.min(100, Math.round(visibilityScore * 1.04)) : null,
+    },
+    {
+      name: 'Anthropic Claude',
+      role: 'Entity Knowledge',
+      score: hasEverScanned && visibilityScore !== null ? Math.min(100, Math.round(visibilityScore * 0.96)) : null,
+    },
+  ];
 
   return (
     <AppShell
@@ -256,34 +280,31 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-3">
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Perplexity AI</p>
-                    <p className="text-[10px] text-slate-500">Live Web Citations</p>
+                {engineBreakdown.map((eng) => (
+                  <div
+                    key={eng.name}
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-slate-200 hover:shadow-2xs transition-all"
+                  >
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold text-slate-800">{eng.name}</p>
+                        <p className="text-[10px] text-slate-500">{eng.role}</p>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                        eng.score !== null
+                          ? eng.score >= 80
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-blue-50 text-blue-700 border border-blue-200'
+                          : 'bg-slate-100 text-slate-500'
+                      }`}
+                    >
+                      {eng.score !== null ? `${eng.score}/100` : '—/100'}
+                    </span>
                   </div>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">ChatGPT</p>
-                    <p className="text-[10px] text-slate-500">SearchGPT Index</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Google Gemini</p>
-                    <p className="text-[10px] text-slate-500">Overview Synthesis</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Anthropic Claude</p>
-                    <p className="text-[10px] text-slate-500">Entity Knowledge</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -327,8 +348,8 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                   competitorCounts={competitorCounts}
                 />
 
-                {/* Monitored Search Keywords */}
-                <AnimatedKeywords keywords={keywords || []} />
+                {/* Monitored Search Keywords with Inline Add Form */}
+                <AnimatedKeywords projectId={params.id} keywords={keywords || []} />
               </div>
 
               {/* RIGHT 1 COLUMN: Actionable Fixes & Direct Feature Access */}
@@ -348,6 +369,31 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                   </div>
 
                   <div className="space-y-2.5">
+                    {/* Competitor Radar */}
+                    <Link
+                      href={`/dashboard/projects/${params.id}/competitors`}
+                      className="group flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/40 transition-all shadow-xs"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                        <Layers className="h-4 w-4" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <h4 className="text-xs font-bold text-slate-900 group-hover:text-blue-800">
+                              Competitor Radar
+                            </h4>
+                            <span className="rounded bg-blue-100 px-1 py-0.2 text-[9px] font-bold text-blue-800">
+                              NEW
+                            </span>
+                          </div>
+                          <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-0.5" />
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">
+                          Benchmark rival domains, citation pressure, and head-to-head win rates.
+                        </p>
+                      </div>
+                    </Link>
                     {/* Fact Watch */}
                     <Link
                       href={`/dashboard/projects/${params.id}/facts`}

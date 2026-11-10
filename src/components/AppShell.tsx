@@ -237,16 +237,16 @@ export function AppShell({
     {
       key: 'competitors',
       label: 'Competitors',
-      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/analytics` : '/dashboard',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/competitors` : '/dashboard',
       icon: Layers,
-      active: pathname.includes('/analytics'),
+      active: pathname.includes('/competitors'),
     },
     {
       key: 'traffic',
       label: 'AI Traffic',
-      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/runs` : '/dashboard',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/analytics` : '/dashboard',
       icon: TrendingUp,
-      active: pathname.includes('/runs'),
+      active: pathname.includes('/analytics'),
     },
     {
       key: 'products',
@@ -265,9 +265,9 @@ export function AppShell({
     {
       key: 'brands',
       label: 'Brands',
-      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/facts` : '/dashboard',
+      href: currentProjectId ? `/dashboard/projects/${currentProjectId}/runs` : '/dashboard',
       icon: Globe,
-      active: false,
+      active: pathname.includes('/runs'),
     },
     {
       key: 'tasks',
