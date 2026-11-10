@@ -698,14 +698,11 @@ export default function AdminPortalPage() {
   // VIEW 3: FULL ADMIN PORTAL COMMAND CENTER (IMAGE DESIGN SCHEMA)
   // =========================================================================
   return (
-    <div className="min-h-screen bg-[#eaedf2] text-slate-800 font-sans selection:bg-[#D4F63C] selection:text-black p-3 sm:p-6 lg:p-8">
-      {/* Outer Floating Dashboard Canvas Container (Matching Image) */}
-      <div className="max-w-[1440px] mx-auto bg-white rounded-[32px] sm:rounded-[40px] shadow-[0_20px_70px_-20px_rgba(0,0,0,0.06)] border border-white/80 p-4 sm:p-6 lg:p-8 flex gap-6 min-h-[92vh]">
-        
-        {/* ================================================================ */}
-        {/* LEFT SLIM ICON DOCK / SIDEBAR (Matching Image Left Rail)        */}
-        {/* ================================================================ */}
-        <aside className="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-between py-2">
+    <div className="min-h-screen w-full bg-white text-slate-800 font-sans selection:bg-[#D4F63C] selection:text-black p-4 sm:p-6 lg:p-8 flex gap-6">
+      {/* ================================================================ */}
+      {/* LEFT SLIM ICON DOCK / SIDEBAR (Matching Image Left Rail)        */}
+      {/* ================================================================ */}
+      <aside className="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-between py-2 sticky top-6 self-start h-[calc(100vh-3rem)] min-h-[560px]">
           {/* Brand Logo Asterisk */}
           <div className="flex flex-col items-center gap-1">
             <div className="w-11 h-11 rounded-full bg-slate-950 text-white flex items-center justify-center font-black text-xl shadow-sm hover:scale-105 transition cursor-pointer">
@@ -2182,7 +2179,6 @@ export default function AdminPortalPage() {
           )}
 
         </main>
-      </div>
     </div>
   );
 }
