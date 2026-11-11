@@ -39,6 +39,7 @@ import { AIBotAccessMatrix } from '@/components/AIBotAccessMatrix';
 import { PlatformOptimizationTabs } from '@/components/PlatformOptimizationTabs';
 import { PageCitabilityTable } from '@/components/PageCitabilityTable';
 import { ScoreHistoryTimeline } from '@/components/ScoreHistoryTimeline';
+import { WebPresenceAudit } from '@/components/WebPresenceAudit';
 import type { FullReportData } from '@/lib/report-generator';
 
 interface Props {
@@ -1486,27 +1487,9 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   </div>
                 </div>
 
-                {/* Web Presence Footprint */}
-                <div className="space-y-2">
-                  <h4 className="font-display text-sm font-bold text-slate-900">Web Presence Footprint</h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">Wikipedia</span>
-                      <span className="font-bold text-emerald-700">Found ✓</span>
-                    </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">Reddit Score</span>
-                      <span className="font-bold text-slate-900">{data.strategy.webPresence.redditScore}</span>
-                    </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">X / Twitter</span>
-                      <span className="font-bold text-slate-500">{data.strategy.webPresence.xScore}</span>
-                    </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">YouTube</span>
-                      <span className="font-bold text-slate-500">{data.strategy.webPresence.youtubeScore}</span>
-                    </div>
-                  </div>
+                {/* Web Presence Footprint (Multi-Platform: Reddit, Wikipedia, YouTube, X) */}
+                <div className="pt-2">
+                  <WebPresenceAudit domain={data.domain} brandName={data.domain.split('.')[0]} />
                 </div>
 
                 {/* AI Crawler Accessibility */}

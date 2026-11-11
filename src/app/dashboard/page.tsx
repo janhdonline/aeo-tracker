@@ -14,6 +14,7 @@ import { CompetitorLeaderboardWidget } from './components/CompetitorLeaderboardW
 import { ExecutiveExportDigestModal } from './components/ExecutiveExportDigestModal';
 import { ExecutivePulseCard } from './components/ExecutivePulseCard';
 import { LiveCitationTicker } from './components/LiveCitationTicker';
+import { WebPresenceAudit } from '@/components/WebPresenceAudit';
 import {
   Plus,
   ArrowRight,
@@ -701,6 +702,12 @@ export default function DashboardPage() {
         <CompetitorLeaderboardWidget
           currentDomain={projects[0]?.domain || 'notion.so'}
           userScore={avgScore > 0 ? avgScore : 84}
+        />
+
+        {/* MULTI-PLATFORM WEB PRESENCE FOOTPRINT (Reddit, Wikipedia, YouTube, X) */}
+        <WebPresenceAudit
+          domain={selectedDomain}
+          brandName={projects.find((p: any) => p.domain === selectedDomain)?.brand_name || selectedDomain.split('.')[0]}
         />
 
         {/* ANSWER ENGINE RADAR STATUS STRIP (With Model Latency Telemetry) */}

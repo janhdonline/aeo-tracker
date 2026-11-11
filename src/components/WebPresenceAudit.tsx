@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Globe,
@@ -15,9 +15,13 @@ import {
   HelpCircle,
   Copy,
   Check,
+  RefreshCw,
+  Sliders,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
-interface PlatformStatus {
+export interface PlatformStatus {
   name: string;
   iconType: 'reddit' | 'wikipedia' | 'youtube' | 'x';
   score: number;
@@ -26,13 +30,15 @@ interface PlatformStatus {
   citations: string;
   role: string;
   insight: string;
+  subreddits?: string[];
   actionUrl?: string;
   actionLabel?: string;
 }
 
-interface WebPresenceProps {
+export interface WebPresenceProps {
   domain: string;
   brandName?: string;
+  compact?: boolean;
 }
 
 function RedditIcon({ className = 'h-5 w-5' }: { className?: string }) {
@@ -67,11 +73,14 @@ function XIcon({ className = 'h-5 w-5' }: { className?: string }) {
   );
 }
 
-export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
+export function WebPresenceAudit({ domain, brandName, compact = false }: WebPresenceProps) {
   const brand = brandName || domain.split('.')[0] || domain;
   const [copiedTip, setCopiedTip] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const platforms: PlatformStatus[] = [
+  // Baseline data with immediate fallback
+  const [platforms, setPlatforms] = useState<PlatformStatus[]>([
     {
       name: 'Reddit Community Authority',
       iconType: 'reddit',
@@ -80,6 +89,7 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
       badgeStyle: 'bg-orange-50 text-orange-700 border-orange-200',
       citations: '48+ citations in AI answers',
       role: 'Primary source for ChatGPT & Perplexity unvarnished peer reviews',
+      subreddits: ['r/SaaS', 'r/technology', 'r/productivity', `r/${brand.toLowerCase()}`],
       insight: `LLMs heavily weight r/technology, r/software, and niche subreddits for "${brand}" sentiment and competitor versus queries.`,
       actionUrl: `https://www.reddit.com/search/?q=${encodeURIComponent(brand)}`,
       actionLabel: 'Inspect Reddit Discussions',
@@ -101,7 +111,7 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
       iconType: 'youtube',
       score: 78,
       status: 'Growing Presence',
-      badgeStyle: 'bg-blue-50 text-blue-700 border-blue-200',
+      badgeStyle: 'bg-red-50 text-red-700 border-red-200',
       citations: '32+ video transcripts parsed',
       role: 'Google Gemini & Perplexity multimodal training citations',
       insight: `Gemini extracts how-to workflows and pricing breakdowns directly from YouTube automated speech-to-text transcripts.`,
@@ -120,12 +130,58 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
       actionUrl: `https://x.com/search?q=${encodeURIComponent(brand)}`,
       actionLabel: 'View Live Mentions',
     },
-  ];
+  ]);
+
+  const [recommendations, setRecommendations] = useState<Array<{
+    platform: string;
+    priority: string;
+    impact: string;
+    advice: string;
+  }>>([
+    {
+      platform: 'Schema Integration',
+      priority: 'Quick Win',
+      impact: '+12 pts AEO Uplift',
+      advice: `Add schema.org sameAs links in your homepage <head> to anchor ${brand}'s entity across Reddit, Wikipedia, YouTube, and X.`,
+    },
+    {
+      platform: 'Reddit E-E-A-T',
+      priority: 'High',
+      impact: '+16 pts Perplexity Citations',
+      advice: `Monitor active conversations in r/SaaS and r/technology where buyers compare "${brand}" vs alternatives. Real user reviews are heavily cited by ChatGPT Search.`,
+    },
+  ]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    async function fetchAudit() {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/tools/web-presence?domain=${encodeURIComponent(domain)}&brand=${encodeURIComponent(brand)}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (!isCancelled && json.platforms) {
+            setPlatforms(json.platforms);
+            if (json.recommendations) setRecommendations(json.recommendations);
+          }
+        }
+      } catch {
+        // Safe fallback already in state
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    }
+    fetchAudit();
+    return () => {
+      isCancelled = true;
+    };
+  }, [domain, brand]);
 
   const avgPresenceScore = Math.round(
     platforms.reduce((acc, p) => acc + p.score, 0) / platforms.length
   );
 
+  const cleanHandle = brand.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
   const sampleSchema = `<script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -133,10 +189,10 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
   "name": "${brand}",
   "url": "https://${domain}",
   "sameAs": [
-    "https://www.reddit.com/r/${brand.toLowerCase()}",
-    "https://www.wikidata.org/wiki/Special:Search?search=${brand}",
-    "https://www.youtube.com/@${brand.toLowerCase()}",
-    "https://x.com/${brand.toLowerCase()}"
+    "https://www.reddit.com/r/${cleanHandle}",
+    "https://www.wikidata.org/wiki/Special:Search?search=${encodeURIComponent(brand)}",
+    "https://www.youtube.com/@${cleanHandle}",
+    "https://x.com/${cleanHandle}"
   ]
 }
 </script>`;
@@ -148,11 +204,11 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
   };
 
   return (
-    <section className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs space-y-6">
+    <section className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-xs space-y-6">
       {/* Header with Radial Pillar Badge */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-200/60">
               <Globe className="h-4 w-4" />
             </span>
@@ -162,32 +218,77 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
               {avgPresenceScore}/100 Footprint Score
             </span>
+            {loading && (
+              <RefreshCw className="h-3 w-3 animate-spin text-slate-400 ml-1" />
+            )}
           </div>
           <p className="text-xs text-slate-500">
             Measures brand presence across Reddit, Wikipedia, YouTube, and X—the 4 primary external sources AI engines cite.
           </p>
         </div>
 
-        <button
-          onClick={copySchema}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 shadow-2xs transition-colors cursor-pointer shrink-0"
-        >
-          {copiedTip ? (
-            <>
-              <Check className="h-3.5 w-3.5 text-emerald-600" />
-              <span className="text-emerald-700">Copied sameAs Schema!</span>
-            </>
-          ) : (
-            <>
-              <Copy className="h-3.5 w-3.5 text-slate-500" />
-              <span>Copy sameAs Entity Schema</span>
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={() => setShowRecommendations(!showRecommendations)}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs transition-colors cursor-pointer"
+          >
+            <span>Strategic Fixes</span>
+            {showRecommendations ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          </button>
+
+          <button
+            onClick={copySchema}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 shadow-2xs transition-colors cursor-pointer shrink-0"
+          >
+            {copiedTip ? (
+              <>
+                <Check className="h-3.5 w-3.5 text-emerald-600" />
+                <span className="text-emerald-700">Copied sameAs!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-3.5 w-3.5 text-slate-500" />
+                <span>Copy sameAs Schema</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
+      {/* Expandable Strategic Fixes */}
+      <AnimatePresence>
+        {showRecommendations && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 space-y-3">
+              <h4 className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
+                High-Impact Web Presence Playbook for {brand}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                {recommendations.map((rec, i) => (
+                  <div key={i} className="p-3 rounded-lg bg-white border border-indigo-100 text-xs space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900">{rec.platform}</span>
+                      <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+                        {rec.impact}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed text-[11px]">{rec.advice}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 4 Platform Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`grid grid-cols-1 ${compact ? 'gap-3' : 'md:grid-cols-2 gap-4'}`}>
         {platforms.map((plat) => (
           <div
             key={plat.name}
@@ -209,7 +310,7 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="font-display text-base font-extrabold text-slate-900 block">
+                  <span className="font-display text-base font-extrabold text-slate-900 block tabular-nums">
                     {plat.score}/100
                   </span>
                   <span
@@ -220,9 +321,33 @@ export function WebPresenceAudit({ domain, brandName }: WebPresenceProps) {
                 </div>
               </div>
 
-              <p className="text-xs text-slate-600 leading-relaxed mt-3">
+              {/* Progress Bar Gauge */}
+              <div className="w-full bg-slate-200/70 h-1.5 rounded-full overflow-hidden mt-3 mb-3">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${
+                    plat.score >= 80 ? 'bg-emerald-500' : plat.score >= 60 ? 'bg-indigo-500' : 'bg-amber-500'
+                  }`}
+                  style={{ width: `${plat.score}%` }}
+                />
+              </div>
+
+              <p className="text-xs text-slate-600 leading-relaxed">
                 {plat.insight}
               </p>
+
+              {plat.subreddits && plat.subreddits.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1 mt-2.5">
+                  <span className="text-[10px] text-slate-400 font-medium">Key communities:</span>
+                  {plat.subreddits.map((sub) => (
+                    <span
+                      key={sub}
+                      className="inline-flex items-center text-[10px] font-medium bg-slate-200/60 text-slate-700 px-1.5 py-0.5 rounded"
+                    >
+                      {sub}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs">

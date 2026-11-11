@@ -6,6 +6,7 @@ import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import Link from 'next/link';
 import { LLMSSuiteManager } from './LLMSSuiteManager';
+import { WebPresenceAudit } from '@/components/WebPresenceAudit';
 import { ArrowLeft } from 'lucide-react';
 
 export default async function LLMSSuitePage({
@@ -60,10 +61,10 @@ export default async function LLMSSuitePage({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="font-display text-2xl font-bold text-slate-900">
-                llms.txt Suite & Host Validator
+                Online Presence & AI File Suite
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                The official AEO protocol standard to guide GPTBot, ClaudeBot, and Perplexity indexing for <strong>{project.domain}</strong>.
+                Audit your multi-platform presence (Reddit, Wikipedia, YouTube, X) and validate the <strong>llms.txt</strong> protocol for <strong>{project.domain}</strong>.
               </p>
             </div>
             <Link
@@ -75,10 +76,16 @@ export default async function LLMSSuitePage({
             </Link>
           </div>
 
-          <LLMSSuiteManager
-            project={project}
-            brandFacts={brandFacts || []}
-          />
+          <div className="space-y-8">
+            {/* Multi-Platform Web Presence Footprint */}
+            <WebPresenceAudit domain={project.domain} brandName={project.brand_name} />
+
+            {/* llms.txt Suite & Host Validator */}
+            <LLMSSuiteManager
+              project={project}
+              brandFacts={brandFacts || []}
+            />
+          </div>
         </div>
       </div>
     </AppShell>
