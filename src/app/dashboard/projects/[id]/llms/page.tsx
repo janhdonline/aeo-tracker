@@ -7,6 +7,7 @@ import { ProjectSidebar } from '@/components/ProjectSidebar';
 import Link from 'next/link';
 import { LLMSSuiteManager } from './LLMSSuiteManager';
 import { WebPresenceAudit } from '@/components/WebPresenceAudit';
+import { FrontierModelRadar } from '@/components/FrontierModelRadar';
 import { ArrowLeft } from 'lucide-react';
 
 export default async function LLMSSuitePage({
@@ -79,6 +80,9 @@ export default async function LLMSSuitePage({
           <div className="space-y-8">
             {/* Multi-Platform Web Presence Footprint */}
             <WebPresenceAudit domain={project.domain} brandName={project.brand_name} />
+
+            {/* 10-Model Frontier AI Engine Radar Suite */}
+            <FrontierModelRadar domain={project.domain} brandName={project.brand_name} />
 
             {/* llms.txt Suite & Host Validator */}
             <LLMSSuiteManager

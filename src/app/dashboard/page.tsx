@@ -16,6 +16,7 @@ import { ExecutivePulseCard } from './components/ExecutivePulseCard';
 import { LiveCitationTicker } from './components/LiveCitationTicker';
 import { AttributionLeakMeter } from './components/AttributionLeakMeter';
 import { QuickBuyerQuerySimulator } from './components/QuickBuyerQuerySimulator';
+import { FrontierModelRadar } from '@/components/FrontierModelRadar';
 import { WebPresenceAudit } from '@/components/WebPresenceAudit';
 import {
   Plus,
@@ -725,39 +726,11 @@ export default function DashboardPage() {
           brandName={projects.find((p: any) => p.domain === selectedDomain)?.brand_name || selectedDomain.split('.')[0]}
         />
 
-        {/* ANSWER ENGINE RADAR STATUS STRIP (With Model Latency Telemetry) */}
-        <section className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2">
-              <Bot className="h-4 w-4 text-emerald-600" />
-              <h3 className="font-display text-sm font-bold text-slate-900">
-                Answer Engine Radar Status
-              </h3>
-            </div>
-            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
-              All 6 AI Models Operational
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-            {AI_ENGINES.map((engine) => (
-              <div
-                key={engine.name}
-                className="flex flex-col justify-between p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-white hover:border-slate-200 hover:shadow-2xs transition-all"
-              >
-                <div className="flex items-start justify-between gap-1 mb-2">
-                  <p className="text-xs font-bold text-slate-900 truncate">{engine.name}</p>
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-slate-500">{engine.status}</p>
-                  <p className="text-[9px] font-semibold text-emerald-700 mt-0.5">{engine.latency}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* 10-MODEL FRONTIER AI ENGINE RADAR SUITE (Phase 3.2) */}
+        <FrontierModelRadar
+          domain={selectedDomain}
+          brandName={projects.find((p: any) => p.domain === selectedDomain)?.brand_name || selectedDomain.split('.')[0]}
+        />
 
         {/* ESSENTIAL TOOLS QUICK SHELF */}
         <section className="pt-2">
