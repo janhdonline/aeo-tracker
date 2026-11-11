@@ -79,15 +79,20 @@ export async function PATCH(request: NextRequest) {
 
     if (updateError) throw updateError;
 
-    // Record admin audit log
-    await admin.from('audit_logs').insert({
-      admin_user_id: adminUser?.id,
-      action: 'user_profile_updated',
-      target_type: 'user',
-      target_id: userId,
-      old_value: oldProfile,
-      new_value: updatedProfile,
-    });
+    // Record admin audit log safely
+    try {
+      const isValidUuid = typeof adminUser?.id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(adminUser.id);
+      await admin.from('audit_logs').insert({
+        admin_user_id: isValidUuid ? adminUser.id : null,
+        action: 'user_profile_updated',
+        target_type: 'user',
+        target_id: userId,
+        old_value: oldProfile,
+        new_value: updatedProfile,
+      });
+    } catch (auditErr) {
+      console.warn('[users] Non-fatal: could not write audit log:', auditErr);
+    }
 
     return NextResponse.json({ success: true, profile: updatedProfile });
   } catch (err: any) {
