@@ -4,17 +4,13 @@ import { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp,
-  Calendar,
-  Zap,
   ArrowUpRight,
-  BarChart2,
   Globe,
   Sparkles,
   Bot,
   Activity,
-  Layers,
-  ChevronRight,
   ShieldCheck,
+  Zap,
 } from 'lucide-react';
 
 export interface DataPoint {
@@ -34,19 +30,19 @@ interface DailyAnalyticsProps {
   onDomainChange?: (domain: string) => void;
 }
 
-type MetricMode = 'visibility' | 'citations' | 'sentiment' | 'all' | 'competitor';
+type MetricMode = 'visibility' | 'citations' | 'sentiment' | 'competitor' | 'all';
 
 export function DailyAnalyticsChart({
   domain = 'notion.so',
   currentScore = 84,
 }: DailyAnalyticsProps) {
   const [timeframe, setTimeframe] = useState<'7d' | '30d' | '90d'>('7d');
-  // User choice: default primary focus is "visibility" (AEO Visibility Score)
+  // Default primary focus is "visibility" (AEO Visibility Score)
   const [activeMetric, setActiveMetric] = useState<MetricMode>('visibility');
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Generate historical curve data based on timeframe & domain score
+  // Dynamic realistic fluctuating wave data (peaks, dips, momentum)
   const data: DataPoint[] = useMemo(() => {
     const base = currentScore > 0 ? currentScore : 84;
     if (timeframe === '7d') {
@@ -54,67 +50,67 @@ export function DailyAnalyticsChart({
         {
           date: '2026-11-05',
           displayDate: 'Nov 5',
-          visibility: Math.max(48, base - 10),
-          sentiment: 79,
+          visibility: Math.max(48, base - 16), // 68
+          sentiment: 78,
           citations: 28,
-          competitorAvg: 68,
+          competitorAvg: 67,
           topEngine: 'ChatGPT-4o',
-          deltaText: '+2.1%',
+          deltaText: '-2.4%',
         },
         {
           date: '2026-11-06',
           displayDate: 'Nov 6',
-          visibility: Math.max(52, base - 8),
+          visibility: Math.max(54, base - 9), // 75
           sentiment: 82,
-          citations: 32,
-          competitorAvg: 70,
+          citations: 34,
+          competitorAvg: 69,
           topEngine: 'Perplexity Pro',
-          deltaText: '+3.4%',
+          deltaText: '+5.8%',
         },
         {
           date: '2026-11-07',
           displayDate: 'Nov 7',
-          visibility: Math.max(55, base - 6),
-          sentiment: 81,
-          citations: 35,
-          competitorAvg: 69,
+          visibility: Math.max(50, base - 14), // 70
+          sentiment: 80,
+          citations: 31,
+          competitorAvg: 68,
           topEngine: 'Gemini',
-          deltaText: '+1.8%',
+          deltaText: '-4.1%',
         },
         {
           date: '2026-11-08',
           displayDate: 'Nov 8',
-          visibility: Math.max(62, base - 4),
-          sentiment: 86,
-          citations: 39,
-          competitorAvg: 72,
+          visibility: Math.max(58, base - 6), // 78
+          sentiment: 87,
+          citations: 40,
+          competitorAvg: 71,
           topEngine: 'ChatGPT-4o',
-          deltaText: '+4.5%',
+          deltaText: '+8.2%',
         },
         {
           date: '2026-11-09',
           displayDate: 'Nov 9',
-          visibility: Math.max(68, base - 2),
-          sentiment: 89,
-          citations: 43,
-          competitorAvg: 73,
+          visibility: Math.max(54, base - 10), // 74
+          sentiment: 85,
+          citations: 38,
+          competitorAvg: 72,
           topEngine: 'Claude 3.5',
-          deltaText: '+3.2%',
+          deltaText: '-3.6%',
         },
         {
           date: '2026-11-10',
           displayDate: 'Yesterday',
-          visibility: Math.max(76, base - 1),
+          visibility: Math.max(62, base - 3), // 81
           sentiment: 91,
-          citations: 46,
-          competitorAvg: 75,
+          citations: 45,
+          competitorAvg: 74,
           topEngine: 'ChatGPT-4o',
-          deltaText: '+5.6%',
+          deltaText: '+7.9%',
         },
         {
           date: '2026-11-11',
           displayDate: 'Today (Live)',
-          visibility: base,
+          visibility: base, // 84
           sentiment: 93,
           citations: 48,
           competitorAvg: 76,
@@ -127,8 +123,8 @@ export function DailyAnalyticsChart({
         {
           date: '2026-10-12',
           displayDate: 'Oct 12',
-          visibility: Math.max(40, base - 24),
-          sentiment: 72,
+          visibility: Math.max(40, base - 26),
+          sentiment: 71,
           citations: 18,
           competitorAvg: 62,
           topEngine: 'ChatGPT',
@@ -137,32 +133,42 @@ export function DailyAnalyticsChart({
         {
           date: '2026-10-19',
           displayDate: 'Oct 19',
-          visibility: Math.max(48, base - 18),
-          sentiment: 77,
-          citations: 24,
+          visibility: Math.max(50, base - 16),
+          sentiment: 78,
+          citations: 26,
           competitorAvg: 65,
           topEngine: 'Gemini',
-          deltaText: '+3.8%',
+          deltaText: '+6.4%',
         },
         {
           date: '2026-10-26',
           displayDate: 'Oct 26',
-          visibility: Math.max(56, base - 12),
-          sentiment: 83,
-          citations: 31,
-          competitorAvg: 69,
+          visibility: Math.max(46, base - 21),
+          sentiment: 76,
+          citations: 23,
+          competitorAvg: 67,
           topEngine: 'Perplexity',
-          deltaText: '+5.1%',
+          deltaText: '-3.5%',
         },
         {
           date: '2026-11-02',
           displayDate: 'Nov 2',
-          visibility: Math.max(69, base - 5),
-          sentiment: 88,
-          citations: 40,
-          competitorAvg: 72,
+          visibility: Math.max(58, base - 9),
+          sentiment: 86,
+          citations: 39,
+          competitorAvg: 71,
           topEngine: 'ChatGPT-4o',
-          deltaText: '+7.4%',
+          deltaText: '+9.1%',
+        },
+        {
+          date: '2026-11-07',
+          displayDate: 'Nov 7',
+          visibility: Math.max(55, base - 12),
+          sentiment: 84,
+          citations: 35,
+          competitorAvg: 73,
+          topEngine: 'Claude 3.5',
+          deltaText: '-2.2%',
         },
         {
           date: '2026-11-11',
@@ -171,7 +177,7 @@ export function DailyAnalyticsChart({
           sentiment: 93,
           citations: 48,
           competitorAvg: 76,
-          topEngine: 'Claude 3.5',
+          topEngine: 'Perplexity Pro',
           deltaText: '+8.4%',
         },
       ];
@@ -180,97 +186,138 @@ export function DailyAnalyticsChart({
         {
           date: '2026-08-15',
           displayDate: 'Aug 2026',
-          visibility: Math.max(30, base - 35),
-          sentiment: 66,
+          visibility: Math.max(30, base - 38),
+          sentiment: 64,
           citations: 14,
           competitorAvg: 58,
           topEngine: 'ChatGPT',
           deltaText: '+2.0%',
         },
         {
-          date: '2026-09-15',
+          date: '2026-09-01',
           displayDate: 'Sep 2026',
-          visibility: Math.max(46, base - 22),
-          sentiment: 76,
-          citations: 26,
-          competitorAvg: 64,
+          visibility: Math.max(42, base - 24),
+          sentiment: 74,
+          citations: 24,
+          competitorAvg: 62,
           topEngine: 'Gemini',
-          deltaText: '+6.2%',
+          deltaText: '+8.5%',
+        },
+        {
+          date: '2026-09-20',
+          displayDate: 'Late Sep',
+          visibility: Math.max(38, base - 29),
+          sentiment: 72,
+          citations: 21,
+          competitorAvg: 65,
+          topEngine: 'Perplexity',
+          deltaText: '-4.1%',
         },
         {
           date: '2026-10-15',
           displayDate: 'Oct 2026',
-          visibility: Math.max(62, base - 11),
-          sentiment: 84,
-          citations: 38,
-          competitorAvg: 70,
-          topEngine: 'Perplexity',
-          deltaText: '+11.5%',
+          visibility: Math.max(56, base - 14),
+          sentiment: 83,
+          citations: 36,
+          competitorAvg: 69,
+          topEngine: 'Claude 3.5',
+          deltaText: '+11.2%',
+        },
+        {
+          date: '2026-11-01',
+          displayDate: 'Nov 2026',
+          visibility: Math.max(52, base - 18),
+          sentiment: 80,
+          citations: 33,
+          competitorAvg: 72,
+          topEngine: 'ChatGPT-4o',
+          deltaText: '-3.8%',
         },
         {
           date: '2026-11-11',
-          displayDate: 'Nov 2026',
+          displayDate: 'Live Radar',
           visibility: base,
           sentiment: 93,
           citations: 48,
           competitorAvg: 76,
-          topEngine: 'ChatGPT-4o',
+          topEngine: 'Perplexity Pro',
           deltaText: '+18.4%',
         },
       ];
     }
   }, [timeframe, currentScore]);
 
-  // SVG Geometry Calculation (width 860, height 260)
-  const svgWidth = 860;
-  const svgHeight = 250;
-  const paddingX = 46;
-  const paddingY = 32;
+  // Wide SVG Dimensions: 1200 x 300 for expansive full-width coverage
+  const svgWidth = 1200;
+  const svgHeight = 290;
+  const paddingX = 24; // Minimal padding so line extends page-wide
+  const paddingY = 28;
 
+  // Dynamic Adaptive Y-Scale Bounds (ensures the curve has dramatic wave motion instead of flatline)
+  const { minBound, maxBound } = useMemo(() => {
+    const allVis = data.map((d) => d.visibility);
+    const minVal = Math.min(...allVis);
+    const maxVal = Math.max(...allVis);
+    const lower = Math.max(0, Math.floor((minVal - 15) / 10) * 10);
+    const upper = Math.min(100, Math.ceil((maxVal + 8) / 10) * 10);
+    return { minBound: lower, maxBound: upper };
+  }, [data]);
+
+  // Transform coordinates
   const points = useMemo(() => {
     const usableWidth = svgWidth - paddingX * 2;
     const usableHeight = svgHeight - paddingY * 2;
     const count = data.length;
+    const range = Math.max(10, maxBound - minBound);
 
     return data.map((d, i) => {
       const x = paddingX + (i / (count - 1)) * usableWidth;
-      // visibility y (0 to 100)
-      const yVis = svgHeight - paddingY - (d.visibility / 100) * usableHeight;
-      // sentiment y (0 to 100)
-      const ySent = svgHeight - paddingY - (d.sentiment / 100) * usableHeight;
-      // citations scaled (0 to 60 -> scaled to 100)
-      const yCit = svgHeight - paddingY - ((d.citations / 60) * 100 / 100) * usableHeight;
-      // competitor benchmark y
-      const yComp = svgHeight - paddingY - (d.competitorAvg / 100) * usableHeight;
+
+      // Visibility with dynamic altitude scale
+      const visRatio = Math.max(0, Math.min(1, (d.visibility - minBound) / range));
+      const yVis = svgHeight - paddingY - visRatio * usableHeight;
+
+      // Sentiment scaled (60 to 100)
+      const sentRatio = Math.max(0, Math.min(1, (d.sentiment - 60) / 40));
+      const ySent = svgHeight - paddingY - sentRatio * usableHeight;
+
+      // Citations scaled (10 to 60)
+      const citRatio = Math.max(0, Math.min(1, (d.citations - 10) / 50));
+      const yCit = svgHeight - paddingY - citRatio * usableHeight;
+
+      // Competitor benchmark
+      const compRatio = Math.max(0, Math.min(1, (d.competitorAvg - minBound) / range));
+      const yComp = svgHeight - paddingY - compRatio * usableHeight;
 
       return { x, yVis, ySent, yCit, yComp, d };
     });
-  }, [data]);
+  }, [data, minBound, maxBound]);
 
-  // Build smooth cubic bezier curves
+  // Smooth fluid cubic bezier curves with natural tension
   const { visPath, visArea, sentPath, citPath, compPath } = useMemo(() => {
     if (points.length < 2) {
       return { visPath: '', visArea: '', sentPath: '', citPath: '', compPath: '' };
     }
 
-    function createSmoothPath(getY: (p: (typeof points)[0]) => number) {
+    function createSmoothSpline(getY: (p: (typeof points)[0]) => number) {
       let pth = `M ${points[0].x} ${getY(points[0])}`;
       for (let i = 0; i < points.length - 1; i++) {
         const p0 = points[i];
         const p1 = points[i + 1];
-        const cx1 = p0.x + (p1.x - p0.x) * 0.45;
+        // Control point tension factor 0.42 for silk-smooth fluid wave
+        const cx1 = p0.x + (p1.x - p0.x) * 0.42;
         const cy1 = getY(p0);
-        const cx2 = p0.x + (p1.x - p0.x) * 0.55;
+        const cx2 = p0.x + (p1.x - p0.x) * 0.58;
         const cy2 = getY(p1);
         pth += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p1.x} ${getY(p1)}`;
       }
       return pth;
     }
 
-    const vPath = createSmoothPath((p) => p.yVis);
-    const sPath = createSmoothPath((p) => p.ySent);
-    const cPath = createSmoothPath((p) => p.yCit);
-    const cmPath = createSmoothPath((p) => p.yComp);
+    const vPath = createSmoothSpline((p) => p.yVis);
+    const sPath = createSmoothSpline((p) => p.ySent);
+    const cPath = createSmoothSpline((p) => p.yCit);
+    const cmPath = createSmoothSpline((p) => p.yComp);
 
     const lastX = points[points.length - 1].x;
     const firstX = points[0].x;
@@ -282,15 +329,22 @@ export function DailyAnalyticsChart({
 
   const activePoint = hoveredIdx !== null ? points[hoveredIdx] : points[points.length - 1];
 
-  // Tooltip positioning
+  // Tooltip positioning clamped between 8% and 92%
   const tooltipXPercent = activePoint
     ? ((activePoint.x - paddingX) / (svgWidth - paddingX * 2)) * 100
     : 50;
 
+  // Grid steps (4 horizontal bands)
+  const gridSteps = useMemo(() => {
+    const range = maxBound - minBound;
+    const step = Math.round(range / 4);
+    return [minBound, minBound + step, minBound + step * 2, minBound + step * 3, maxBound];
+  }, [minBound, maxBound]);
+
   return (
-    <section className="relative rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs space-y-6 overflow-hidden">
-      {/* Background Ambient Glow (Electric Indigo + Emerald) */}
-      <div className="pointer-events-none absolute -top-24 right-1/4 h-72 w-96 rounded-full bg-gradient-to-br from-emerald-100/40 via-cyan-50/30 to-indigo-100/30 blur-3xl -z-0" />
+    <section className="relative rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-xs space-y-6 overflow-hidden">
+      {/* Background Ambient Glow (Electric Indigo + Cyan + Emerald) */}
+      <div className="pointer-events-none absolute -top-32 right-1/4 h-80 w-[600px] rounded-full bg-gradient-to-br from-emerald-100/35 via-cyan-50/30 to-indigo-100/25 blur-3xl -z-0" />
 
       {/* Top Header & Range Controls */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
@@ -383,7 +437,7 @@ export function DailyAnalyticsChart({
         </div>
       </div>
 
-      {/* 4 Interactive KPI Micro-Cards with Sparklines */}
+      {/* 4 Interactive KPI Micro-Cards */}
       <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Metric 1: Latest Score */}
         <div
@@ -490,10 +544,10 @@ export function DailyAnalyticsChart({
         </div>
       </div>
 
-      {/* Main Interactive Canvas & Glowing Spline Curve */}
+      {/* FULL-WIDTH IMMERSIVE CANVAS: Edge-to-Edge Span Across the Container */}
       <div
         ref={containerRef}
-        className="relative z-10 w-full overflow-hidden select-none bg-radial from-slate-50/90 via-white to-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-inner"
+        className="relative z-10 -mx-5 sm:-mx-7 overflow-hidden select-none bg-gradient-to-b from-slate-50/70 via-white to-white pt-4 pb-3 border-t border-b border-slate-100"
         onMouseLeave={() => setHoveredIdx(null)}
       >
         {/* Dynamic Floating Glassmorphic Tooltip */}
@@ -505,9 +559,9 @@ export function DailyAnalyticsChart({
               exit={{ opacity: 0, y: 6, scale: 0.96 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
               style={{
-                left: `${Math.min(84, Math.max(16, tooltipXPercent))}%`,
+                left: `${Math.min(88, Math.max(12, tooltipXPercent))}%`,
               }}
-              className="pointer-events-none absolute top-4 -translate-x-1/2 z-30 min-w-[210px] rounded-2xl border border-slate-800/10 bg-slate-900/95 p-3.5 text-white shadow-2xl backdrop-blur-md"
+              className="pointer-events-none absolute top-3 -translate-x-1/2 z-30 min-w-[210px] rounded-2xl border border-slate-800/20 bg-slate-950/95 p-3.5 text-white shadow-2xl backdrop-blur-md"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
                 <span className="text-xs font-bold text-slate-200">{activePoint.d.displayDate}</span>
@@ -554,68 +608,72 @@ export function DailyAnalyticsChart({
 
         <svg
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-          className="w-full h-52 sm:h-64 overflow-visible"
+          className="w-full h-64 sm:h-80 lg:h-96 overflow-visible"
+          preserveAspectRatio="none"
         >
           <defs>
-            {/* Emerald Area Gradient */}
-            <linearGradient id="glowVisArea" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#10b981" stopOpacity="0.28" />
-              <stop offset="60%" stopColor="#06b6d4" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+            {/* Emerald Glowing Area Gradient */}
+            <linearGradient id="fluidVisAreaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10b981" stopOpacity="0.32" />
+              <stop offset="45%" stopColor="#06b6d4" stopOpacity="0.14" />
+              <stop offset="90%" stopColor="#10b981" stopOpacity="0.0" />
             </linearGradient>
 
             {/* Cyan Citations Area Gradient */}
-            <linearGradient id="glowCitArea" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="fluidCitAreaGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.25" />
               <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.0" />
             </linearGradient>
 
-            {/* Strokes Gradients */}
-            <linearGradient id="visStroke" x1="0" y1="0" x2="1" y2="0">
+            {/* Vibrant Stroke Gradients */}
+            <linearGradient id="fluidVisStroke" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#059669" />
-              <stop offset="50%" stopColor="#10b981" />
-              <stop offset="100%" stopColor="#06b6d4" />
+              <stop offset="40%" stopColor="#10b981" />
+              <stop offset="80%" stopColor="#06b6d4" />
+              <stop offset="100%" stopColor="#10b981" />
             </linearGradient>
 
-            <linearGradient id="citStroke" x1="0" y1="0" x2="1" y2="0">
+            <linearGradient id="fluidCitStroke" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#0891b2" />
               <stop offset="100%" stopColor="#22d3ee" />
             </linearGradient>
 
-            <linearGradient id="sentStroke" x1="0" y1="0" x2="1" y2="0">
+            <linearGradient id="fluidSentStroke" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#4f46e5" />
               <stop offset="100%" stopColor="#818cf8" />
             </linearGradient>
 
-            {/* Ambient Line Drop Shadow */}
-            <filter id="emeraldGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#10b981" floodOpacity="0.35" />
+            {/* Glowing Drop Shadows */}
+            <filter id="waveEmeraldGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="5" stdDeviation="7" floodColor="#10b981" floodOpacity="0.45" />
             </filter>
-            <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#06b6d4" floodOpacity="0.35" />
+            <filter id="waveCyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="5" stdDeviation="7" floodColor="#06b6d4" floodOpacity="0.45" />
             </filter>
           </defs>
 
-          {/* Grid lines */}
-          {[0, 25, 50, 75, 100].map((level) => {
-            const y = svgHeight - paddingY - (level / 100) * (svgHeight - paddingY * 2);
+          {/* Full-Width Grid Lines & Floating Y-Labels */}
+          {gridSteps.map((level) => {
+            const range = Math.max(10, maxBound - minBound);
+            const ratio = (level - minBound) / range;
+            const y = svgHeight - paddingY - ratio * (svgHeight - paddingY * 2);
             return (
               <g key={level}>
                 <line
-                  x1={paddingX}
+                  x1={0}
                   y1={y}
-                  x2={svgWidth - paddingX}
+                  x2={svgWidth}
                   y2={y}
                   stroke="#e2e8f0"
                   strokeWidth="1"
-                  strokeDasharray={level === 0 ? '' : '4 4'}
-                  strokeOpacity={level === 0 ? 0.9 : 0.6}
+                  strokeDasharray={level === minBound ? '' : '4 6'}
+                  strokeOpacity={level === minBound ? 0.9 : 0.65}
                 />
                 <text
-                  x={paddingX - 12}
-                  y={y + 3.5}
-                  textAnchor="end"
-                  className="fill-slate-400 text-[10px] font-mono font-semibold"
+                  x={paddingX + 6}
+                  y={y - 6}
+                  textAnchor="start"
+                  className="fill-slate-400 text-[11px] font-mono font-bold"
                 >
                   {level}
                 </text>
@@ -629,31 +687,29 @@ export function DailyAnalyticsChart({
               d={compPath}
               fill="none"
               stroke="#f59e0b"
-              strokeWidth="2.2"
+              strokeWidth="2.5"
               strokeLinecap="round"
-              strokeDasharray="5 5"
+              strokeDasharray="6 6"
               initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.8 }}
+              animate={{ pathLength: 1, opacity: 0.85 }}
               transition={{ duration: 1, ease: 'easeOut' }}
             />
           )}
 
           {/* Citations Curve (Cyan) */}
           {(activeMetric === 'citations' || activeMetric === 'all') && (
-            <>
-              <motion.path
-                d={citPath}
-                fill="none"
-                stroke="url(#citStroke)"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                filter="url(#cyanGlow)"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 1.1, ease: 'easeOut' }}
-              />
-            </>
+            <motion.path
+              d={citPath}
+              fill="none"
+              stroke="url(#fluidCitStroke)"
+              strokeWidth="3.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#waveCyanGlow)"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 1.1, ease: 'easeOut' }}
+            />
           )}
 
           {/* Sentiment Curve (Electric Indigo) */}
@@ -661,8 +717,8 @@ export function DailyAnalyticsChart({
             <motion.path
               d={sentPath}
               fill="none"
-              stroke="url(#sentStroke)"
-              strokeWidth="2.5"
+              stroke="url(#fluidSentStroke)"
+              strokeWidth="2.8"
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeDasharray="4 4"
@@ -672,14 +728,14 @@ export function DailyAnalyticsChart({
             />
           )}
 
-          {/* Visibility Area Fill & Spline (Emerald) */}
+          {/* Visibility Area Fill & Spline (Emerald Wave) */}
           {(activeMetric === 'visibility' || activeMetric === 'all') && visArea && (
             <motion.path
               d={visArea}
-              fill="url(#glowVisArea)"
+              fill="url(#fluidVisAreaGrad)"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.85 }}
             />
           )}
 
@@ -687,27 +743,28 @@ export function DailyAnalyticsChart({
             <motion.path
               d={visPath}
               fill="none"
-              stroke="url(#visStroke)"
-              strokeWidth="3.5"
+              stroke="url(#fluidVisStroke)"
+              strokeWidth="4"
               strokeLinecap="round"
               strokeLinejoin="round"
-              filter="url(#emeraldGlow)"
+              filter="url(#waveEmeraldGlow)"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1] }}
             />
           )}
 
-          {/* Interactive Crosshair & Cursor Guides */}
+          {/* Interactive Laser Crosshair & Hotspots */}
           {points.map((pt, i) => {
-            const isHovered = hoveredIdx === i || (hoveredIdx === null && i === points.length - 1);
+            const isLast = i === points.length - 1;
+            const isHovered = hoveredIdx === i || (hoveredIdx === null && isLast);
             return (
               <g
                 key={pt.d.date}
                 className="cursor-pointer"
                 onMouseEnter={() => setHoveredIdx(i)}
               >
-                {/* Vertical Guide Line */}
+                {/* Vertical Laser Guide Line */}
                 {isHovered && (
                   <motion.line
                     initial={{ opacity: 0 }}
@@ -717,9 +774,19 @@ export function DailyAnalyticsChart({
                     x2={pt.x}
                     y2={svgHeight - paddingY}
                     stroke="#0f172a"
-                    strokeWidth="1.5"
+                    strokeWidth="1.6"
                     strokeDasharray="3 3"
-                    className="opacity-40"
+                    className="opacity-45"
+                  />
+                )}
+
+                {/* Animated Pulsing Beacon on Today (Live) point */}
+                {isLast && (activeMetric === 'visibility' || activeMetric === 'all') && (
+                  <circle
+                    cx={pt.x}
+                    cy={pt.yVis}
+                    r={14}
+                    className="fill-emerald-400/25 animate-ping"
                   />
                 )}
 
@@ -728,12 +795,12 @@ export function DailyAnalyticsChart({
                   <circle
                     cx={pt.x}
                     cy={pt.yVis}
-                    r={isHovered ? 6 : 4}
+                    r={isHovered ? 7 : 5}
                     className="fill-emerald-500 stroke-white stroke-2 transition-all duration-150"
                     style={{
                       filter: isHovered
-                        ? 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.8))'
-                        : 'drop-shadow(0 0 2px rgba(16, 185, 129, 0.3))',
+                        ? 'drop-shadow(0 0 10px rgba(16, 185, 129, 0.9))'
+                        : 'drop-shadow(0 0 3px rgba(16, 185, 129, 0.4))',
                     }}
                   />
                 )}
@@ -743,11 +810,11 @@ export function DailyAnalyticsChart({
                   <circle
                     cx={pt.x}
                     cy={pt.yCit}
-                    r={isHovered ? 5.5 : 3.5}
+                    r={isHovered ? 6 : 4}
                     className="fill-cyan-500 stroke-white stroke-2 transition-all duration-150"
                     style={{
                       filter: isHovered
-                        ? 'drop-shadow(0 0 8px rgba(6, 182, 212, 0.8))'
+                        ? 'drop-shadow(0 0 10px rgba(6, 182, 212, 0.9))'
                         : 'none',
                     }}
                   />
@@ -758,7 +825,7 @@ export function DailyAnalyticsChart({
                   <circle
                     cx={pt.x}
                     cy={pt.ySent}
-                    r={isHovered ? 5 : 3}
+                    r={isHovered ? 5.5 : 3.5}
                     className="fill-indigo-500 stroke-white stroke-2 transition-all duration-150"
                   />
                 )}
@@ -766,20 +833,20 @@ export function DailyAnalyticsChart({
                 {/* X-Axis Date Labels */}
                 <text
                   x={pt.x}
-                  y={svgHeight - 10}
+                  y={svgHeight - 8}
                   textAnchor="middle"
-                  className={`text-[11px] font-mono transition-colors ${
+                  className={`text-[11px] font-mono tracking-tight transition-colors ${
                     isHovered
-                      ? 'fill-slate-950 font-bold'
+                      ? 'fill-slate-950 font-bold text-xs'
                       : 'fill-slate-400 font-medium'
                   }`}
                 >
                   {pt.d.displayDate}
                 </text>
 
-                {/* Hotspot bounding box */}
+                {/* Generous hover target bounding box */}
                 <rect
-                  x={pt.x - (svgWidth / (points.length * 2))}
+                  x={pt.x - svgWidth / (points.length * 2)}
                   y={paddingY}
                   width={svgWidth / points.length}
                   height={svgHeight - paddingY * 2}
@@ -791,11 +858,11 @@ export function DailyAnalyticsChart({
         </svg>
 
         {/* Legend & Telemetry Indicators */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-3 border-t border-slate-100 text-xs">
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex items-center gap-2">
-              <span className="h-2.5 w-6 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 shadow-2xs inline-block" />
-              <span className="font-semibold text-slate-700">AEO Visibility (0-100)</span>
+              <span className="h-2.5 w-6 rounded-full bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-400 shadow-2xs inline-block" />
+              <span className="font-semibold text-slate-800">AEO Visibility Wave</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-6 rounded-full bg-cyan-500 inline-block" />
@@ -813,7 +880,7 @@ export function DailyAnalyticsChart({
 
           <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
             <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-            <span>Hover points for micro-snapshot analysis</span>
+            <span>Full-width telemetry sync • Multi-LLM verified</span>
           </div>
         </div>
       </div>
