@@ -186,7 +186,7 @@ export default function AdminPortalPage() {
   const [promptTemplatesList, setPromptTemplatesList] = useState<any[]>([]);
   const [savingTemplate, setSavingTemplate] = useState(false);
 
-  // Keys State
+  // Keys & Vault State
   const [apiKeys, setApiKeys] = useState<any[]>([]);
   const [newKeyService, setNewKeyService] = useState('gemini');
   const [newKeyName, setNewKeyName] = useState('primary');
@@ -194,14 +194,27 @@ export default function AdminPortalPage() {
   const [newKeyPurpose, setNewKeyPurpose] = useState('scan');
   const [newKeyPriority, setNewKeyPriority] = useState('1');
   const [addingKey, setAddingKey] = useState(false);
+  const [keyServiceFilter, setKeyServiceFilter] = useState('all');
+  const [testingKeyId, setTestingKeyId] = useState<string | null>(null);
+  const [keyTestResult, setKeyTestResult] = useState<Record<string, { valid: boolean; message: string; latencyMs: number }>>({});
+  const [envFallbacks, setEnvFallbacks] = useState<Record<string, { configured: boolean; variableName: string; providerName: string }>>({});
+  const [keyStats, setKeyStats] = useState({ total: 0, active: 0, errored: 0, healthy: 0 });
+  const [testingNewKey, setTestingNewKey] = useState(false);
+  const [newKeyTestFeedback, setNewKeyTestFeedback] = useState<{ valid: boolean; message: string } | null>(null);
 
   // Security & Webhook DLQ State
   const [blacklistedIps, setBlacklistedIps] = useState<any[]>([]);
   const [newIpAddress, setNewIpAddress] = useState('');
   const [newIpReason, setNewIpReason] = useState('');
   const [newIpHours, setNewIpHours] = useState('24');
+  const [testIpInput, setTestIpInput] = useState('');
+  const [testIpResult, setTestIpResult] = useState<{ checkedIp: string; isBlocked: boolean; statusNote: string } | null>(null);
+  const [testingIpShield, setTestingIpShield] = useState(false);
+  const [ipFilterMode, setIpFilterMode] = useState<'all' | 'permanent' | 'expiring'>('all');
   const [webhookEvents, setWebhookEvents] = useState<any[]>([]);
   const [failedWebhooksCount, setFailedWebhooksCount] = useState(0);
+  const [replayingAllWebhooks, setReplayingAllWebhooks] = useState(false);
+  const [simulatingWebhook, setSimulatingWebhook] = useState(false);
 
   // Config & Templates State
   const [appConfigs, setAppConfigs] = useState<any[]>([]);
@@ -225,10 +238,14 @@ export default function AdminPortalPage() {
   // Batch 2: AI Misinformation & Fix Briefs
   const [misinformationAlerts, setMisinformationAlerts] = useState<any[]>([]);
   const [misinformationStats, setMisinformationStats] = useState({ totalAlerts: 0, unreviewedAlerts: 0, openBriefs: 0 });
+  const [misinfoFilterMode, setMisinfoFilterMode] = useState<'all' | 'unreviewed' | 'high_confidence'>('all');
+  const [misinfoBriefsList, setMisinfoBriefsList] = useState<any[]>([]);
+  const [simulatingMisinfo, setSimulatingMisinfo] = useState(false);
 
   // Batch 2: Crawler & Bot Telemetry
   const [crawlerVisits, setCrawlerVisits] = useState<any[]>([]);
   const [crawlerStats, setCrawlerStats] = useState<any>({ totalVisits: 0, verifiedRatePct: 100, botDistribution: {} });
+  const [copiedRobotsTxt, setCopiedRobotsTxt] = useState(false);
 
   // Batch 2: Public Reports Cache Manager
   const [cachedReports, setCachedReports] = useState<any[]>([]);
@@ -315,6 +332,8 @@ export default function AdminPortalPage() {
       if (keysRes.ok) {
         const data = await keysRes.json();
         setApiKeys(data.keys || []);
+        if (data.envFallbacks) setEnvFallbacks(data.envFallbacks);
+        if (data.stats) setKeyStats(data.stats);
       }
 
       if (costRes.ok) {
@@ -384,6 +403,7 @@ export default function AdminPortalPage() {
         const data = await misinfoRes.json();
         setMisinformationAlerts(data.alerts || []);
         if (data.stats) setMisinformationStats(data.stats);
+        if (data.briefs) setMisinfoBriefsList(data.briefs);
       }
 
       if (crawlersRes.ok) {
@@ -781,7 +801,7 @@ export default function AdminPortalPage() {
     }
   }
 
-  // IP Blacklist
+  // IP Blacklist & Threat Shield Handlers
   async function handleAddBlacklist(e: React.FormEvent) {
     e.preventDefault();
     if (!newIpAddress || !newIpReason) return;
@@ -813,7 +833,36 @@ export default function AdminPortalPage() {
     }
   }
 
-  // Webhook DLQ retry
+  // Live IP Shield Test Probe
+  async function handleCheckIpShield() {
+    if (!testIpInput) return;
+    setTestingIpShield(true);
+    setTestIpResult(null);
+    try {
+      const res = await fetch(`/api/admin/security/blacklist?checkIp=${encodeURIComponent(testIpInput.trim())}`);
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTestIpResult(data);
+      }
+    } finally {
+      setTestingIpShield(false);
+    }
+  }
+
+  // Quick Preset Block
+  async function handleQuickPresetBlock(ip: string, reason: string, hours = 24) {
+    const res = await fetch('/api/admin/security/blacklist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ip_address: ip, reason, expires_in_hours: hours }),
+    });
+    if (res.ok) {
+      setStatusMessage({ type: 'success', text: `Preset block applied for ${ip}` });
+      loadAllAdminData();
+    }
+  }
+
+  // Webhook DLQ retry single
   async function handleRetryWebhook(webhookId: number) {
     const res = await fetch('/api/admin/webhooks', {
       method: 'POST',
@@ -824,6 +873,106 @@ export default function AdminPortalPage() {
       setStatusMessage({ type: 'success', text: `Webhook #${webhookId} marked resolved` });
       loadAllAdminData();
     }
+  }
+
+  // Webhook DLQ Replay All
+  async function handleReplayAllWebhooks() {
+    setReplayingAllWebhooks(true);
+    try {
+      const res = await fetch('/api/admin/webhooks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'retry_all' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: data.message });
+        loadAllAdminData();
+      }
+    } finally {
+      setReplayingAllWebhooks(false);
+    }
+  }
+
+  // Simulate Synthetic Webhook Event
+  async function handleSimulateWebhook() {
+    setSimulatingWebhook(true);
+    try {
+      const res = await fetch('/api/admin/webhooks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'simulate' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: 'Synthetic test webhook dispatched and verified!' });
+        loadAllAdminData();
+      }
+    } finally {
+      setSimulatingWebhook(false);
+    }
+  }
+
+  // Simulate Ingestion of False AI Claim
+  async function handleSimulateMisinfo() {
+    setSimulatingMisinfo(true);
+    try {
+      const res = await fetch('/api/admin/misinformation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'simulate' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: 'Simulated AI hallucination ingested into Truth Radar' });
+        loadAllAdminData();
+      }
+    } finally {
+      setSimulatingMisinfo(false);
+    }
+  }
+
+  // Resolve Fix Brief
+  async function handleResolveBrief(briefId: string) {
+    const res = await fetch('/api/admin/misinformation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'resolve_brief', briefId }),
+    });
+    if (res.ok) {
+      setStatusMessage({ type: 'success', text: 'Fix brief marked resolved' });
+      loadAllAdminData();
+    }
+  }
+
+  // Copy Optimized robots.txt
+  function handleCopyRobotsTxt() {
+    const text = `# AI Search Optimization Directives
+User-agent: GPTBot
+Allow: /
+Allow: /report/
+Allow: /llms.txt
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: *
+Disallow: /admin
+Disallow: /api/
+Sitemap: https://aeo-tracker.com/sitemap.xml`;
+    navigator.clipboard.writeText(text);
+    setCopiedRobotsTxt(true);
+    setTimeout(() => setCopiedRobotsTxt(false), 2500);
+    setStatusMessage({ type: 'success', text: 'Optimized robots.txt copied to clipboard!' });
   }
 
   // Email Template Save
@@ -916,10 +1065,80 @@ export default function AdminPortalPage() {
       setStatusMessage({ type: 'success', text: `Added new ${newKeyService} API key` });
       setAddingKey(false);
       setNewKeyValue('');
+      setNewKeyTestFeedback(null);
       loadAllAdminData();
     } else {
       const data = await res.json();
       setStatusMessage({ type: 'error', text: data.error || 'Failed to add API key' });
+    }
+  }
+
+  // Live Test Existing Key
+  async function handleTestKey(keyId: string, service: string) {
+    setTestingKeyId(keyId);
+    try {
+      const res = await fetch('/api/admin/keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'test_key', keyId, service }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setKeyTestResult((prev) => ({
+          ...prev,
+          [keyId]: { valid: data.valid, message: data.message, latencyMs: data.latencyMs },
+        }));
+        setStatusMessage({
+          type: data.valid ? 'success' : 'error',
+          text: `${service.toUpperCase()}: ${data.message} (${data.latencyMs}ms)`,
+        });
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Key probe failed' });
+      }
+    } finally {
+      setTestingKeyId(null);
+    }
+  }
+
+  // Live Test New Key before saving
+  async function handleTestNewKey() {
+    if (!newKeyValue) {
+      setStatusMessage({ type: 'error', text: 'Enter a secret key first to test' });
+      return;
+    }
+    setTestingNewKey(true);
+    setNewKeyTestFeedback(null);
+    try {
+      const res = await fetch('/api/admin/keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'test_key', service: newKeyService, keyValue: newKeyValue }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNewKeyTestFeedback({ valid: data.valid, message: `${data.message} (${data.latencyMs}ms)` });
+        setStatusMessage({
+          type: data.valid ? 'success' : 'error',
+          text: `${newKeyService.toUpperCase()}: ${data.message}`,
+        });
+      }
+    } finally {
+      setTestingNewKey(false);
+    }
+  }
+
+  // In-place adjust key priority
+  async function handleAdjustPriority(keyId: string, currentPriority: number, delta: number) {
+    const nextPriority = Math.max(1, Math.min(10, currentPriority + delta));
+    if (nextPriority === currentPriority) return;
+    const res = await fetch('/api/admin/keys', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: keyId, priority: nextPriority }),
+    });
+    if (res.ok) {
+      loadAllAdminData();
     }
   }
 
@@ -3139,17 +3358,26 @@ export default function AdminPortalPage() {
           {/* ============================================================== */}
           {activeTab === 'keys' && (
             <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-6">
+              {/* ========================================================== */}
+              {/* VAULT HEADER & HEALTH SUMMARY CHIPS                       */}
+              {/* ========================================================== */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-black text-slate-950">API Keys & Fallback Rotation Pool</h2>
-                  <p className="text-xs text-slate-500">
-                    Priority 1 is utilized first. Auto-rotates round-robin on consecutive provider errors with lowest-error failover.
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-black text-slate-950">API Keys & Fallback Rotation Pool</h2>
+                    <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                      Vault Active
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Multi-key round-robin rotation with lowest-error failover and native environment fallback safety.
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => handleResetAllKeyPool()}
-                    className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                    className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-2xs"
                   >
                     <RotateCcw className="w-3.5 h-3.5 text-lime-600" />
                     Revive Pool & Reset Errors
@@ -3159,17 +3387,106 @@ export default function AdminPortalPage() {
                     className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-sm"
                   >
                     <Plus className="w-4 h-4" />
-                    Add API Key
+                    {addingKey ? 'Close Form' : 'Add API Key'}
                   </button>
                 </div>
               </div>
 
+              {/* Vault Metric Chips Bar */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Total Keys in Pool</div>
+                  <div className="text-2xl font-black text-slate-950 font-mono mt-0.5">{apiKeys.length}</div>
+                </div>
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Active & Healthy</div>
+                  <div className="text-2xl font-black text-emerald-600 font-mono mt-0.5">
+                    {apiKeys.filter((k) => k.is_active && k.error_count === 0).length}
+                  </div>
+                </div>
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Degraded / Errored</div>
+                  <div className="text-2xl font-black text-amber-600 font-mono mt-0.5">
+                    {apiKeys.filter((k) => k.error_count > 0).length}
+                  </div>
+                </div>
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Native Env Fallbacks</div>
+                  <div className="text-2xl font-black text-slate-900 font-mono mt-0.5">
+                    {Object.values(envFallbacks).filter((f) => f.configured).length}/6 Active
+                  </div>
+                </div>
+              </div>
+
+              {/* ========================================================== */}
+              {/* NATIVE ENVIRONMENT FALLBACK VAULT RADAR                   */}
+              {/* ========================================================== */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <div>
+                    <h3 className="text-xs font-black text-slate-950 uppercase tracking-wider flex items-center gap-2">
+                      <Lock className="w-3.5 h-3.5 text-slate-700" />
+                      Native Environment Fallback Credentials
+                    </h3>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      When database key pool has zero keys or exhausted quota, engines seamlessly fall back to these environment credentials.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                  {[
+                    { svc: 'gemini', label: 'Gemini', envKey: 'GEMINI_API_KEY' },
+                    { svc: 'openrouter', label: 'OpenRouter', envKey: 'OPENROUTER_API_KEY' },
+                    { svc: 'resend', label: 'Resend', envKey: 'RESEND_API_KEY' },
+                    { svc: 'openai', label: 'OpenAI', envKey: 'OPENAI_API_KEY' },
+                    { svc: 'perplexity', label: 'Perplexity', envKey: 'PERPLEXITY_API_KEY' },
+                    { svc: 'grok', label: 'xAI Grok', envKey: 'GROK_API_KEY' },
+                  ].map((p) => {
+                    const fallback = envFallbacks[p.svc];
+                    const isConfigured = fallback?.configured;
+                    return (
+                      <div
+                        key={p.svc}
+                        className={`p-3 rounded-xl border flex flex-col justify-between ${
+                          isConfigured
+                            ? 'bg-lime-50/50 border-lime-200 text-slate-900'
+                            : 'bg-slate-50/50 border-slate-200 text-slate-400'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-xs">{p.label}</span>
+                          <span
+                            className={`w-2 h-2 rounded-full ${
+                              isConfigured ? 'bg-emerald-500' : 'bg-slate-300'
+                            }`}
+                          />
+                        </div>
+                        <span className="text-[10px] font-mono truncate">
+                          {isConfigured ? 'Configured in Env' : 'Not Set in Env'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ========================================================== */}
+              {/* ADD API KEY FORM (WITH LIVE VALIDATION PROBE)             */}
+              {/* ========================================================== */}
               {addingKey && (
                 <form onSubmit={handleAddKey} className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs">
-                  <h3 className="text-xs font-black text-slate-950 uppercase tracking-wider">New API Key Entry</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-black text-slate-950 uppercase tracking-wider flex items-center gap-2">
+                      <Key className="w-3.5 h-3.5" />
+                      Add New API Key to Rotation Pool
+                    </h3>
+                    <span className="text-[10px] text-slate-400 font-mono">Auto-encrypts into Supabase api_keys table</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Service</label>
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Service Provider</label>
                       <select
                         value={newKeyService}
                         onChange={(e) => setNewKeyService(e.target.value)}
@@ -3185,124 +3502,282 @@ export default function AdminPortalPage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Key Label</label>
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Key Label / Name</label>
                       <input
                         type="text"
                         value={newKeyName}
                         onChange={(e) => setNewKeyName(e.target.value)}
-                        placeholder="e.g. primary-tier-1"
+                        placeholder="e.g. secondary-pro-pool"
                         className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950"
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Secret Key</label>
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Secret Key Value</label>
                       <input
                         type="password"
                         value={newKeyValue}
                         onChange={(e) => setNewKeyValue(e.target.value)}
-                        placeholder="sk-..."
+                        placeholder="sk-... or AIzaSy..."
                         className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-mono"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Priority</label>
+                      <label className="block text-[11px] font-bold text-slate-600 mb-1">Priority (1 = First)</label>
                       <input
                         type="number"
                         min={1}
                         max={10}
                         value={newKeyPriority}
                         onChange={(e) => setNewKeyPriority(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-semibold"
+                        className="w-full px-3 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-semibold font-mono"
                       />
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-2 pt-2">
+                  {/* Validation Feedback Banner */}
+                  {newKeyTestFeedback && (
+                    <div
+                      className={`p-3 rounded-xl text-xs flex items-center justify-between ${
+                        newKeyTestFeedback.valid
+                          ? 'bg-lime-50 border border-lime-200 text-slate-900'
+                          : 'bg-rose-50 border border-rose-200 text-rose-800'
+                      }`}
+                    >
+                      <span className="font-medium">
+                        {newKeyTestFeedback.valid ? '✓ ' : '✗ '}
+                        {newKeyTestFeedback.message}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                     <button
                       type="button"
-                      onClick={() => setAddingKey(false)}
-                      className="px-4 py-2 bg-slate-100 text-slate-700 rounded-full text-xs font-bold"
+                      onClick={handleTestNewKey}
+                      disabled={testingNewKey || !newKeyValue}
+                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-50"
                     >
-                      Cancel
+                      <RefreshCw className={`w-3.5 h-3.5 ${testingNewKey ? 'animate-spin' : ''}`} />
+                      <span>{testingNewKey ? 'Probing Key...' : 'Test Key Before Saving'}</span>
                     </button>
-                    <button
-                      type="submit"
-                      className="px-5 py-2 bg-[#D4F63C] text-black font-black rounded-full text-xs shadow-xs"
-                    >
-                      Save Key
-                    </button>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAddingKey(false);
+                          setNewKeyTestFeedback(null);
+                        }}
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-xs font-bold"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={!newKeyValue}
+                        className="px-6 py-2 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-xs shadow-xs disabled:opacity-50"
+                      >
+                        Save Key to Pool
+                      </button>
+                    </div>
                   </div>
                 </form>
               )}
 
+              {/* ========================================================== */}
+              {/* SERVICE FILTER TABS                                        */}
+              {/* ========================================================== */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60">
+                <span className="text-xs font-bold text-slate-500 mr-1">Filter Service:</span>
+                {[
+                  { id: 'all', label: `All Keys (${apiKeys.length})` },
+                  { id: 'gemini', label: 'Gemini' },
+                  { id: 'openai', label: 'OpenAI' },
+                  { id: 'perplexity', label: 'Perplexity' },
+                  { id: 'grok', label: 'Grok' },
+                  { id: 'openrouter', label: 'OpenRouter' },
+                  { id: 'resend', label: 'Resend' },
+                ].map((tab) => {
+                  const isActive = keyServiceFilter === tab.id;
+                  const count =
+                    tab.id === 'all'
+                      ? apiKeys.length
+                      : apiKeys.filter((k) => k.service === tab.id).length;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setKeyServiceFilter(tab.id)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
+                        isActive
+                          ? 'bg-slate-950 text-white shadow-xs'
+                          : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      {tab.id !== 'all' && (
+                        <span className={`text-[10px] px-1.5 rounded-full font-mono ${isActive ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* ========================================================== */}
+              {/* ACTIVE KEY POOL GRID                                       */}
+              {/* ========================================================== */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {apiKeys.map((k) => (
-                  <div key={k.id} className="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-black text-sm text-slate-950 capitalize">{k.service}</span>
-                          <span className="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full">
-                            Priority {k.priority}
-                          </span>
-                          <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">
-                            {k.purpose || 'scan'}
-                          </span>
-                          {k.error_count > 0 ? (
-                            <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
-                              {k.error_count} Errors
-                            </span>
-                          ) : (
-                            <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
-                              Active & Healthy
-                            </span>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => handleToggleKeyActive(k.id, k.is_active)}
-                          className="p-1 text-slate-400 hover:text-black"
-                        >
-                          {k.is_active ? (
-                            <ToggleRight className="w-8 h-8 text-lime-500" />
-                          ) : (
-                            <ToggleLeft className="w-8 h-8 text-slate-400" />
-                          )}
-                        </button>
-                      </div>
+                {(keyServiceFilter === 'all'
+                  ? apiKeys
+                  : apiKeys.filter((k) => k.service === keyServiceFilter)
+                ).map((k) => {
+                  const isTestingThis = testingKeyId === k.id;
+                  const testResult = keyTestResult[k.id];
 
-                      <p className="font-mono text-xs text-slate-500 mb-2">
-                        Label: <span className="text-slate-900 font-bold">{k.key_name}</span> • Purpose:{' '}
-                        <span className="text-slate-700">{k.purpose}</span>
-                      </p>
+                  return (
+                    <div
+                      key={k.id}
+                      className="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-xs hover:border-slate-300 transition"
+                    >
+                      <div>
+                        {/* Header Row: Provider, Priority +/- Tuner, Health */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-sm text-slate-950 capitalize">{k.service}</span>
+                            
+                            {/* In-place Priority Tuner */}
+                            <div className="flex items-center bg-slate-100 rounded-full px-2 py-0.5 text-[10px] font-bold text-slate-700">
+                              <span>P{k.priority}</span>
+                              <div className="flex items-center ml-1.5 gap-0.5">
+                                <button
+                                  onClick={() => handleAdjustPriority(k.id, k.priority, -1)}
+                                  disabled={k.priority <= 1}
+                                  title="Increase Priority (Lower number)"
+                                  className="w-3.5 h-3.5 rounded hover:bg-slate-200 text-slate-600 flex items-center justify-center font-black disabled:opacity-30"
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  onClick={() => handleAdjustPriority(k.id, k.priority, 1)}
+                                  disabled={k.priority >= 10}
+                                  title="Decrease Priority (Higher number)"
+                                  className="w-3.5 h-3.5 rounded hover:bg-slate-200 text-slate-600 flex items-center justify-center font-black disabled:opacity-30"
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                            </div>
 
-                      {k.error_count > 0 && (
-                        <div className="flex items-center justify-between text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-2">
-                          <div className="max-w-[70%]">
-                            <span className="font-bold">Errors: {k.error_count}/5</span> • Last: {k.last_error || 'Transient failure'}
+                            <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">
+                              {k.purpose || 'scan'}
+                            </span>
+
+                            {k.error_count > 0 ? (
+                              <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                                {k.error_count} Errors
+                              </span>
+                            ) : (
+                              <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
+                                Active & Healthy
+                              </span>
+                            )}
                           </div>
+
+                          {/* Toggle Active Switch */}
                           <button
-                            onClick={() => handleResetKeyErrors(k.id)}
-                            className="px-2.5 py-1 bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold rounded-md text-[10px] transition shrink-0"
+                            onClick={() => handleToggleKeyActive(k.id, k.is_active)}
+                            className="p-1 text-slate-400 hover:text-black transition"
+                            title={k.is_active ? 'Disable Key' : 'Enable Key'}
                           >
-                            Reset Errors
+                            {k.is_active ? (
+                              <ToggleRight className="w-8 h-8 text-lime-500" />
+                            ) : (
+                              <ToggleLeft className="w-8 h-8 text-slate-400" />
+                            )}
                           </button>
                         </div>
-                      )}
-                    </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[11px] text-slate-400">
-                      <span>Used: {k.last_used_at ? new Date(k.last_used_at).toLocaleTimeString() : 'Never'}</span>
-                      <button
-                        onClick={() => handleDeleteKey(k.id)}
-                        className="text-rose-600 hover:text-rose-700 flex items-center gap-1 font-bold"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" /> Remove
-                      </button>
+                        {/* Label & Redacted Key Display */}
+                        <div className="flex items-center justify-between text-xs mb-2">
+                          <span className="text-slate-600 font-semibold">{k.key_name}</span>
+                          <code className="text-[11px] font-mono bg-slate-100 text-slate-800 px-2 py-0.5 rounded-md font-bold">
+                            {k.key_hint || '••••••••'}
+                          </code>
+                        </div>
+
+                        {/* Test Probe Inline Feedback */}
+                        {testResult && (
+                          <div
+                            className={`p-2.5 rounded-xl text-xs mb-2.5 flex items-center justify-between ${
+                              testResult.valid
+                                ? 'bg-lime-50 border border-lime-200 text-slate-900'
+                                : 'bg-rose-50 border border-rose-200 text-rose-800'
+                            }`}
+                          >
+                            <span className="font-semibold">{testResult.message}</span>
+                            <span className="font-mono text-[10px]">{testResult.latencyMs}ms</span>
+                          </div>
+                        )}
+
+                        {/* Error Diagnostic Banner */}
+                        {k.error_count > 0 && (
+                          <div className="flex items-center justify-between text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-2">
+                            <div className="max-w-[70%]">
+                              <span className="font-bold">Errors: {k.error_count}/5</span> • Last: {k.last_error || 'Transient failure'}
+                            </div>
+                            <button
+                              onClick={() => handleResetKeyErrors(k.id)}
+                              className="px-2.5 py-1 bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold rounded-md text-[10px] transition shrink-0"
+                            >
+                              Reset Errors
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Card Footer: Last Used, Test Key & Delete */}
+                      <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[11px] text-slate-400">
+                        <span>Used: {k.last_used_at ? new Date(k.last_used_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Never'}</span>
+                        
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleTestKey(k.id, k.service)}
+                            disabled={isTestingThis}
+                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-md text-[10px] transition flex items-center gap-1 disabled:opacity-50"
+                          >
+                            <RefreshCw className={`w-3 h-3 ${isTestingThis ? 'animate-spin' : ''}`} />
+                            <span>{isTestingThis ? 'Testing...' : 'Test Key'}</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteKey(k.id)}
+                            className="text-rose-600 hover:text-rose-700 flex items-center gap-1 font-bold text-[11px] ml-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
+                  );
+                })}
+
+                {/* Empty State Banner */}
+                {(keyServiceFilter === 'all'
+                  ? apiKeys
+                  : apiKeys.filter((k) => k.service === keyServiceFilter)
+                ).length === 0 && (
+                  <div className="col-span-full bg-white border border-slate-200/80 rounded-2xl p-8 text-center shadow-xs">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center mx-auto mb-3">
+                      <Key className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-sm font-black text-slate-900">No Database Keys Configured in Pool</h3>
+                    <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                      All queries for {keyServiceFilter === 'all' ? 'AI models' : keyServiceFilter.toUpperCase()} are currently using Native Environment Fallback credentials. Click &ldquo;Add API Key&rdquo; to configure dedicated load-balanced keys.
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           )}
@@ -3312,14 +3787,102 @@ export default function AdminPortalPage() {
           {/* ============================================================== */}
           {activeTab === 'security' && (
             <div className="space-y-6">
-              {/* Anti Scraping IP Blacklist */}
-              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
-                <h2 className="text-xl font-black text-slate-950 mb-1">Anti-Scraping IP Blacklist Shield</h2>
-                <p className="text-xs text-slate-500 mb-5">
-                  Blocked IPs immediately receive 403 Forbidden across public search check endpoints.
-                </p>
+              {/* ========================================================== */}
+              {/* MODULE 1: ANTI-SCRAPING IP BLACKLIST & THREAT SHIELD       */}
+              {/* ========================================================== */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">Anti-Scraping IP Blacklist Shield</h2>
+                      <span className="px-2.5 py-0.5 bg-rose-100 text-rose-800 font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Threat Shield
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Blocked IPs immediately receive 403 Forbidden across public search check and reporting endpoints.
+                    </p>
+                  </div>
 
-                <form onSubmit={handleAddBlacklist} className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-white border border-slate-200 text-slate-700 font-bold text-xs rounded-full">
+                      {blacklistedIps.length} Blocked IPs
+                    </span>
+                    <span className="px-3 py-1 bg-rose-50 border border-rose-200 text-rose-800 font-bold text-xs rounded-full">
+                      {blacklistedIps.filter((i) => !i.expires_at).length} Permanent
+                    </span>
+                  </div>
+                </div>
+
+                {/* Live IP Testing Sandbox */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <ShieldAlert className="w-3.5 h-3.5 text-slate-600" />
+                      Live IP Shield Testing Sandbox
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">Test any IP against active rules</span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Enter IP (e.g. 198.51.100.42 or 203.0.113.195)"
+                      value={testIpInput}
+                      onChange={(e) => setTestIpInput(e.target.value)}
+                      className="flex-1 min-w-[200px] px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-mono"
+                    />
+                    <button
+                      onClick={handleCheckIpShield}
+                      disabled={testingIpShield || !testIpInput}
+                      className="px-4 py-2 bg-slate-900 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                      <Search className={`w-3.5 h-3.5 ${testingIpShield ? 'animate-spin text-[#D4F63C]' : ''}`} />
+                      <span>{testingIpShield ? 'Checking...' : 'Check Shield Status'}</span>
+                    </button>
+                  </div>
+
+                  {testIpResult && (
+                    <div
+                      className={`p-2.5 rounded-xl text-xs flex items-center justify-between ${
+                        testIpResult.isBlocked
+                          ? 'bg-rose-50 border border-rose-200 text-rose-900'
+                          : 'bg-lime-50 border border-lime-200 text-slate-900'
+                      }`}
+                    >
+                      <span className="font-semibold">{testIpResult.statusNote}</span>
+                      <span className="font-mono text-[10px] uppercase font-bold">
+                        {testIpResult.isBlocked ? '403 FORBIDDEN' : '200 ALLOWED'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* 1-Click Preset Bad-Actor Blocks */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[11px] font-bold text-slate-400">1-Click Presets:</span>
+                  <button
+                    onClick={() => handleQuickPresetBlock('198.51.100.22', 'Known Automated Headless Scraper', 48)}
+                    className="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-mono font-bold transition"
+                  >
+                    + Block Aggressive Scraper (48h)
+                  </button>
+                  <button
+                    onClick={() => handleQuickPresetBlock('203.0.113.88', 'Public Datacenter Probe Abuse', 24)}
+                    className="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-mono font-bold transition"
+                  >
+                    + Block Datacenter Bot (24h)
+                  </button>
+                  <button
+                    onClick={() => handleQuickPresetBlock('192.0.2.77', 'Credential Stuffing Attempt', 0)}
+                    className="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-mono font-bold transition"
+                  >
+                    + Block Threat IP (Permanent)
+                  </button>
+                </div>
+
+                {/* Add Custom Blacklist IP Form */}
+                <form onSubmit={handleAddBlacklist} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
                   <div>
                     <input
                       type="text"
@@ -3341,7 +3904,7 @@ export default function AdminPortalPage() {
                   <div>
                     <input
                       type="number"
-                      placeholder="Expires in hours (e.g. 24)"
+                      placeholder="Hours (0 = permanent)"
                       value={newIpHours}
                       onChange={(e) => setNewIpHours(e.target.value)}
                       className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 shadow-xs"
@@ -3356,41 +3919,82 @@ export default function AdminPortalPage() {
                   </button>
                 </form>
 
-                <div className="divide-y divide-slate-100 bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs">
-                  {blacklistedIps.length === 0 ? (
-                    <p className="text-xs text-slate-400 py-3 text-center">No active IP blocks in place.</p>
-                  ) : (
-                    blacklistedIps.map((ip) => (
-                      <div key={ip.id} className="py-3 px-3 flex items-center justify-between text-xs">
-                        <div>
-                          <div className="font-mono font-bold text-slate-950">{ip.ip_address}</div>
-                          <div className="text-slate-500 text-[11px]">{ip.reason}</div>
+                {/* Filter Pills & Active Blocks Table */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-500">Filter Blocks:</span>
+                    {[
+                      { id: 'all', label: `All (${blacklistedIps.length})` },
+                      { id: 'permanent', label: `Permanent (${blacklistedIps.filter((i) => !i.expires_at).length})` },
+                      { id: 'expiring', label: `Expiring (${blacklistedIps.filter((i) => i.expires_at).length})` },
+                    ].map((btn) => (
+                      <button
+                        key={btn.id}
+                        onClick={() => setIpFilterMode(btn.id as any)}
+                        className={`px-3 py-1 rounded-full text-xs font-bold transition ${
+                          ipFilterMode === btn.id
+                            ? 'bg-slate-950 text-white shadow-xs'
+                            : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="divide-y divide-slate-100 bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs">
+                    {(ipFilterMode === 'permanent'
+                      ? blacklistedIps.filter((i) => !i.expires_at)
+                      : ipFilterMode === 'expiring'
+                      ? blacklistedIps.filter((i) => i.expires_at)
+                      : blacklistedIps
+                    ).length === 0 ? (
+                      <p className="text-xs text-slate-400 py-4 text-center">No active IP blocks matching filter.</p>
+                    ) : (
+                      (ipFilterMode === 'permanent'
+                        ? blacklistedIps.filter((i) => !i.expires_at)
+                        : ipFilterMode === 'expiring'
+                        ? blacklistedIps.filter((i) => i.expires_at)
+                        : blacklistedIps
+                      ).map((ip) => (
+                        <div key={ip.id} className="py-3 px-3 flex items-center justify-between text-xs hover:bg-slate-50/70 transition">
+                          <div>
+                            <div className="font-mono font-bold text-slate-950 flex items-center gap-2">
+                              <span>{ip.ip_address}</span>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${ip.expires_at ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'}`}>
+                                {ip.expires_at ? 'Temporary' : 'Permanent'}
+                              </span>
+                            </div>
+                            <div className="text-slate-500 text-[11px] mt-0.5">{ip.reason}</div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="text-slate-400 text-[10px] font-mono">
+                              {ip.expires_at ? `Expires: ${new Date(ip.expires_at).toLocaleTimeString()}` : 'Indefinite'}
+                            </span>
+                            <button
+                              onClick={() => handleRemoveBlacklist(ip.ip_address)}
+                              className="text-emerald-700 hover:underline font-bold"
+                            >
+                              Unblock
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className="text-slate-400 text-[10px]">
-                            {ip.expires_at ? `Expires: ${new Date(ip.expires_at).toLocaleTimeString()}` : 'Permanent'}
-                          </span>
-                          <button
-                            onClick={() => handleRemoveBlacklist(ip.ip_address)}
-                            className="text-emerald-700 hover:underline font-bold"
-                          >
-                            Unblock
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
+                      ))
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* AI Hallucination & Brand Misinformation Sentinel */}
+              {/* ========================================================== */}
+              {/* MODULE 2: AI HALLUCINATION & BRAND MISINFORMATION SENTINEL */}
+              {/* ========================================================== */}
               <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
                   <div>
                     <div className="flex items-center gap-2">
                       <h2 className="text-xl font-black text-slate-950">AI Hallucination & Brand Misinformation Sentinel</h2>
                       <span className="px-2.5 py-0.5 bg-rose-100 text-rose-800 font-black text-[10px] rounded-full uppercase tracking-wider">
-                        Truth Engine
+                        Truth Radar
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
@@ -3398,6 +4002,14 @@ export default function AdminPortalPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleSimulateMisinfo}
+                      disabled={simulatingMisinfo}
+                      className="px-3.5 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-2xs"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      <span>{simulatingMisinfo ? 'Simulating...' : 'Simulate False AI Claim'}</span>
+                    </button>
                     <span className="px-3 py-1 bg-amber-100 text-amber-900 font-bold text-xs rounded-full">
                       {misinformationStats.unreviewedAlerts} Unreviewed
                     </span>
@@ -3407,28 +4019,61 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
 
+                {/* Filter Pills */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-500">Filter Alerts:</span>
+                  {[
+                    { id: 'all', label: `All Alerts (${misinformationAlerts.length})` },
+                    { id: 'unreviewed', label: `Unreviewed Only (${misinformationAlerts.filter((m) => !m.reviewed).length})` },
+                    { id: 'high_confidence', label: `High Match (>=80%)` },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setMisinfoFilterMode(tab.id as any)}
+                      className={`px-3 py-1 rounded-full text-xs font-bold transition ${
+                        misinfoFilterMode === tab.id
+                          ? 'bg-slate-950 text-white shadow-xs'
+                          : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Alerts Table */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
                         <tr>
-                          <th className="px-5 py-3.5">Brand / Project</th>
+                          <th className="px-5 py-3.5">Brand / Target</th>
                           <th className="px-5 py-3.5">AI Engine</th>
-                          <th className="px-5 py-3.5">Claimed Quote</th>
-                          <th className="px-5 py-3.5">Claimed vs Expected</th>
-                          <th className="px-5 py-3.5">Confidence</th>
+                          <th className="px-5 py-3.5">Hallucinated Claim</th>
+                          <th className="px-5 py-3.5">Claimed vs Expected Truth</th>
+                          <th className="px-5 py-3.5">Match Confidence</th>
                           <th className="px-5 py-3.5 text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {misinformationAlerts.length === 0 ? (
+                        {(misinfoFilterMode === 'unreviewed'
+                          ? misinformationAlerts.filter((m) => !m.reviewed)
+                          : misinfoFilterMode === 'high_confidence'
+                          ? misinformationAlerts.filter((m) => Number(m.confidence) >= 0.8)
+                          : misinformationAlerts
+                        ).length === 0 ? (
                           <tr>
                             <td colSpan={6} className="px-5 py-8 text-center text-slate-400">
                               No active misinformation alerts detected. AI models are responding accurately.
                             </td>
                           </tr>
                         ) : (
-                          misinformationAlerts.map((m) => (
+                          (misinfoFilterMode === 'unreviewed'
+                            ? misinformationAlerts.filter((m) => !m.reviewed)
+                            : misinfoFilterMode === 'high_confidence'
+                            ? misinformationAlerts.filter((m) => Number(m.confidence) >= 0.8)
+                            : misinformationAlerts
+                          ).map((m) => (
                             <tr key={m.id} className="hover:bg-slate-50 transition">
                               <td className="px-5 py-4 font-bold text-slate-950 font-mono">
                                 {m.project?.domain || 'Brand Target'}
@@ -3478,9 +4123,51 @@ export default function AdminPortalPage() {
                     </table>
                   </div>
                 </div>
+
+                {/* Technical Fix Briefs Ledger */}
+                {misinfoBriefsList.length > 0 && (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between text-xs border-b border-slate-100 pb-2">
+                      <span className="font-black text-slate-950 uppercase tracking-wider">
+                        Active Technical Schema & llms.txt Fix Briefs ({misinfoBriefsList.length})
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">Dispatched for Developer Correction</span>
+                    </div>
+
+                    <div className="divide-y divide-slate-100 text-xs">
+                      {misinfoBriefsList.slice(0, 5).map((b) => (
+                        <div key={b.id} className="py-2.5 flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-slate-900 flex items-center gap-2">
+                              <span className="font-mono text-emerald-600">{b.project?.domain || 'Target'}</span>
+                              <span className="text-slate-500 font-normal">{b.gap_description}</span>
+                            </div>
+                            <span className="text-[10px] text-slate-400 uppercase font-bold">{b.gap_type}</span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${b.status === 'resolved' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}`}>
+                              {b.status.toUpperCase()}
+                            </span>
+                            {b.status !== 'resolved' && (
+                              <button
+                                onClick={() => handleResolveBrief(b.id)}
+                                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-md text-[10px] font-bold"
+                              >
+                                Mark Resolved
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* AI Search Bot & Crawler Telemetry */}
+              {/* ========================================================== */}
+              {/* MODULE 3: AI SEARCH BOT & CRAWLER TELEMETRY               */}
+              {/* ========================================================== */}
               <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
                   <div>
@@ -3494,7 +4181,14 @@ export default function AdminPortalPage() {
                       Reverse-DNS verified ingestion activity by GPTBot, ClaudeBot, PerplexityBot, and Google-Extended.
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={handleCopyRobotsTxt}
+                      className="px-3.5 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-2xs"
+                    >
+                      <Download className="w-3.5 h-3.5 text-slate-700" />
+                      <span>{copiedRobotsTxt ? '✓ Directives Copied!' : 'Copy Optimized robots.txt'}</span>
+                    </button>
                     <span className="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full">
                       {crawlerStats.verifiedRatePct || 100}% Verified Crawlers
                     </span>
@@ -3505,21 +4199,25 @@ export default function AdminPortalPage() {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
-                    <p className="text-[10px] font-bold text-slate-500 uppercase">GPTBot</p>
-                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.gptbot || 0}</p>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase">GPTBot / SearchGPT</p>
+                    <p className="text-2xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.gptbot || 0}</p>
+                    <span className="text-[10px] text-emerald-600 font-bold">OpenAI Crawlers</span>
                   </div>
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[10px] font-bold text-slate-500 uppercase">ClaudeBot</p>
-                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.claudebot || 0}</p>
+                    <p className="text-2xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.claudebot || 0}</p>
+                    <span className="text-[10px] text-emerald-600 font-bold">Anthropic Search</span>
                   </div>
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[10px] font-bold text-slate-500 uppercase">PerplexityBot</p>
-                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.perplexitybot || 0}</p>
+                    <p className="text-2xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.perplexitybot || 0}</p>
+                    <span className="text-[10px] text-blue-600 font-bold">Realtime Sonar</span>
                   </div>
-                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[10px] font-bold text-slate-500 uppercase">Google-Extended</p>
-                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.googleExtended || 0}</p>
+                    <p className="text-2xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.googleExtended || 0}</p>
+                    <span className="text-[10px] text-emerald-600 font-bold">Gemini Grounding</span>
                   </div>
                 </div>
 
@@ -3530,7 +4228,7 @@ export default function AdminPortalPage() {
                       <span className="text-emerald-600 font-mono font-bold">Live Traffic</span>
                     </div>
                     <div className="divide-y divide-slate-100 text-xs">
-                      {crawlerVisits.slice(0, 5).map((v) => (
+                      {crawlerVisits.slice(0, 6).map((v) => (
                         <div key={v.id} className="px-4 py-2.5 flex items-center justify-between hover:bg-slate-50 transition">
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-bold text-slate-900">{v.engine || v.user_agent?.split('/')[0] || 'Bot'}</span>
@@ -3546,12 +4244,40 @@ export default function AdminPortalPage() {
                 )}
               </div>
 
-              {/* Webhook Dead-Letter Queue */}
-              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
-                <h2 className="text-xl font-black text-slate-950 mb-1">Webhook Dead-Letter Queue (LemonSqueezy)</h2>
-                <p className="text-xs text-slate-500 mb-5">
-                  Failed billing events. Retry to reconcile customer plan updates safely.
-                </p>
+              {/* ========================================================== */}
+              {/* MODULE 4: WEBHOOK DEAD-LETTER QUEUE (LEMONSQUEEZY)         */}
+              {/* ========================================================== */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-950 mb-0.5">Webhook Dead-Letter Queue (LemonSqueezy)</h2>
+                    <p className="text-xs text-slate-500">
+                      Failed billing and subscription reconciliation events. Replay to resolve customer tiers safely.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleSimulateWebhook}
+                      disabled={simulatingWebhook}
+                      className="px-3.5 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                    >
+                      <Zap className="w-3.5 h-3.5 text-amber-500" />
+                      <span>{simulatingWebhook ? 'Dispatching...' : 'Simulate Test Webhook'}</span>
+                    </button>
+
+                    {webhookEvents.length > 0 && (
+                      <button
+                        onClick={handleReplayAllWebhooks}
+                        disabled={replayingAllWebhooks}
+                        className="px-4 py-1.5 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-sm"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${replayingAllWebhooks ? 'animate-spin text-[#D4F63C]' : ''}`} />
+                        <span>{replayingAllWebhooks ? 'Replaying...' : 'Replay All Failed'}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
 
                 <div className="bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs divide-y divide-slate-100">
                   {webhookEvents.length === 0 ? (
@@ -3560,7 +4286,7 @@ export default function AdminPortalPage() {
                     </p>
                   ) : (
                     webhookEvents.map((w) => (
-                      <div key={w.id} className="py-3.5 px-3 flex items-center justify-between text-xs">
+                      <div key={w.id} className="py-3.5 px-3 flex items-center justify-between text-xs hover:bg-slate-50/70 transition">
                         <div>
                           <div className="font-bold text-slate-950 flex items-center gap-2">
                             <span className="font-mono text-emerald-600">#{w.id}</span>

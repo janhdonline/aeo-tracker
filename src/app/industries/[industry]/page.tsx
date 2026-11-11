@@ -12,9 +12,13 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
   return {
     title: `Most-Cited AI Sources in ${formatted} — AI Visibility Index`,
     description: `See which websites are most cited in AI answers for ${formatted} businesses. Data aggregated from 1000+ AEO visibility scans.`,
+    alternates: {
+      canonical: `/industries/${params.industry}`,
+    },
     openGraph: {
       type: 'website',
       locale: 'en_US',
+      url: `/industries/${params.industry}`,
       siteName: 'AEO Visibility Tracker',
     },
   };
@@ -46,9 +50,29 @@ export default async function IndustryIndexPage({ params }: IndustryPageProps) {
 
   const totalCitations = sortedDomains.reduce((sum, [, count]) => sum + count, 0);
 
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://aeo-checker.com';
+  const breadcrumbJson = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: 'Industries', item: `${siteUrl}/industries` },
+      { '@type': 'ListItem', position: 3, name: formatted, item: `${siteUrl}/industries/${params.industry}` },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJson) }}
+      />
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="mb-6">
+          <Link href="/industries" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors inline-flex items-center gap-1">
+            ← Back to All Industries
+          </Link>
+        </div>
         <h1 className="text-4xl font-bold text-slate-900 mb-4">
           Most-Cited AI Sources in {formatted}
         </h1>

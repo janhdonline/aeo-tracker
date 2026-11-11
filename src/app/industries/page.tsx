@@ -6,7 +6,10 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'AI Visibility Index — Industry Benchmarks',
   description: 'See which websites are most cited in AI answers by industry. Aggregated from 1000+ AEO visibility scans.',
-  openGraph: { type: 'website', locale: 'en_US' },
+  alternates: {
+    canonical: '/industries',
+  },
+  openGraph: { type: 'website', locale: 'en_US', url: '/industries' },
 };
 
 const industries = [
@@ -36,7 +39,7 @@ export default function IndexPage() {
           {industries.map((industry) => (
             <Link
               key={industry.slug}
-              href={`/index/${industry.slug}`}
+              href={`/industries/${industry.slug}`}
               className="block p-6 rounded-2xl border border-slate-200/80 bg-white hover:border-slate-300 hover:shadow-card transition-all"
             >
               <h2 className="text-lg font-semibold text-slate-900">{industry.name}</h2>

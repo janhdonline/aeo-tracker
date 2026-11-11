@@ -4,11 +4,34 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { invalidateBlacklistCache } from '@/lib/security';
 
 export async function GET(request: NextRequest) {
-  const { errorResponse, adminUser } = await requireAdmin(request);
+  const { errorResponse } = await requireAdmin(request);
   if (errorResponse) return errorResponse;
 
   try {
     const admin = createAdminClient();
+    const checkIp = request.nextUrl.searchParams.get('checkIp');
+
+    // 1. Live IP Shield Test Probe
+    if (checkIp) {
+      const { data: match } = await admin
+        .from('ip_blacklist')
+        .select('*')
+        .eq('ip_address', checkIp.trim())
+        .maybeSingle();
+
+      const isBlocked = Boolean(match && (!match.expires_at || new Date(match.expires_at) > new Date()));
+      return NextResponse.json({
+        success: true,
+        checkedIp: checkIp.trim(),
+        isBlocked,
+        record: match || null,
+        statusNote: isBlocked
+          ? `Blocked by rule: ${match?.reason} (Expires: ${match?.expires_at ? new Date(match.expires_at).toLocaleString() : 'Permanent'})`
+          : 'Allowed: IP is not on the blacklist shield (HTTP 200 OK)',
+      });
+    }
+
+    // 2. Return All Blacklist Items
     const { data, error } = await admin
       .from('ip_blacklist')
       .select('*')
@@ -18,9 +41,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    const items = data || [];
+    const permanentCount = items.filter((i) => !i.expires_at).length;
+    const expiringCount = items.length - permanentCount;
+
     return NextResponse.json({
       success: true,
-      items: data || [],
+      items,
+      stats: {
+        total: items.length,
+        permanent: permanentCount,
+        expiring: expiringCount,
+      },
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

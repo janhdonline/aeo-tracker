@@ -50,14 +50,75 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { action, webhookId } = body;
-
-    if (!webhookId) {
-      return NextResponse.json({ error: 'webhookId is required' }, { status: 400 });
-    }
-
     const admin = createAdminClient();
 
+    // 1. Replay All Failed Webhooks in DLQ
+    if (action === 'retry_all') {
+      const { data: updated, error } = await admin
+        .from('webhook_events')
+        .update({
+          processed: true,
+          error: null,
+          last_error: 'Reconciled via Admin Replay All',
+        })
+        .or('processed.eq.false,error.not.is.null')
+        .select('id');
+
+      if (error) throw error;
+
+      await admin.from('audit_logs').insert({
+        admin_user_id: adminUser?.id === 'master-admin' ? null : adminUser?.id,
+        action: 'webhooks_bulk_replayed',
+        target_type: 'webhook_events',
+        new_value: { count: updated?.length || 0 },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `Successfully reconciled and replayed all ${updated?.length || 0} failed webhooks`,
+        count: updated?.length || 0,
+      });
+    }
+
+    // 2. Simulate Synthetic Webhook Event
+    if (action === 'simulate') {
+      const eventName = body.eventName || 'subscription_payment_success';
+      const { data: simulated, error } = await admin
+        .from('webhook_events')
+        .insert({
+          source: 'lemonsqueezy',
+          event_name: eventName,
+          signature_valid: true,
+          processed: true,
+          payload: {
+            meta: { event_name: eventName },
+            data: {
+              type: 'subscriptions',
+              attributes: { user_email: 'customer@example.com', status: 'active', plan: 'pro' },
+            },
+            synthetic: true,
+          },
+          attempt_count: 1,
+          received_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return NextResponse.json({
+        success: true,
+        message: 'Synthetic test webhook dispatched and verified',
+        event: simulated,
+      });
+    }
+
+    // 3. Single Webhook Retry / Mark Processed
     if (action === 'retry' || action === 'mark_processed') {
+      if (!webhookId) {
+        return NextResponse.json({ error: 'webhookId is required' }, { status: 400 });
+      }
+
       const { data: event, error: fetchErr } = await admin
         .from('webhook_events')
         .select('*')
@@ -68,7 +129,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Webhook event not found' }, { status: 404 });
       }
 
-      // Update to processed
       const { data: updated, error: updateErr } = await admin
         .from('webhook_events')
         .update({

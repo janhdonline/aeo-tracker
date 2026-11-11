@@ -4,9 +4,13 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'AEO Tools Comparison — Best AI Visibility Trackers 2026',
   description: 'Compare the best AEO and AI visibility tracking tools. See how our tool differs from competitors like Scrunch, Profound, and SEMrush.',
+  alternates: {
+    canonical: '/compare',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
+    url: '/compare',
   },
 };
 

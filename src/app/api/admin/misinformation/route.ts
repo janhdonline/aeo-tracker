@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     const enrichedAlerts = (alerts || []).map((a) => ({
       ...a,
-      project: projectMap[a.project_id] || { domain: 'Unknown', name: 'Unknown Project' },
+      project: projectMap[a.project_id] || { domain: 'Unknown Target', name: 'General Brand' },
     }));
 
     // 3. Fetch Fix Briefs Summary
@@ -40,11 +40,11 @@ export async function GET(request: NextRequest) {
       .from('fix_briefs')
       .select('id, project_id, gap_type, gap_description, status, created_at')
       .order('created_at', { ascending: false })
-      .limit(20);
+      .limit(30);
 
     const enrichedBriefs = (briefs || []).map((b) => ({
       ...b,
-      project: projectMap[b.project_id] || { domain: 'Unknown', name: 'Unknown Project' },
+      project: projectMap[b.project_id] || { domain: 'Unknown Target', name: 'General Brand' },
     }));
 
     const unreviewedCount = (alerts || []).filter((a) => !a.reviewed).length;
@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
     const { action } = body;
     const admin = createAdminClient();
 
+    // Action 1: Mark Reviewed
     if (action === 'mark_reviewed') {
       const { id } = body;
       if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 });
@@ -102,6 +103,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, alert: updated });
     }
 
+    // Action 2: Create Technical Fix Brief
     if (action === 'create_brief') {
       const { project_id, gap_type, gap_description, recommendation } = body;
 
@@ -116,7 +118,7 @@ export async function POST(request: NextRequest) {
           gap_type,
           gap_description,
           recommendation: recommendation || {
-            action: 'Update Schema & llms.txt',
+            action: 'Update Schema & llms.txt directives',
             priority: 'high',
           },
           status: 'open',
@@ -135,6 +137,68 @@ export async function POST(request: NextRequest) {
       });
 
       return NextResponse.json({ success: true, brief: inserted });
+    }
+
+    // Action 3: Ingest Simulated False AI Claim
+    if (action === 'simulate') {
+      const {
+        quote = 'Product claims false pricing and lacks key integrations',
+        claimed_value = '$149/mo',
+        expected_value = '$49/mo verified in pricing table',
+        engine = 'chatgpt',
+        project_id,
+        confidence = 0.94,
+      } = body;
+
+      let targetProjectId = project_id;
+      if (!targetProjectId) {
+        const { data: firstProj } = await admin.from('projects').select('id').limit(1).maybeSingle();
+        targetProjectId = firstProj?.id || '00000000-0000-0000-0000-000000000000';
+      }
+
+      const { data: inserted, error: insErr } = await admin
+        .from('misinformation_alerts')
+        .insert({
+          project_id: targetProjectId,
+          engine,
+          quote,
+          claimed_value,
+          expected_value,
+          fact_type: 'pricing_features',
+          confidence: Number(confidence),
+          reviewed: false,
+        })
+        .select()
+        .single();
+
+      if (insErr) throw insErr;
+
+      return NextResponse.json({
+        success: true,
+        message: 'Simulated misinformation alert ingested into Truth Radar',
+        alert: inserted,
+      });
+    }
+
+    // Action 4: Resolve Fix Brief
+    if (action === 'resolve_brief') {
+      const { briefId } = body;
+      if (!briefId) return NextResponse.json({ error: 'briefId is required' }, { status: 400 });
+
+      const { data: updated, error: updErr } = await admin
+        .from('fix_briefs')
+        .update({ status: 'resolved' })
+        .eq('id', briefId)
+        .select()
+        .single();
+
+      if (updErr) throw updErr;
+
+      return NextResponse.json({
+        success: true,
+        message: 'Fix brief marked as resolved',
+        brief: updated,
+      });
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

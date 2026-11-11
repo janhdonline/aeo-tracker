@@ -1,0 +1,25 @@
+# AEO Checker
+
+> AEO Checker is an Answer Engine Optimization (AEO) and AI Search Visibility platform. It monitors how brands appear in AI-generated answers from ChatGPT, Google Gemini, Claude, and Perplexity, detects traffic leaks (brand mentions without website citations), and generates prioritized algorithmic fix playbooks.
+
+## Canonical URLs
+- Website: https://aeo-checker.com
+- Public Reports: https://aeo-checker.com/report
+- Free AI Crawler Audit: https://aeo-checker.com/tools/ai-crawler-audit
+- Free llms.txt Generator: https://aeo-checker.com/tools/llms-generator
+- Industry Benchmarks: https://aeo-checker.com/industries
+- Competitor Comparisons: https://aeo-checker.com/compare
+- Pricing & Plans: https://aeo-checker.com/pricing
+- AEO Resources & Documentation: https://aeo-checker.com/resources
+
+## Core Capabilities
+- AI Visibility Score (0-100): Weighted calculation across mention frequency, citation rate, and position in AI answers.
+- Traffic Leak Detection: Identifies buyer prompts where an AI assistant recommends a brand by name but fails to provide a clickable hyperlink.
+- 23 AI Crawler Matrix: Live deterministic verification of robots.txt and /llms.txt against GPTBot, ClaudeBot, PerplexityBot, Google-Extended, ByteSpider, and 18 other AI bots.
+- Platform Optimization Playbooks: Algorithmic guidance tailored to ChatGPT Search, Google AI Overviews, Perplexity, Claude, Gemini, and Bing Copilot.
+- Share of Voice Benchmarking: Real-time market share measurement against direct competitors in conversational queries.
+
+## Documentation
+- [AEO vs SEO Guide](https://aeo-checker.com/blog/aeo-vs-seo): Key architectural differences between keyword search and conversational LLM citation models.
+- [What is AEO?](https://aeo-checker.com/blog/what-is-aeo): Foundational principles of Answer Engine Optimization.
+- [Full Text Summary](https://aeo-checker.com/llms-full.txt): Complete platform architecture and prompt auditing methods.

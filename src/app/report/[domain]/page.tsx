@@ -23,10 +23,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${capitalized} - AEO Analysis & AI Visibility Report`,
     description: `See how ${domain} appears in AI-generated answers across ChatGPT, Google Gemini, Claude, and Perplexity. Powered by AEO Checker.`,
+    alternates: {
+      canonical: `/report/${domain}`,
+    },
     openGraph: {
       title: `${capitalized} - AEO Analysis & AI Visibility Report`,
       description: `Complete Answer Engine Optimization (AEO) benchmark, citation rate, and competitor Share of Voice for ${domain}`,
       type: 'website',
+      url: `/report/${domain}`,
     },
     twitter: {
       card: 'summary_large_image',
@@ -156,6 +160,7 @@ export default async function PublicReportPage({ params }: Props) {
     console.warn('Error reading existing project score for public report:', err);
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://aeo-checker.com';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AnalysisNewsArticle',
@@ -168,11 +173,21 @@ export default async function PublicReportPage({ params }: Props) {
     },
   };
 
+  const breadcrumbs = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: 'Reports', item: `${siteUrl}/report` },
+      { '@type': 'ListItem', position: 3, name: cleanDomain, item: `${siteUrl}/report/${cleanDomain}` },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, breadcrumbs]) }}
       />
       <ReportView data={reportData} userEmail={user?.email || null} userPlan={userPlan} />
     </>

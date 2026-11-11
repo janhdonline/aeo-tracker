@@ -12,6 +12,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
+      url: `${baseUrl}/report`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/pricing`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
@@ -63,52 +69,89 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/tools/ai-crawler-audit`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.8,
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/tools/llms-generator`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
-      priority: 0.7,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/industries`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
     },
   ];
 
-  // Fetch active project domains from DB for dynamic report pages
+  // Dynamic Blog Posts
+  const blogSlugs = ['what-is-aeo', 'aeo-vs-seo'];
+  const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
+    url: `${baseUrl}/blog/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }));
+
+  // Fetch active project domains & cached reports from DB for dynamic report pages
   let reportPages: MetadataRoute.Sitemap = [];
   try {
     const supabase = createAdminClient();
+    const domainsMap = new Map<string, Date>();
+
+    // 1. Projects
     const { data: projects } = await supabase
       .from('projects')
       .select('domain, updated_at')
       .eq('active', true)
       .order('updated_at', { ascending: false })
-      .limit(1000);
+      .limit(500);
 
-    reportPages = (projects || []).map((p: any) => ({
-      url: `${baseUrl}/report/${p.domain}`,
-      lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
+    (projects || []).forEach((p: any) => {
+      if (p.domain) {
+        domainsMap.set(p.domain.toLowerCase(), p.updated_at ? new Date(p.updated_at) : new Date());
+      }
+    });
+
+    // 2. Public cached reports
+    const { data: cachedReports } = await supabase
+      .from('public_reports_cache')
+      .select('domain, updated_at')
+      .order('updated_at', { ascending: false })
+      .limit(500);
+
+    (cachedReports || []).forEach((c: any) => {
+      if (c.domain && !domainsMap.has(c.domain.toLowerCase())) {
+        domainsMap.set(c.domain.toLowerCase(), c.updated_at ? new Date(c.updated_at) : new Date());
+      }
+    });
+
+    reportPages = Array.from(domainsMap.entries()).map(([domain, date]) => ({
+      url: `${baseUrl}/report/${domain}`,
+      lastModified: date,
       changeFrequency: 'weekly' as const,
-      priority: 0.6,
+      priority: 0.7,
     }));
   } catch (error) {
     console.warn('sitemap: failed to fetch projects, using fallback', error);
-    // Fallback to example domains
-    reportPages = ['shopify.com', 'stripe.com', 'notion.so', 'hubspot.com', 'salesforce.com'].map((domain) => ({
+    // Fallback to top example domains
+    reportPages = ['shopify.com', 'stripe.com', 'notion.so', 'hubspot.com', 'salesforce.com', 'figma.com', 'linear.app', 'slack.com', 'canva.com', 'github.com'].map((domain) => ({
       url: `${baseUrl}/report/${domain}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.6,
+      priority: 0.7,
     }));
   }
 
-  // Industry index pages (programmatic SEO)
+  // Industry index pages (programmatic SEO) - Fixed URL path to /industries/[industry]
   const industries = ['saas', 'ecommerce', 'healthcare', 'finance', 'legal', 'real-estate', 'education', 'marketing', 'media', 'hospitality'];
-  const industryPages = industries.map((industry) => ({
-    url: `${baseUrl}/index/${industry}`,
+  const industryPages: MetadataRoute.Sitemap = industries.map((industry) => ({
+    url: `${baseUrl}/industries/${industry}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
 
-  return [...staticPages, ...reportPages, ...industryPages];
+  return [...staticPages, ...blogPages, ...reportPages, ...industryPages];
 }

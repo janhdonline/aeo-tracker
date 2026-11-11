@@ -1,0 +1,23 @@
+# AEO Checker — Full Platform Specification & AI Ingestion Guide
+
+## Overview
+AEO Checker is an enterprise-grade Answer Engine Optimization (AEO) and Generative Engine Optimization (GEO) platform. As search behavior shifts from clicking traditional search engine results pages (SERPs) to reading synthesized conversational answers from LLMs (ChatGPT, Perplexity, Gemini, Claude, Grok, Copilot), brands require specialized tooling to measure visibility, secure citations, and prevent traffic leaks.
+
+## How AEO Scoring Works
+The AEO Checker visibility score is scored on a 0–100 scale across 5 distinct dimensions (20 points each):
+1. AI Bot Access (20 pts): Verification that robots.txt and server headers permit AI search agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended).
+2. Content Structure (20 pts): Logical H1/H2 hierarchy, 40-60 word concise factual answer blocks, and FAQ formats optimized for retrieval-augmented generation (RAG).
+3. Schema Presence (20 pts): Valid JSON-LD structured data including Organization, WebSite, SoftwareApplication, and FAQPage.
+4. Meta Quality (20 pts): Standardized title tags (10-70 chars), meta descriptions (50-200 chars), and OpenGraph social markup.
+5. Citability (20 pts): High citation density, external entity references, third-party press mentions, and authoritative factual claims.
+
+## Free Public Tools
+- AI Crawler Audit (https://aeo-checker.com/tools/ai-crawler-audit): Audits robots.txt and llms.txt against 23 AI search agents.
+- llms.txt Generator (https://aeo-checker.com/tools/llms-generator): Produces standard-compliant markdown files for LLM crawlers.
+- Public Brand Reports (https://aeo-checker.com/report/[domain]): Instant AEO analysis for any public web domain.
+
+## Company Information
+- Name: AEO Checker
+- URL: https://aeo-checker.com
+- Classification: Answer Engine Optimization & AI Search Analytics
+- Support: contact@aeovisibility.com

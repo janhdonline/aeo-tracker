@@ -1,3 +1,13 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy — AEO Checker',
+  description: 'Our privacy policy details how we collect, use, and protect your domain scan data, keywords, and account credentials.',
+  alternates: {
+    canonical: '/privacy',
+  },
+};
+
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-white text-slate-900">

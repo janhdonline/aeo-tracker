@@ -12,6 +12,9 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Pricing — AEO Visibility Tracker',
   description: 'Simple, transparent pricing for AI visibility tracking.',
+  alternates: {
+    canonical: '/pricing',
+  },
 };
 
 const DEFAULT_STARTER_URL =
