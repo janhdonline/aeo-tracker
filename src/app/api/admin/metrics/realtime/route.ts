@@ -12,7 +12,7 @@ export interface RealtimeWarning {
   title: string;
   message: string;
   metricValue?: string;
-  actionType: 'kill_stuck' | 'emergency_stop' | 'update_budget' | 'test_engine' | 'view_webhooks' | 'view_emails' | 'view_keys' | 'dismiss';
+  actionType: 'kill_stuck' | 'emergency_stop' | 'update_budget' | 'test_engine' | 'view_webhooks' | 'view_emails' | 'view_keys' | 'view_misinformation' | 'prewarm_cache' | 'dismiss';
   actionLabel: string;
   timestamp: string;
 }
@@ -223,6 +223,17 @@ export async function GET(request: NextRequest) {
 
     const errorKeysCount = (errorKeys || []).length;
 
+    const { data: misinformation } = await admin
+      .from('misinformation_alerts')
+      .select('id, confidence')
+      .eq('reviewed', false)
+      .limit(10);
+    const unreviewedMisinformationCount = (misinformation || []).length;
+
+    const { count: cachedCount } = await admin
+      .from('public_reports_cache')
+      .select('domain', { count: 'exact', head: true });
+
     // 8. Dynamic Real-time Warning Heuristic Engine
     const warnings: RealtimeWarning[] = [];
 
@@ -333,6 +344,34 @@ export async function GET(request: NextRequest) {
         metricValue: `${errorKeysCount} keys`,
         actionType: 'view_keys',
         actionLabel: 'Inspect Keys',
+        timestamp: now.toISOString(),
+      });
+    }
+
+    // Rule H: Unreviewed AI Misinformation
+    if (unreviewedMisinformationCount > 0) {
+      warnings.push({
+        id: 'warn-misinformation',
+        severity: 'warning',
+        title: `${unreviewedMisinformationCount} AI Misinformation Alert${unreviewedMisinformationCount > 1 ? 's' : ''} Detected`,
+        message: 'AI engines claimed incorrect brand facts or pricing. Review truth claims and dispatch fix briefs.',
+        metricValue: `${unreviewedMisinformationCount} unreviewed`,
+        actionType: 'view_misinformation',
+        actionLabel: 'Review Truth',
+        timestamp: now.toISOString(),
+      });
+    }
+
+    // Rule I: Cold Public Reports Cache
+    if ((cachedCount || 0) < 5) {
+      warnings.push({
+        id: 'warn-cache-cold',
+        severity: 'info',
+        title: `Public Funnel Cache is Cold (${cachedCount || 0} Domain${(cachedCount || 0) === 1 ? '' : 's'})`,
+        message: 'Pre-warm top tech domains to guarantee sub-100ms instant checks for new prospects.',
+        metricValue: `${cachedCount || 0} cached`,
+        actionType: 'prewarm_cache',
+        actionLabel: 'Pre-warm Top 20',
         timestamp: now.toISOString(),
       });
     }

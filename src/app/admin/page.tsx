@@ -197,6 +197,24 @@ export default function AdminPortalPage() {
   const [testEmailSubject, setTestEmailSubject] = useState('');
   const [sendingTestEmail, setSendingTestEmail] = useState(false);
 
+  // Batch 2: Plans & Revenue Matrix
+  const [planConfigs, setPlanConfigs] = useState<any[]>([]);
+  const [revenueMetrics, setRevenueMetrics] = useState<any>({ mrrUsd: 0, arrUsd: 0, totalPayingUsers: 0, freeUsers: 0 });
+  const [savingPlanName, setSavingPlanName] = useState<string | null>(null);
+
+  // Batch 2: AI Misinformation & Fix Briefs
+  const [misinformationAlerts, setMisinformationAlerts] = useState<any[]>([]);
+  const [misinformationStats, setMisinformationStats] = useState({ totalAlerts: 0, unreviewedAlerts: 0, openBriefs: 0 });
+
+  // Batch 2: Crawler & Bot Telemetry
+  const [crawlerVisits, setCrawlerVisits] = useState<any[]>([]);
+  const [crawlerStats, setCrawlerStats] = useState<any>({ totalVisits: 0, verifiedRatePct: 100, botDistribution: {} });
+
+  // Batch 2: Public Reports Cache Manager
+  const [cachedReports, setCachedReports] = useState<any[]>([]);
+  const [cacheTotal, setCacheTotal] = useState<number>(0);
+  const [prewarmingCache, setPrewarmingCache] = useState(false);
+
   // DB & Hygiene State
   const [hygieneStats, setHygieneStats] = useState<any | null>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
@@ -240,6 +258,10 @@ export default function AdminPortalPage() {
         templatesRes,
         hygieneRes,
         emailsRes,
+        plansRes,
+        misinfoRes,
+        crawlersRes,
+        cacheRes,
       ] = await Promise.all([
         fetch('/api/admin/config'),
         fetch('/api/admin/users'),
@@ -252,6 +274,10 @@ export default function AdminPortalPage() {
         fetch('/api/admin/templates/email'),
         fetch('/api/admin/hygiene'),
         fetch('/api/admin/emails'),
+        fetch('/api/admin/plans'),
+        fetch('/api/admin/misinformation'),
+        fetch('/api/admin/crawlers'),
+        fetch('/api/admin/cache'),
       ]);
 
       if (configRes.ok) {
@@ -315,6 +341,30 @@ export default function AdminPortalPage() {
         const data = await emailsRes.json();
         setEmailLogs(data.logs || []);
         setEmailStats(data.stats || { total: 0, delivered: 0, failed: 0, successRate: 100 });
+      }
+
+      if (plansRes.ok) {
+        const data = await plansRes.json();
+        setPlanConfigs(data.plans || []);
+        if (data.revenue) setRevenueMetrics(data.revenue);
+      }
+
+      if (misinfoRes.ok) {
+        const data = await misinfoRes.json();
+        setMisinformationAlerts(data.alerts || []);
+        if (data.stats) setMisinformationStats(data.stats);
+      }
+
+      if (crawlersRes.ok) {
+        const data = await crawlersRes.json();
+        setCrawlerVisits(data.visits || []);
+        if (data.stats) setCrawlerStats(data.stats);
+      }
+
+      if (cacheRes.ok) {
+        const data = await cacheRes.json();
+        setCachedReports(data.items || []);
+        setCacheTotal(data.totalCached || 0);
       }
     } catch (err: any) {
       console.error('Failed to load admin data:', err);
@@ -411,6 +461,11 @@ export default function AdminPortalPage() {
       setActiveTab('config');
     } else if (actionType === 'view_keys') {
       setActiveTab('keys');
+    } else if (actionType === 'view_misinformation') {
+      setActiveTab('security');
+    } else if (actionType === 'prewarm_cache') {
+      await handlePrewarmCache();
+      setActiveTab('db');
     }
   }
 
@@ -866,6 +921,117 @@ export default function AdminPortalPage() {
       setStatusMessage({ type: 'error', text: err.message });
     } finally {
       setSendingTestEmail(false);
+    }
+  }
+
+  // Update Plan Configuration
+  async function handleUpdatePlanConfig(planName: string, updates: Record<string, any>) {
+    setSavingPlanName(planName);
+    try {
+      const res = await fetch('/api/admin/plans', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan_name: planName, ...updates }),
+      });
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: `Updated tier configuration for ${planName.toUpperCase()}` });
+        loadAllAdminData();
+      } else {
+        const data = await res.json();
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to update plan' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    } finally {
+      setSavingPlanName(null);
+    }
+  }
+
+  // Mark Misinformation Alert Reviewed
+  async function handleMarkMisinformationReviewed(alertId: string) {
+    try {
+      const res = await fetch('/api/admin/misinformation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mark_reviewed', id: alertId }),
+      });
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: 'Marked alert as reviewed' });
+        loadAllAdminData();
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Create Technical Fix Brief for Misinformation
+  async function handleCreateFixBrief(projectId: string, gapType: string, gapDesc: string) {
+    try {
+      const res = await fetch('/api/admin/misinformation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_brief',
+          project_id: projectId,
+          gap_type: gapType,
+          gap_description: gapDesc,
+        }),
+      });
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: 'Technical Fix Brief created and dispatched to project' });
+        loadAllAdminData();
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Pre-warm Viral Public Reports Cache
+  async function handlePrewarmCache(domains?: string[]) {
+    setPrewarmingCache(true);
+    try {
+      const res = await fetch('/api/admin/cache', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domains: domains || [] }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: `Pre-warmed ${data.prewarmed?.length || 0} top SaaS domains in viral cache` });
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to pre-warm cache' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    } finally {
+      setPrewarmingCache(false);
+    }
+  }
+
+  // Purge Entire Public Reports Cache
+  async function handlePurgeAllCache() {
+    try {
+      const res = await fetch('/api/admin/cache?purgeAll=true', { method: 'DELETE' });
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: 'Purged all cached public reports' });
+        loadAllAdminData();
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Purge Single Domain Cache
+  async function handlePurgeDomainCache(domain: string) {
+    try {
+      const res = await fetch(`/api/admin/cache?domain=${encodeURIComponent(domain)}`, { method: 'DELETE' });
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: `Purged cache for ${domain}` });
+        loadAllAdminData();
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
     }
   }
 
@@ -1760,8 +1926,110 @@ export default function AdminPortalPage() {
           {/* TAB 2: USERS & SUBSCRIPTIONS (Clean White Cards)                */}
           {/* ============================================================== */}
           {activeTab === 'users' && (
-            <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="space-y-6">
+              {/* Subscription Revenue & Plan Quotas Matrix */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">Subscription Revenue & Plan Quotas Matrix</h2>
+                      <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Live Tier Sync
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Dynamic tier limits, allowed engines, and recurring revenue estimates synced with <code className="font-mono text-slate-900 font-bold">public.plan_configs</code>.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-3.5 py-1.5 bg-[#D4F63C] text-black font-black text-xs rounded-full shadow-xs">
+                      MRR: ${revenueMetrics.mrrUsd || 0}/mo
+                    </span>
+                    <span className="px-3.5 py-1.5 bg-slate-950 text-white font-bold text-xs rounded-full shadow-xs">
+                      ARR: ${revenueMetrics.arrUsd || 0}/yr
+                    </span>
+                  </div>
+                </div>
+
+                {/* Plan Tier Config Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {planConfigs.map((plan) => (
+                    <div key={plan.plan_name} className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-black text-sm text-slate-950 capitalize">{plan.display_name || plan.plan_name}</span>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${plan.is_active ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+                            {plan.is_active ? 'ACTIVE' : 'DISABLED'}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 mb-3">{plan.description}</p>
+
+                        <div className="space-y-2 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 font-semibold">Price / mo ($):</span>
+                            <input
+                              type="number"
+                              defaultValue={plan.price_usd}
+                              id={`plan-price-${plan.plan_name}`}
+                              className="w-20 px-2 py-1 text-right bg-[#f4f5f8] border border-slate-200 rounded-lg font-bold text-slate-900"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 font-semibold">Keywords Limit:</span>
+                            <input
+                              type="number"
+                              defaultValue={plan.keywords_limit}
+                              id={`plan-keywords-${plan.plan_name}`}
+                              className="w-20 px-2 py-1 text-right bg-[#f4f5f8] border border-slate-200 rounded-lg font-bold text-slate-900"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 font-semibold">Projects Limit:</span>
+                            <input
+                              type="number"
+                              defaultValue={plan.projects_limit}
+                              id={`plan-projects-${plan.plan_name}`}
+                              className="w-20 px-2 py-1 text-right bg-[#f4f5f8] border border-slate-200 rounded-lg font-bold text-slate-900"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 font-semibold">Scan Frequency:</span>
+                            <span className="font-mono text-[11px] bg-slate-100 px-2 py-0.5 rounded-md font-bold text-slate-800 uppercase">
+                              {plan.scan_frequency || 'weekly'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span className="text-[11px] text-slate-400">
+                          {plan.engines_allowed?.length || 1} AI Engines
+                        </span>
+                        <button
+                          disabled={savingPlanName === plan.plan_name}
+                          onClick={() => {
+                            const priceEl = document.getElementById(`plan-price-${plan.plan_name}`) as HTMLInputElement;
+                            const kwEl = document.getElementById(`plan-keywords-${plan.plan_name}`) as HTMLInputElement;
+                            const projEl = document.getElementById(`plan-projects-${plan.plan_name}`) as HTMLInputElement;
+                            handleUpdatePlanConfig(plan.plan_name, {
+                              price_usd: Number(priceEl?.value) || 0,
+                              keywords_limit: Number(kwEl?.value) || 10,
+                              projects_limit: Number(projEl?.value) || 1,
+                            });
+                          }}
+                          className="px-3.5 py-1.5 bg-slate-950 hover:bg-slate-800 disabled:opacity-50 text-white rounded-full text-xs font-bold transition shadow-xs"
+                        >
+                          {savingPlanName === plan.plan_name ? 'Saving...' : 'Save Tier'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Customer Directory */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="relative flex-1 max-w-md">
                   <Search className="w-4 h-4 absolute left-4 top-3 text-slate-400" />
                   <input
@@ -1926,6 +2194,7 @@ export default function AdminPortalPage() {
                   </div>
                 </div>
               )}
+              </div>
             </div>
           )}
 
@@ -2439,6 +2708,169 @@ export default function AdminPortalPage() {
                 </div>
               </div>
 
+              {/* AI Hallucination & Brand Misinformation Sentinel */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">AI Hallucination & Brand Misinformation Sentinel</h2>
+                      <span className="px-2.5 py-0.5 bg-rose-100 text-rose-800 font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Truth Engine
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Monitors AI search engines claiming incorrect pricing, distorted features, or hallucinations about customer brands.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-amber-100 text-amber-900 font-bold text-xs rounded-full">
+                      {misinformationStats.unreviewedAlerts} Unreviewed
+                    </span>
+                    <span className="px-3 py-1 bg-[#D4F63C] text-black font-black text-xs rounded-full">
+                      {misinformationStats.openBriefs} Open Briefs
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
+                        <tr>
+                          <th className="px-5 py-3.5">Brand / Project</th>
+                          <th className="px-5 py-3.5">AI Engine</th>
+                          <th className="px-5 py-3.5">Claimed Quote</th>
+                          <th className="px-5 py-3.5">Claimed vs Expected</th>
+                          <th className="px-5 py-3.5">Confidence</th>
+                          <th className="px-5 py-3.5 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {misinformationAlerts.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="px-5 py-8 text-center text-slate-400">
+                              No active misinformation alerts detected. AI models are responding accurately.
+                            </td>
+                          </tr>
+                        ) : (
+                          misinformationAlerts.map((m) => (
+                            <tr key={m.id} className="hover:bg-slate-50 transition">
+                              <td className="px-5 py-4 font-bold text-slate-950 font-mono">
+                                {m.project?.domain || 'Brand Target'}
+                              </td>
+                              <td className="px-5 py-4">
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-800 capitalize">
+                                  {m.engine}
+                                </span>
+                              </td>
+                              <td className="px-5 py-4 text-slate-700 max-w-[220px] truncate" title={m.quote}>
+                                &ldquo;{m.quote}&rdquo;
+                              </td>
+                              <td className="px-5 py-4">
+                                <div className="text-[11px]">
+                                  <span className="text-rose-600 font-bold">Claim: {m.claimed_value || 'N/A'}</span>
+                                  <span className="text-slate-400 mx-1">→</span>
+                                  <span className="text-emerald-600 font-bold">Truth: {m.expected_value || 'Verified'}</span>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4">
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${Number(m.confidence) >= 0.8 ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}`}>
+                                  {Math.round(Number(m.confidence) * 100)}% Match
+                                </span>
+                              </td>
+                              <td className="px-5 py-4 text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  {!m.reviewed && (
+                                    <button
+                                      onClick={() => handleMarkMisinformationReviewed(m.id)}
+                                      className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full text-[11px] font-bold transition shadow-xs"
+                                    >
+                                      Mark Reviewed
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => handleCreateFixBrief(m.project_id, 'misinformation', `Correct false AI claim: ${m.claimed_value} should be ${m.expected_value}`)}
+                                    className="px-3 py-1 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-[11px] transition shadow-xs"
+                                  >
+                                    Create Brief
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Search Bot & Crawler Telemetry */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">AI Search Bot & Crawler Telemetry</h2>
+                      <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Edge Radar
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Reverse-DNS verified ingestion activity by GPTBot, ClaudeBot, PerplexityBot, and Google-Extended.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full">
+                      {crawlerStats.verifiedRatePct || 100}% Verified Crawlers
+                    </span>
+                    <span className="px-3 py-1 bg-slate-950 text-white font-bold text-xs rounded-full">
+                      {crawlerStats.totalVisits || 0} Total Hits
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase">GPTBot</p>
+                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.gptbot || 0}</p>
+                  </div>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase">ClaudeBot</p>
+                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.claudebot || 0}</p>
+                  </div>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase">PerplexityBot</p>
+                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.perplexitybot || 0}</p>
+                  </div>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase">Google-Extended</p>
+                    <p className="text-xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.googleExtended || 0}</p>
+                  </div>
+                </div>
+
+                {crawlerVisits.length > 0 && (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs mt-3">
+                    <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
+                      <span>Recent Crawler Ingestions</span>
+                      <span className="text-emerald-600 font-mono font-bold">Live Traffic</span>
+                    </div>
+                    <div className="divide-y divide-slate-100 text-xs">
+                      {crawlerVisits.slice(0, 5).map((v) => (
+                        <div key={v.id} className="px-4 py-2.5 flex items-center justify-between hover:bg-slate-50 transition">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-slate-900">{v.engine || v.user_agent?.split('/')[0] || 'Bot'}</span>
+                            <span className="text-slate-400 font-mono text-[11px]">{v.path || '/'}</span>
+                          </div>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${v.is_verified ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+                            {v.is_verified ? 'Verified DNS' : 'Unverified'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Webhook Dead-Letter Queue */}
               <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
                 <h2 className="text-xl font-black text-slate-950 mb-1">Webhook Dead-Letter Queue (LemonSqueezy)</h2>
@@ -2833,6 +3265,94 @@ export default function AdminPortalPage() {
                     >
                       Execute Hygiene Prune (Delete &gt;90d)
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Viral Public Reports Cache Explorer & Pre-Warmer */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">Viral Public Reports Cache Manager</h2>
+                      <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Prospect Funnel
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Evaluated SaaS brand reports cached for instant sub-100ms free check delivery at <code className="font-mono text-slate-900 font-bold">/report/[domain]</code>.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      disabled={prewarmingCache}
+                      onClick={() => handlePrewarmCache()}
+                      className="px-4 py-2 bg-slate-950 hover:bg-slate-800 disabled:opacity-50 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-sm"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-[#D4F63C]" />
+                      {prewarmingCache ? 'Pre-warming...' : 'Pre-warm Top 20'}
+                    </button>
+                    {cacheTotal > 0 && (
+                      <button
+                        onClick={handlePurgeAllCache}
+                        className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Purge All ({cacheTotal})
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
+                        <tr>
+                          <th className="px-5 py-3.5">Target Domain</th>
+                          <th className="px-5 py-3.5">Brand</th>
+                          <th className="px-5 py-3.5">AEO Visibility</th>
+                          <th className="px-5 py-3.5">Share of Voice</th>
+                          <th className="px-5 py-3.5">Last Refreshed</th>
+                          <th className="px-5 py-3.5 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {cachedReports.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="px-5 py-8 text-center text-slate-400">
+                              Cache is empty. Click &quot;Pre-warm Top 20&quot; to cache top domains for immediate sub-100ms prospective visits.
+                            </td>
+                          </tr>
+                        ) : (
+                          cachedReports.map((c) => (
+                            <tr key={c.domain} className="hover:bg-slate-50 transition">
+                              <td className="px-5 py-4 font-mono font-bold text-slate-900">{c.domain}</td>
+                              <td className="px-5 py-4 text-slate-700 font-semibold">{c.brand_name || 'Brand'}</td>
+                              <td className="px-5 py-4">
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#D4F63C] text-black">
+                                  {c.visibility_score || 0}%
+                                </span>
+                              </td>
+                              <td className="px-5 py-4 text-slate-600 font-mono text-[11px]">
+                                {c.share_of_voice_pct ? `${Math.round(Number(c.share_of_voice_pct) * 100)}%` : '—'}
+                              </td>
+                              <td className="px-5 py-4 text-slate-400 font-mono text-[11px]">
+                                {c.updated_at ? new Date(c.updated_at).toLocaleTimeString() : 'Fresh'}
+                              </td>
+                              <td className="px-5 py-4 text-right">
+                                <button
+                                  onClick={() => handlePurgeDomainCache(c.domain)}
+                                  className="text-rose-600 hover:text-rose-700 text-xs font-bold"
+                                >
+                                  Purge
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>

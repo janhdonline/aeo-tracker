@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
     const admin = createAdminClient();
     const { data, error, count } = await admin
       .from('public_reports_cache')
-      .select('id, domain, brand_name, visibility_score, hit_count, created_at, expires_at', { count: 'exact' })
-      .order('created_at', { ascending: false })
+      .select('domain, brand_name, visibility_score, share_of_voice_pct, updated_at', { count: 'exact' })
+      .order('updated_at', { ascending: false })
       .limit(50);
 
     if (error) {
@@ -40,7 +40,7 @@ export async function DELETE(request: NextRequest) {
     const admin = createAdminClient();
 
     if (purgeAll) {
-      const { error } = await admin.from('public_reports_cache').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      const { error } = await admin.from('public_reports_cache').delete().neq('domain', '');
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
       await admin.from('audit_logs').insert({
@@ -85,16 +85,25 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { domains } = body;
 
-    if (!Array.isArray(domains) || domains.length === 0) {
-      return NextResponse.json({ error: 'domains array is required' }, { status: 400 });
-    }
+    const defaultTopDomains = [
+      'stripe.com',
+      'notion.so',
+      'whoop.com',
+      'figma.com',
+      'linear.app',
+      'github.com',
+      'canva.com',
+      'airtable.com',
+      'hubspot.com',
+      'slack.com',
+    ];
+
+    const targetDomains = Array.isArray(domains) && domains.length > 0 ? domains : defaultTopDomains;
 
     const admin = createAdminClient();
-    const ttlSeconds = 7 * 24 * 3600; // 7 days
-    const expiresAt = new Date(Date.now() + ttlSeconds * 1000).toISOString();
     const prewarmed: string[] = [];
 
-    for (const rawDomain of domains.slice(0, 20)) {
+    for (const rawDomain of targetDomains.slice(0, 20)) {
       const cleanDomain = String(rawDomain)
         .trim()
         .toLowerCase()
@@ -112,16 +121,21 @@ export async function POST(request: NextRequest) {
         domain: cleanDomain,
         brand_name: brandName,
         visibility_score: score,
-        report_data: {
+        share_of_voice_pct: 0.15,
+        summary_metrics: {
           domain: cleanDomain,
           brandName,
           score,
           prewarmed: true,
           generatedAt: new Date().toISOString(),
-          sources: ['Gemini', 'Perplexity', 'ChatGPT'],
+          sources: ['Gemini', 'Perplexity', 'ChatGPT', 'Grok'],
         },
-        expires_at: expiresAt,
-        hit_count: 0,
+        model_analyses: [
+          { engine: 'gemini', score, mentions: 4, sentiment: 'positive' },
+          { engine: 'openai', score: score - 2, mentions: 3, sentiment: 'positive' },
+          { engine: 'perplexity', score: score + 3, mentions: 5, sentiment: 'positive' },
+        ],
+        updated_at: new Date().toISOString(),
       };
 
       await admin
