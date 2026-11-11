@@ -31,8 +31,30 @@ async function executeSingleRun(
   });
   const latencyMs = Date.now() - startTime;
 
+  // Safely normalize citations so detectMentions never throws on missing domain
+  const rawCitations = Array.isArray(result.citations) ? result.citations : [];
+  const normalizedCitations = rawCitations.map((c: any) => {
+    if (typeof c === 'string') {
+      try {
+        const u = new URL(c);
+        return { url: c, domain: u.hostname, title: u.hostname };
+      } catch {
+        return { url: c, domain: c, title: c };
+      }
+    }
+    let d = c.domain;
+    if (!d && c.url) {
+      try {
+        d = new URL(c.url).hostname;
+      } catch {
+        d = 'web';
+      }
+    }
+    return { url: c.url || '', domain: d || 'web', title: c.title || d || 'source' };
+  });
+
   // Detect mentions and sentiment
-  const mentions = detectMentions(result.answerText, result.citations, brandName, [], domain);
+  const mentions = detectMentions(result.answerText, normalizedCitations, brandName, [], domain);
   const sentiment = await analyzeSentiment(result.answerText);
 
   // Estimate token usage and micro-cost
