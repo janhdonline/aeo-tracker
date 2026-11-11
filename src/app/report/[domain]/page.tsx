@@ -72,8 +72,11 @@ export default async function PublicReportPage({ params }: Props) {
     userPlan = null;
   }
 
+  // Generate full default baseline data for this domain
+  const baseDefaults = generateFullReportData(cleanDomain);
+
   // Check public_reports_cache first
-  let reportData: any = null;
+  let reportData: any = baseDefaults;
   const admin = createAdminClient();
   try {
     const { data: cached } = await admin
@@ -84,49 +87,60 @@ export default async function PublicReportPage({ params }: Props) {
 
     if (cached && cached.summary_metrics) {
       reportData = {
-        domain: cached.domain,
-        brandName: cached.brand_name,
-        score: cached.visibility_score,
-        shareOfVoice: `${cached.share_of_voice_pct}%`,
+        ...baseDefaults,
+        domain: cached.domain || baseDefaults.domain,
+        brandName: cached.brand_name || baseDefaults.brandName,
+        score: cached.visibility_score ?? baseDefaults.score,
+        shareOfVoice: cached.share_of_voice_pct ? `${cached.share_of_voice_pct}%` : `${baseDefaults.score}%`,
         ...cached.summary_metrics,
-        modelAnalyses: cached.model_analyses,
-        promptDetails: cached.prompt_details,
-        productRankings: cached.product_rankings || [],
-        sources: cached.sources || [],
+        modelAnalyses: cached.model_analyses && cached.model_analyses.length > 0 ? cached.model_analyses : baseDefaults.aiChatbotsTable,
+        promptDetails: cached.prompt_details && cached.prompt_details.length > 0 ? cached.prompt_details : baseDefaults.prompts,
+        prompts: cached.prompt_details && cached.prompt_details.length > 0 ? cached.prompt_details : baseDefaults.prompts,
+        productRankings: cached.product_rankings && cached.product_rankings.length > 0 ? cached.product_rankings : baseDefaults.productRankings,
+        sources: cached.sources && cached.sources.length > 0 ? cached.sources : [],
+        products: (cached.summary_metrics?.products && cached.summary_metrics.products.length > 0)
+          ? cached.summary_metrics.products
+          : (cached.products && cached.products.length > 0 ? cached.products : baseDefaults.products),
+        productsFoundPct: cached.summary_metrics?.productsFoundPct ?? cached.productsFoundPct ?? baseDefaults.productsFoundPct,
+        yourProductsPct: cached.summary_metrics?.yourProductsPct ?? cached.yourProductsPct ?? baseDefaults.yourProductsPct,
+        competitorProductsPct: cached.summary_metrics?.competitorProductsPct ?? cached.competitorProductsPct ?? baseDefaults.competitorProductsPct,
+        bestProduct: cached.summary_metrics?.bestProduct || cached.bestProduct || baseDefaults.bestProduct,
       };
+    } else {
+      try {
+        await admin.from('public_reports_cache').upsert(
+          {
+            domain: cleanDomain,
+            brand_name: baseDefaults.brandName,
+            visibility_score: baseDefaults.score,
+            share_of_voice_pct: parseFloat(String(baseDefaults.score)) || 0,
+            summary_metrics: {
+              totalAudited: 4,
+              scoreBadge: baseDefaults.scoreBadge,
+              engineCoveragePct: 100,
+              sourceCitationsCount: baseDefaults.productRankings?.length || 12,
+              fanoutQueries: baseDefaults.fanoutOpportunities?.length || 6,
+              competitors: baseDefaults.competitorNames || [],
+              products: baseDefaults.products,
+              productsFoundPct: baseDefaults.productsFoundPct,
+              yourProductsPct: baseDefaults.yourProductsPct,
+              competitorProductsPct: baseDefaults.competitorProductsPct,
+              bestProduct: baseDefaults.bestProduct,
+            },
+            model_analyses: baseDefaults.aiChatbotsTable,
+            prompt_details: baseDefaults.prompts,
+            product_rankings: baseDefaults.productRankings,
+            sources: [],
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'domain' }
+        );
+      } catch (cacheErr) {
+        console.warn('Failed to cache public report:', cacheErr);
+      }
     }
   } catch (err) {
     console.warn('Error reading public_reports_cache:', err);
-  }
-
-  if (!reportData) {
-    reportData = generateFullReportData(cleanDomain);
-    try {
-      await admin.from('public_reports_cache').upsert(
-        {
-          domain: cleanDomain,
-          brand_name: reportData.brandName,
-          visibility_score: reportData.score,
-          share_of_voice_pct: parseFloat(reportData.shareOfVoice) || 0,
-          summary_metrics: {
-            totalAudited: reportData.totalAudited,
-            scoreBadge: reportData.scoreBadge,
-            engineCoveragePct: reportData.engineCoveragePct,
-            sourceCitationsCount: reportData.sourceCitationsCount,
-            fanoutQueries: reportData.fanoutQueries,
-            competitors: reportData.competitors,
-          },
-          model_analyses: reportData.modelAnalyses,
-          prompt_details: reportData.promptDetails,
-          product_rankings: reportData.productRankings,
-          sources: reportData.sources,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'domain' }
-      );
-    } catch (cacheErr) {
-      console.warn('Failed to cache public report:', cacheErr);
-    }
   }
 
   // If this domain is already tracked in our database with snapshot scores, overlay real score

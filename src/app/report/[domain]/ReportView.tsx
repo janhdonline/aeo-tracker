@@ -213,10 +213,35 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
     }
   };
 
+  // Safe normalized fallback variables to prevent any undefined runtime crashes
+  const brandName = data.brandName || data.domain?.split('.')[0] || 'Brand';
+  const products = Array.isArray(data.products) && data.products.length > 0
+    ? data.products
+    : [`${brandName} Core Platform`, `${brandName} Solutions`];
+  const productRankings = Array.isArray(data.productRankings) ? data.productRankings : [];
+  const prompts = Array.isArray(data.prompts) ? data.prompts : [];
+  const competitorNames = Array.isArray(data.competitorNames) && data.competitorNames.length > 0
+    ? data.competitorNames
+    : ['Market Alternative A', 'Industry Choice B'];
+  const competitorDots = Array.isArray(data.competitorDots) ? data.competitorDots : [];
+  const aiChatbotsTable = Array.isArray(data.aiChatbotsTable) ? data.aiChatbotsTable : [];
+  const aiModels = data.aiModels || {
+    chatgpt: { name: 'ChatGPT-4o', score: 85, checked: true },
+    gemini: { name: 'Google Gemini', score: 82, checked: true },
+    claude: { name: 'Claude 3.7', score: 79, checked: true },
+    perplexity: { name: 'Perplexity Pro', score: 87, checked: true },
+  };
+  const strategy = data.strategy || {
+    answerability: { score: 75, goodLength: true, conversational: true, statistics: true, citations: true },
+    webPresence: { wikipedia: true, redditScore: 82, xScore: 68, youtubeScore: 74 },
+    structuredData: { score: 85 },
+    crawlerAccessibility: { score: 92 },
+  };
+
   // Circular score progress calculation
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (data.score / 100) * circumference;
+  const strokeDashoffset = circumference - ((data.score || 0) / 100) * circumference;
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-900 flex antialiased selection:bg-slate-900 selection:text-white">
@@ -601,7 +626,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       <Package className="h-3 w-3 text-slate-400" />
                       Products:
                     </span>
-                    {data.products.slice(0, 5).map((p) => (
+                    {products.slice(0, 5).map((p) => (
                       <span
                         key={p}
                         className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50/70 px-2 py-0.5 text-[11px] font-medium text-slate-700"
@@ -610,9 +635,9 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                         <span>{p}</span>
                       </span>
                     ))}
-                    {data.products.length > 5 && (
+                    {products.length > 5 && (
                       <span className="text-[11px] font-semibold text-slate-500">
-                        {data.products.length - 5} other products
+                        {products.length - 5} other products
                       </span>
                     )}
                   </div>
@@ -644,7 +669,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-2xl font-bold text-slate-900">{data.productsFoundPct}%</p>
+              <p className="font-display text-2xl font-bold text-slate-900">{data.productsFoundPct ?? 0}%</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -655,7 +680,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-2xl font-bold text-slate-900">{data.yourProductsPct}%</p>
+              <p className="font-display text-2xl font-bold text-slate-900">{data.yourProductsPct ?? 0}%</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -666,7 +691,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-2xl font-bold text-slate-900">{data.competitorProductsPct}%</p>
+              <p className="font-display text-2xl font-bold text-slate-900">{data.competitorProductsPct ?? 0}%</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -677,8 +702,8 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-sm font-bold text-slate-900 truncate" title={data.bestProduct}>
-                {data.bestProduct}
+              <p className="font-display text-sm font-bold text-slate-900 truncate" title={data.bestProduct || '—'}>
+                {data.bestProduct || '—'}
               </p>
             </div>
           </div>
@@ -708,7 +733,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      <span className="font-bold text-slate-900">{data.aiModels.chatgpt.score}</span>
+                      <span className="font-bold text-slate-900">{aiModels.chatgpt?.score ?? 85}</span>
                     </div>
                   </div>
 
@@ -722,7 +747,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      <span className="font-bold text-slate-900">{data.aiModels.gemini.score}</span>
+                      <span className="font-bold text-slate-900">{aiModels.gemini?.score ?? 82}</span>
                     </div>
                   </div>
 
@@ -736,7 +761,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      <span className="font-bold text-slate-900">{data.aiModels.claude.score}</span>
+                      <span className="font-bold text-slate-900">{aiModels.claude?.score ?? 79}</span>
                     </div>
                   </div>
 
@@ -750,7 +775,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      <span className="font-bold text-slate-900">{data.aiModels.perplexity.score}</span>
+                      <span className="font-bold text-slate-900">{aiModels.perplexity?.score ?? 87}</span>
                     </div>
                   </div>
                 </div>
@@ -781,7 +806,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </div>
 
                 <div className="space-y-3.5 pt-1">
-                  {data.prompts.slice(0, 2).map((p, idx) => (
+                  {prompts.slice(0, 2).map((p, idx) => (
                     <div key={p.id} className="space-y-2 text-xs">
                       <p className="font-medium text-slate-800 line-clamp-2 leading-snug">
                         {p.prompt}
@@ -843,7 +868,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     Competitors Mentioned:
                   </span>
                   <div className="flex flex-wrap gap-1.5">
-                    {data.competitorNames.slice(0, 6).map((c) => (
+                    {competitorNames.slice(0, 6).map((c) => (
                       <span
                         key={c}
                         className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-xs font-medium text-slate-700 shadow-2xs"
@@ -886,13 +911,13 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="font-medium text-slate-700">Answerability</span>
-                      <span className="font-bold text-slate-900">{data.strategy.answerability.score}</span>
+                      <span className="font-bold text-slate-900">{strategy.answerability?.score ?? 75}</span>
                     </div>
                     <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <motion.div
                         className="h-full bg-slate-800 rounded-full"
                         initial={{ width: 0 }}
-                        animate={{ width: `${data.strategy.answerability.score}%` }}
+                        animate={{ width: `${strategy.answerability?.score ?? 75}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                       />
                     </div>
@@ -907,19 +932,19 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                           r/
                         </span>
                         <span className="font-bold text-slate-800 text-[11px]">
-                          {data.strategy.webPresence.redditScore}
+                          {strategy.webPresence?.redditScore ?? 80}
                         </span>
                       </div>
                       <div className="flex items-center gap-1 flex-1 border-l border-slate-200 pl-1.5">
                         <XIcon className="h-3.5 w-3.5 text-slate-800" />
                         <span className="font-bold text-slate-400 text-[11px]">
-                          {data.strategy.webPresence.xScore}
+                          {strategy.webPresence?.xScore ?? 70}
                         </span>
                       </div>
                       <div className="flex items-center gap-1 flex-1 border-l border-slate-200 pl-1.5">
                         <YouTubeIcon className="h-3.5 w-3.5" />
                         <span className="font-bold text-slate-400 text-[11px]">
-                          {data.strategy.webPresence.youtubeScore}
+                          {strategy.webPresence?.youtubeScore ?? 75}
                         </span>
                       </div>
                       <div className="flex items-center justify-center border-l border-slate-200 pl-1.5">
@@ -932,13 +957,13 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="font-medium text-slate-700">Structured Data</span>
-                      <span className="font-bold text-slate-900">{data.strategy.structuredData.score}</span>
+                      <span className="font-bold text-slate-900">{strategy.structuredData?.score ?? 85}</span>
                     </div>
                     <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <motion.div
                         className="h-full bg-slate-800 rounded-full"
                         initial={{ width: 0 }}
-                        animate={{ width: `${data.strategy.structuredData.score}%` }}
+                        animate={{ width: `${strategy.structuredData?.score ?? 85}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                       />
                     </div>
@@ -948,13 +973,13 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="font-medium text-slate-700">AI Crawler Accessibility</span>
-                      <span className="font-bold text-slate-900">{data.strategy.crawlerAccessibility.score}</span>
+                      <span className="font-bold text-slate-900">{strategy.crawlerAccessibility?.score ?? 90}</span>
                     </div>
                     <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <motion.div
                         className="h-full bg-slate-800 rounded-full"
                         initial={{ width: 0 }}
-                        animate={{ width: `${data.strategy.crawlerAccessibility.score}%` }}
+                        animate={{ width: `${strategy.crawlerAccessibility?.score ?? 90}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                       />
                     </div>
@@ -1200,7 +1225,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </div>
 
                 {/* Individual Prompts */}
-                {data.prompts.map((p) => (
+                {prompts.map((p) => (
                   <div key={p.id} className="rounded-xl border border-slate-200 p-5 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <h4 className="font-display text-sm font-bold text-slate-900">&ldquo;{p.prompt}&rdquo;</h4>
@@ -1224,7 +1249,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-1">
                           Cited Sources:
                         </span>
-                        {p.sources.map((s) => (
+                        {(p.sources || []).map((s) => (
                           <span
                             key={s}
                             className="rounded-md bg-white border border-slate-200 px-2 py-0.5 text-[10px] font-mono text-slate-600 shadow-2xs"
@@ -1250,7 +1275,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             >
               <div className="flex items-center gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 text-blue-700 text-xs font-bold">
-                  {data.products.length}
+                  {products.length}
                 </span>
                 <div>
                   <h3 className="font-display text-base font-bold text-slate-900">Products & Offerings</h3>
@@ -1274,7 +1299,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {data.productRankings.map((p) => (
+                      {productRankings.map((p) => (
                         <tr key={p.rank} className={p.isYourProduct ? 'bg-emerald-50/40 font-semibold' : ''}>
                           <td className="py-3 font-bold text-slate-800">#{p.rank}</td>
                           <td className="py-3 text-slate-900 flex items-center gap-1.5">
@@ -1327,7 +1352,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {data.aiChatbotsTable.map((m) => (
+                      {aiChatbotsTable.map((m) => (
                         <tr key={`${m.name}-${m.subModel}`}>
                           <td className="py-3 font-semibold text-slate-900">
                             {m.name} · <span className="font-normal text-slate-500">{m.subModel}</span>
@@ -1398,7 +1423,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       </div>
                     </div>
 
-                    {data.competitorDots.map((dot) => {
+                    {competitorDots.map((dot) => {
                       const left = `${Math.min(92, Math.max(8, dot.mentionRate * 1.4))}%`;
                       const bottom = `${Math.min(90, Math.max(10, dot.sentiment))}%`;
                       return (

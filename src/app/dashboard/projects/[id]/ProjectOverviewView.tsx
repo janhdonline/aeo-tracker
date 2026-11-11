@@ -391,7 +391,7 @@ export function ProjectOverviewView({
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-2xl font-bold text-slate-900">{reportData.productsFoundPct}%</p>
+          <p className="font-display text-2xl font-bold text-slate-900">{reportData.productsFoundPct ?? 0}%</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -402,7 +402,7 @@ export function ProjectOverviewView({
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-2xl font-bold text-slate-900">{reportData.yourProductsPct}%</p>
+          <p className="font-display text-2xl font-bold text-slate-900">{reportData.yourProductsPct ?? 0}%</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -413,7 +413,7 @@ export function ProjectOverviewView({
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-2xl font-bold text-slate-900">{reportData.competitorProductsPct}%</p>
+          <p className="font-display text-2xl font-bold text-slate-900">{reportData.competitorProductsPct ?? 0}%</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -424,8 +424,8 @@ export function ProjectOverviewView({
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-sm font-bold text-slate-900 truncate" title={reportData.bestProduct}>
-            {reportData.bestProduct}
+          <p className="font-display text-sm font-bold text-slate-900 truncate" title={reportData.bestProduct || '—'}>
+            {reportData.bestProduct || '—'}
           </p>
         </div>
       </div>

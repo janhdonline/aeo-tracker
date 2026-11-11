@@ -46,7 +46,7 @@ function LoginForm() {
 
   // Read error from redirect (e.g. from /auth/callback)
   useEffect(() => {
-    const errorParam = searchParams.get('error');
+    const errorParam = searchParams?.get('error');
     if (errorParam) {
       setError(decodeURIComponent(errorParam));
     }
