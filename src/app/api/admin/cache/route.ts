@@ -2,17 +2,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/middleware/admin-guard';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const { errorResponse } = await requireAdmin(request);
   if (errorResponse) return errorResponse;
 
   try {
     const admin = createAdminClient();
-    const { data, error, count } = await admin
+    const search = request.nextUrl.searchParams.get('search');
+
+    let query = admin
       .from('public_reports_cache')
-      .select('domain, brand_name, visibility_score, share_of_voice_pct, updated_at', { count: 'exact' })
+      .select('domain, brand_name, visibility_score, share_of_voice_pct, updated_at', { count: 'exact' });
+
+    if (search && search.trim()) {
+      query = query.or(`domain.ilike.%${search.trim()}%,brand_name.ilike.%${search.trim()}%`);
+    }
+
+    const { data, error, count } = await query
       .order('updated_at', { ascending: false })
-      .limit(50);
+      .limit(60);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -83,7 +93,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { domains } = body;
+    const { domains, domain } = body;
 
     const defaultTopDomains = [
       'stripe.com',
@@ -98,12 +108,20 @@ export async function POST(request: NextRequest) {
       'slack.com',
     ];
 
-    const targetDomains = Array.isArray(domains) && domains.length > 0 ? domains : defaultTopDomains;
+    let targetDomains: string[] = [];
+    if (domain && typeof domain === 'string' && domain.trim()) {
+      targetDomains = [domain.trim()];
+    } else if (Array.isArray(domains) && domains.length > 0) {
+      targetDomains = domains;
+    } else {
+      targetDomains = defaultTopDomains;
+    }
 
     const admin = createAdminClient();
     const prewarmed: string[] = [];
+    let singleItem: any = null;
 
-    for (const rawDomain of targetDomains.slice(0, 20)) {
+    for (const rawDomain of targetDomains.slice(0, 25)) {
       const cleanDomain = String(rawDomain)
         .trim()
         .toLowerCase()
@@ -143,6 +161,7 @@ export async function POST(request: NextRequest) {
         .upsert(payload, { onConflict: 'domain' });
 
       prewarmed.push(cleanDomain);
+      if (!singleItem) singleItem = payload;
     }
 
     await admin.from('audit_logs').insert({
@@ -156,6 +175,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: `Successfully pre-warmed ${prewarmed.length} domain(s)`,
       prewarmed,
+      item: singleItem,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

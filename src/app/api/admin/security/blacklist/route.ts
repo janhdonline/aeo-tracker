@@ -3,6 +3,8 @@ import { requireAdmin } from '@/lib/middleware/admin-guard';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { invalidateBlacklistCache } from '@/lib/security';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const { errorResponse } = await requireAdmin(request);
   if (errorResponse) return errorResponse;

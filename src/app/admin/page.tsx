@@ -44,6 +44,14 @@ import {
   Trophy,
   ExternalLink,
   Swords,
+  Eye,
+  Code,
+  Copy,
+  FileText,
+  Server,
+  Globe,
+  X,
+  CheckCheck,
 } from 'lucide-react';
 
 export default function AdminPortalPage() {
@@ -222,10 +230,39 @@ export default function AdminPortalPage() {
   const [emailTemplates, setEmailTemplates] = useState<Record<string, any>>({});
   const [selectedTemplateKey, setSelectedTemplateKey] = useState('email_template_scan_complete');
   const [templateContentInput, setTemplateContentInput] = useState('');
+  const [envAudit, setEnvAudit] = useState<any | null>(null);
+  const [templatePreviewHtml, setTemplatePreviewHtml] = useState<string>('');
+  const [templateTestRecipient, setTemplateTestRecipient] = useState('');
+  const [dispatchingTemplateTest, setDispatchingTemplateTest] = useState(false);
+  const [resettingTemplateDefault, setResettingTemplateDefault] = useState(false);
+  const [templateSampleValues, setTemplateSampleValues] = useState<Record<string, string>>({});
+  const [configCategoryTab, setConfigCategoryTab] = useState<string>('all');
+  const [configSearchQuery, setConfigSearchQuery] = useState('');
+  const [isAddingConfig, setIsAddingConfig] = useState(false);
+  const [newConfigForm, setNewConfigForm] = useState({
+    key: '',
+    value: '',
+    value_type: 'string',
+    category: 'general',
+    description: '',
+    is_secret: false,
+  });
+  const [flagFilterMode, setFlagFilterMode] = useState<'all' | 'enabled' | 'disabled'>('all');
+  const [flagSearchQuery, setFlagSearchQuery] = useState('');
+  const [isAddingFlag, setIsAddingFlag] = useState(false);
+  const [newFlagForm, setNewFlagForm] = useState({
+    flag_key: '',
+    description: '',
+    applies_to: 'all',
+    is_enabled: true,
+  });
 
   // Email DLQ & Sentinel State
   const [emailLogs, setEmailLogs] = useState<any[]>([]);
   const [emailStats, setEmailStats] = useState({ total: 0, delivered: 0, failed: 0, successRate: 100 });
+  const [emailFilterMode, setEmailFilterMode] = useState<'all' | 'failed' | 'delivered'>('all');
+  const [emailSearchQuery, setEmailSearchQuery] = useState('');
+  const [inspectingEmail, setInspectingEmail] = useState<any | null>(null);
   const [testEmailTo, setTestEmailTo] = useState('');
   const [testEmailSubject, setTestEmailSubject] = useState('');
   const [sendingTestEmail, setSendingTestEmail] = useState(false);
@@ -255,6 +292,16 @@ export default function AdminPortalPage() {
   // DB & Hygiene State
   const [hygieneStats, setHygieneStats] = useState<any | null>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [backupSummary, setBackupSummary] = useState<any | null>(null);
+  const [loadingBackupSummary, setLoadingBackupSummary] = useState(false);
+  const [hygieneRetentionHorizon, setHygieneRetentionHorizon] = useState<'30' | '60' | '90' | '180'>('90');
+  const [pruneCheckboxes, setPruneCheckboxes] = useState({ queries: true, errors: true, health: true });
+  const [isPruningHygiene, setIsPruningHygiene] = useState(false);
+  const [customDomainToWarm, setCustomDomainToWarm] = useState('');
+  const [warmingSingleDomain, setWarmingSingleDomain] = useState(false);
+  const [cacheSearchQuery, setCacheSearchQuery] = useState('');
+  const [auditCategoryFilter, setAuditCategoryFilter] = useState<'all' | 'auth' | 'config' | 'database' | 'security'>('all');
+  const [auditSearchQuery, setAuditSearchQuery] = useState('');
 
   // 1. Check existing admin session
   useEffect(() => {
@@ -299,6 +346,7 @@ export default function AdminPortalPage() {
         misinfoRes,
         crawlersRes,
         cacheRes,
+        backupRes,
       ] = await Promise.all([
         fetch('/api/admin/config'),
         fetch('/api/admin/users'),
@@ -315,6 +363,7 @@ export default function AdminPortalPage() {
         fetch('/api/admin/misinformation'),
         fetch('/api/admin/crawlers'),
         fetch('/api/admin/cache'),
+        fetch('/api/admin/backup?summary=true'),
       ]);
 
       if (configRes.ok) {
@@ -322,6 +371,7 @@ export default function AdminPortalPage() {
         setAppConfigs(data.appConfig || []);
         setFeatureFlags(data.featureFlags || []);
         setAuditLogs(data.recentAudits || []);
+        if (data.envAudit) setEnvAudit(data.envAudit);
       }
 
       if (usersRes.ok) {
@@ -377,8 +427,10 @@ export default function AdminPortalPage() {
       if (templatesRes.ok) {
         const data = await templatesRes.json();
         setEmailTemplates(data.templates || {});
+        if (data.sampleValues) setTemplateSampleValues(data.sampleValues);
         if (data.templates?.email_template_scan_complete) {
-          setTemplateContentInput(data.templates.email_template_scan_complete.currentValue);
+          const initialContent = data.templates.email_template_scan_complete.currentValue;
+          setTemplateContentInput(initialContent);
         }
       }
 
@@ -416,6 +468,11 @@ export default function AdminPortalPage() {
         const data = await cacheRes.json();
         setCachedReports(data.items || []);
         setCacheTotal(data.totalCached || 0);
+      }
+
+      if (backupRes && backupRes.ok) {
+        const data = await backupRes.json();
+        if (data.summary) setBackupSummary(data.summary);
       }
     } catch (err: any) {
       console.error('Failed to load admin data:', err);
@@ -981,27 +1038,261 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        action: 'save',
         templateKey: selectedTemplateKey,
         templateContent: templateContentInput,
       }),
     });
     if (res.ok) {
       setStatusMessage({ type: 'success', text: 'Email template saved successfully' });
+      loadAllAdminData();
     }
   }
 
-  // Database Hygiene Prune
+  // Insert Variable Tag into Template Editor
+  function handleInsertVariable(v: string) {
+    setTemplateContentInput((prev) => (prev ? `${prev} ${v}` : v));
+    setStatusMessage({ type: 'success', text: `Variable ${v} inserted` });
+  }
+
+  // Dispatch Live Sample Test Email for Template
+  async function handleDispatchTemplateTest() {
+    if (!templateTestRecipient) {
+      setStatusMessage({ type: 'error', text: 'Please enter a recipient email address' });
+      return;
+    }
+    setDispatchingTemplateTest(true);
+    try {
+      const res = await fetch('/api/admin/templates/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'test_dispatch',
+          templateKey: selectedTemplateKey,
+          templateContent: templateContentInput,
+          targetEmail: templateTestRecipient,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: data.message || `Sample dispatched to ${templateTestRecipient}` });
+        loadEmailData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to dispatch sample email' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    } finally {
+      setDispatchingTemplateTest(false);
+    }
+  }
+
+  // Reset Template to Factory Default
+  async function handleResetTemplateDefault() {
+    if (!confirm('Are you sure you want to reset this email template to factory default?')) return;
+    setResettingTemplateDefault(true);
+    try {
+      const res = await fetch('/api/admin/templates/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'reset_default',
+          templateKey: selectedTemplateKey,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTemplateContentInput(data.defaultText);
+        setStatusMessage({ type: 'success', text: data.message });
+        loadAllAdminData();
+      }
+    } finally {
+      setResettingTemplateDefault(false);
+    }
+  }
+
+  // Create Dynamic Configuration Key
+  async function handleCreateConfig(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newConfigForm.key) return;
+    try {
+      const res = await fetch('/api/admin/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_config',
+          key: newConfigForm.key,
+          value: newConfigForm.value,
+          value_type: newConfigForm.value_type,
+          category: newConfigForm.category,
+          description: newConfigForm.description,
+          is_secret: newConfigForm.is_secret,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: data.message });
+        setIsAddingConfig(false);
+        setNewConfigForm({
+          key: '',
+          value: '',
+          value_type: 'string',
+          category: 'general',
+          description: '',
+          is_secret: false,
+        });
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to create config' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Delete Configuration Key
+  async function handleDeleteConfig(key: string) {
+    if (!confirm(`Are you sure you want to delete configuration key "${key}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/config?section=app_config&key=${encodeURIComponent(key)}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: data.message });
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to delete config' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Register New Feature Flag
+  async function handleCreateFlag(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newFlagForm.flag_key) return;
+    try {
+      const res = await fetch('/api/admin/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_flag',
+          flag_key: newFlagForm.flag_key,
+          description: newFlagForm.description,
+          applies_to: newFlagForm.applies_to,
+          is_enabled: newFlagForm.is_enabled,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: data.message });
+        setIsAddingFlag(false);
+        setNewFlagForm({
+          flag_key: '',
+          description: '',
+          applies_to: 'all',
+          is_enabled: true,
+        });
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to create feature flag' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Delete Feature Flag
+  async function handleDeleteFlag(flagKey: string) {
+    if (!confirm(`Are you sure you want to delete feature flag "${flagKey}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/config?section=feature_flags&key=${encodeURIComponent(flagKey)}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: data.message });
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to delete feature flag' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    }
+  }
+
+  // Database Hygiene Prune (Customized)
   async function handleExecuteHygienePrune() {
-    if (!confirm('Are you sure you want to prune raw query logs older than 90 days?')) return;
-    const res = await fetch('/api/admin/hygiene', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ retentionDays: 90 }),
-    });
-    const data = await res.json();
-    if (res.ok && data.success) {
-      setStatusMessage({ type: 'success', text: data.message });
-      loadAllAdminData();
+    const horizon = Number(hygieneRetentionHorizon);
+    if (!confirm(`Are you sure you want to prune records older than ${horizon} days? This will permanently reclaim storage.`)) return;
+    setIsPruningHygiene(true);
+    try {
+      const res = await fetch('/api/admin/hygiene', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          retentionDays: horizon,
+          pruneQueries: pruneCheckboxes.queries,
+          pruneErrors: pruneCheckboxes.errors,
+          pruneHealth: pruneCheckboxes.health,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: data.message });
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to prune database' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    } finally {
+      setIsPruningHygiene(false);
+    }
+  }
+
+  // Refresh Backup Summary
+  async function handleRefreshBackupSummary() {
+    setLoadingBackupSummary(true);
+    try {
+      const res = await fetch('/api/admin/backup?summary=true');
+      if (res.ok) {
+        const data = await res.json();
+        setBackupSummary(data.summary);
+        setStatusMessage({ type: 'success', text: 'Backup table counts refreshed' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    } finally {
+      setLoadingBackupSummary(false);
+    }
+  }
+
+  // Warm Single Target Domain Cache
+  async function handleWarmSingleDomain(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    if (!customDomainToWarm.trim()) return;
+    setWarmingSingleDomain(true);
+    try {
+      const res = await fetch('/api/admin/cache', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain: customDomainToWarm.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatusMessage({ type: 'success', text: `Pre-warmed report for ${customDomainToWarm.trim()} with score ${data.item?.visibility_score || 80}%` });
+        setCustomDomainToWarm('');
+        loadAllAdminData();
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'Failed to warm domain cache' });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message });
+    } finally {
+      setWarmingSingleDomain(false);
     }
   }
 
@@ -4312,11 +4603,60 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
           )}
 
           {/* ============================================================== */}
-          {/* TAB 7: CONFIG, EMAIL DLQ & LIVE TEMPLATES                      */}
+          {/* TAB 7: CONFIG, EMAIL DLQ & LIVE TEMPLATE STUDIO               */}
           {/* ============================================================== */}
           {activeTab === 'config' && (
-            <div className="space-y-6">
-              {/* Outbound Email DLQ & Delivery Sentinel */}
+            <div className="space-y-8">
+              {/* 1. Runtime Infrastructure & Edge Environment Radar */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">Runtime Environment & Edge Radar</h2>
+                      <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Live Fleet
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Real-time connectivity audit across Supabase DB, Resend Outbound Relay, AI Engine Keys, and Cloudflare Edge.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700 shadow-xs">
+                      <Server className="w-3.5 h-3.5 text-emerald-500" />
+                      Cloudflare Workers (OpenNext)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 pt-2">
+                  {[
+                    { name: 'Supabase DB', status: envAudit?.supabase?.status ?? true, badge: 'Postgres RLS' },
+                    { name: 'Resend SMTP', status: envAudit?.resend?.status ?? true, badge: 'Relay Active' },
+                    { name: 'OpenAI 4o', status: envAudit?.openai?.status ?? true, badge: 'Vision & GPT' },
+                    { name: 'Claude Sonnet', status: envAudit?.anthropic?.status ?? true, badge: 'Reasoning' },
+                    { name: 'Groq Llama', status: envAudit?.groq?.status ?? true, badge: 'Sub-400ms' },
+                    { name: 'Gemini 2.5', status: envAudit?.gemini?.status ?? true, badge: 'Flash Fleet' },
+                    { name: 'Perplexity', status: envAudit?.perplexity?.status ?? true, badge: 'Live Sonar' },
+                    { name: 'LemonSqueezy', status: envAudit?.lemonSqueezy?.status ?? true, badge: 'Webhooks' },
+                  ].map((srv) => (
+                    <div key={srv.name} className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs flex flex-col justify-between">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[11px] font-black text-slate-900 truncate">{srv.name}</span>
+                        <span className={`w-2 h-2 rounded-full ${srv.status ? 'bg-emerald-500 shadow-xs shadow-emerald-400' : 'bg-amber-400'}`} />
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">{srv.badge}</span>
+                      <div className="mt-2 text-[10px] font-bold">
+                        <span className={srv.status ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full' : 'text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full'}>
+                          {srv.status ? 'ONLINE' : 'FALLBACK'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Outbound Email DLQ & Delivery Sentinel */}
               <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
@@ -4385,7 +4725,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                 <form onSubmit={handleSendTestEmail} className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-3 shadow-xs">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-700 whitespace-nowrap">
                     <Mail className="w-4 h-4 text-slate-500" />
-                    <span>Test Dispatch:</span>
+                    <span>Quick Test Dispatch:</span>
                   </div>
                   <input
                     type="email"
@@ -4411,12 +4751,45 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   </button>
                 </form>
 
-                {/* DLQ Logs Table */}
+                {/* Interactive DLQ Logs Filter & Explorer */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
-                  <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="text-xs font-black text-slate-950 uppercase tracking-wider">Outbound Dispatch Logs</h3>
-                    <span className="text-[11px] text-slate-400 font-mono">Recent records</span>
+                  <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[#fbfcfd]">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-slate-950 uppercase tracking-wider">Outbound Logs</span>
+                      <div className="flex items-center bg-slate-100 p-0.5 rounded-full text-[11px] font-bold">
+                        <button
+                          onClick={() => setEmailFilterMode('all')}
+                          className={`px-3 py-1 rounded-full transition ${emailFilterMode === 'all' ? 'bg-white text-slate-950 shadow-xs' : 'text-slate-600 hover:text-slate-950'}`}
+                        >
+                          All ({emailLogs.length})
+                        </button>
+                        <button
+                          onClick={() => setEmailFilterMode('failed')}
+                          className={`px-3 py-1 rounded-full transition ${emailFilterMode === 'failed' ? 'bg-rose-500 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950'}`}
+                        >
+                          Failed ({emailLogs.filter((l) => l.status === 'failed').length})
+                        </button>
+                        <button
+                          onClick={() => setEmailFilterMode('delivered')}
+                          className={`px-3 py-1 rounded-full transition ${emailFilterMode === 'delivered' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950'}`}
+                        >
+                          Delivered ({emailLogs.filter((l) => l.status === 'sent' || l.status === 'delivered').length})
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="relative w-full md:w-64">
+                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                      <input
+                        type="text"
+                        placeholder="Search recipient or subject..."
+                        value={emailSearchQuery}
+                        onChange={(e) => setEmailSearchQuery(e.target.value)}
+                        className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                      />
+                    </div>
                   </div>
+
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
@@ -4426,63 +4799,99 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                           <th className="px-5 py-3">Subject</th>
                           <th className="px-5 py-3">Status</th>
                           <th className="px-5 py-3">Sent At</th>
-                          <th className="px-5 py-3 text-right">Action</th>
+                          <th className="px-5 py-3 text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {emailLogs.length === 0 ? (
+                        {emailLogs
+                          .filter((log) => {
+                            if (emailFilterMode === 'failed') return log.status === 'failed';
+                            if (emailFilterMode === 'delivered') return log.status === 'sent' || log.status === 'delivered';
+                            return true;
+                          })
+                          .filter((log) => {
+                            if (!emailSearchQuery.trim()) return true;
+                            const q = emailSearchQuery.toLowerCase();
+                            return (
+                              (log.recipient || log.recipient_email || '').toLowerCase().includes(q) ||
+                              (log.subject || '').toLowerCase().includes(q) ||
+                              (log.event_type || '').toLowerCase().includes(q)
+                            );
+                          }).length === 0 ? (
                           <tr>
                             <td colSpan={6} className="px-5 py-8 text-center text-slate-400">
-                              No notification logs recorded yet.
+                              No matching notification logs found.
                             </td>
                           </tr>
                         ) : (
-                          emailLogs.map((log) => (
-                            <tr key={log.id} className="hover:bg-slate-50 transition">
-                              <td className="px-5 py-3.5 font-semibold text-slate-900 font-mono">{log.recipient}</td>
-                              <td className="px-5 py-3.5">
-                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
-                                  {log.event_type}
-                                </span>
-                              </td>
-                              <td className="px-5 py-3.5 text-slate-600 max-w-[200px] truncate" title={log.subject}>
-                                {log.subject || '—'}
-                              </td>
-                              <td className="px-5 py-3.5">
-                                {log.status === 'sent' || log.status === 'delivered' ? (
-                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                                    <CheckCircle2 className="w-3.5 h-3.5" /> Delivered
+                          emailLogs
+                            .filter((log) => {
+                              if (emailFilterMode === 'failed') return log.status === 'failed';
+                              if (emailFilterMode === 'delivered') return log.status === 'sent' || log.status === 'delivered';
+                              return true;
+                            })
+                            .filter((log) => {
+                              if (!emailSearchQuery.trim()) return true;
+                              const q = emailSearchQuery.toLowerCase();
+                              return (
+                                (log.recipient || log.recipient_email || '').toLowerCase().includes(q) ||
+                                (log.subject || '').toLowerCase().includes(q) ||
+                                (log.event_type || '').toLowerCase().includes(q)
+                              );
+                            })
+                            .map((log) => (
+                              <tr key={log.id} className="hover:bg-slate-50/80 transition">
+                                <td className="px-5 py-3.5 font-semibold text-slate-900 font-mono">
+                                  {log.recipient || log.recipient_email}
+                                </td>
+                                <td className="px-5 py-3.5">
+                                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                                    {log.event_type}
                                   </span>
-                                ) : (
-                                  <div>
-                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600">
-                                      <AlertTriangle className="w-3.5 h-3.5" /> Failed
+                                </td>
+                                <td className="px-5 py-3.5 text-slate-600 max-w-[220px] truncate" title={log.subject}>
+                                  {log.subject || '—'}
+                                </td>
+                                <td className="px-5 py-3.5">
+                                  {log.status === 'sent' || log.status === 'delivered' ? (
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                                      <CheckCircle2 className="w-3.5 h-3.5" /> Delivered
                                     </span>
-                                    {log.error_message && (
-                                      <p className="text-[10px] text-rose-500 font-mono max-w-[220px] truncate" title={log.error_message}>
-                                        {log.error_message}
-                                      </p>
-                                    )}
-                                  </div>
-                                )}
-                              </td>
-                              <td className="px-5 py-3.5 text-slate-400 font-mono text-[11px]">
-                                {log.sent_at ? new Date(log.sent_at).toLocaleTimeString() : 'Pending'}
-                              </td>
-                              <td className="px-5 py-3.5 text-right">
-                                {log.status === 'failed' ? (
+                                  ) : (
+                                    <div>
+                                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600">
+                                        <AlertTriangle className="w-3.5 h-3.5" /> Failed
+                                      </span>
+                                      {(log.error_message || log.metadata?.error) && (
+                                        <p className="text-[10px] text-rose-500 font-mono max-w-[200px] truncate" title={log.error_message || log.metadata?.error}>
+                                          {log.error_message || log.metadata?.error}
+                                        </p>
+                                      )}
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="px-5 py-3.5 text-slate-400 font-mono text-[11px]">
+                                  {log.sent_at ? new Date(log.sent_at).toLocaleTimeString() : 'Pending'}
+                                </td>
+                                <td className="px-5 py-3.5 text-right space-x-2">
                                   <button
-                                    onClick={() => handleRetryEmail(log.id)}
-                                    className="px-3 py-1 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-[11px] transition shadow-xs"
+                                    onClick={() => setInspectingEmail(log)}
+                                    className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[11px] transition inline-flex items-center gap-1"
+                                    title="View HTML Payload & Trace"
                                   >
-                                    Retry Send
+                                    <Eye className="w-3 h-3" /> Inspect
                                   </button>
-                                ) : (
-                                  <span className="text-[11px] text-slate-400 font-medium">Delivered</span>
-                                )}
-                              </td>
-                            </tr>
-                          ))
+                                  {log.status === 'failed' && (
+                                    <button
+                                      onClick={() => handleRetryEmail(log.id)}
+                                      className="px-3 py-1 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-[11px] transition shadow-xs"
+                                    >
+                                      Retry
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            ))
                         )}
                       </tbody>
                     </table>
@@ -4490,14 +4899,121 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                 </div>
               </div>
 
-              {/* Live Email Template Editor */}
-              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs">
-                <h2 className="text-xl font-black text-slate-950 mb-1">Live Email Template Customizer</h2>
-                <p className="text-xs text-slate-500 mb-4">
-                  Modify Markdown templates sent by AEO Tracker with dynamic variable tags.
-                </p>
+              {/* Inspect Email Modal */}
+              {inspectingEmail && (
+                <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+                  <div className="bg-white border border-slate-200 rounded-[28px] max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-black text-slate-950">Outbound Notification Details</h3>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${inspectingEmail.status === 'sent' || inspectingEmail.status === 'delivered' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                            {inspectingEmail.status.toUpperCase()}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 font-mono mt-0.5">{inspectingEmail.recipient || inspectingEmail.recipient_email}</p>
+                      </div>
+                      <button
+                        onClick={() => setInspectingEmail(null)}
+                        className="p-1.5 text-slate-400 hover:text-slate-800 rounded-full hover:bg-slate-100"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
 
-                <div className="flex gap-2 mb-4">
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Event Type</span>
+                        <span className="font-semibold text-slate-900">{inspectingEmail.event_type}</span>
+                      </div>
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Sent Timestamp</span>
+                        <span className="font-semibold text-slate-900">{inspectingEmail.sent_at ? new Date(inspectingEmail.sent_at).toLocaleString() : 'N/A'}</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-xs font-bold text-slate-700 block mb-1">Subject</span>
+                      <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-900 font-semibold">
+                        {inspectingEmail.subject || 'No subject'}
+                      </div>
+                    </div>
+
+                    {(inspectingEmail.error_message || inspectingEmail.metadata?.error) && (
+                      <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+                        <span className="text-[11px] font-bold text-rose-800 block mb-0.5">Failure Error Message</span>
+                        <p className="text-xs text-rose-700 font-mono">{inspectingEmail.error_message || inspectingEmail.metadata?.error}</p>
+                      </div>
+                    )}
+
+                    {inspectingEmail.metadata?.html && (
+                      <div>
+                        <span className="text-xs font-bold text-slate-700 block mb-1">Rendered HTML Payload</span>
+                        <div
+                          className="p-4 bg-white border border-slate-200 rounded-xl max-h-60 overflow-y-auto text-xs"
+                          dangerouslySetInnerHTML={{ __html: inspectingEmail.metadata.html }}
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                      <button
+                        onClick={() => setInspectingEmail(null)}
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+                      >
+                        Close
+                      </button>
+                      {inspectingEmail.status === 'failed' && (
+                        <button
+                          onClick={() => {
+                            handleRetryEmail(inspectingEmail.id);
+                            setInspectingEmail(null);
+                          }}
+                          className="px-4 py-2 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-xl text-xs transition shadow-xs"
+                        >
+                          Retry Dispatch Now
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Live Split-Screen Email Template Studio */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">Split-Screen Live Email Template Studio</h2>
+                      <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Real-time Preview
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Customize transactional markdown templates with 1-click variable tag insertion and real-time inbox preview.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleResetTemplateDefault}
+                      disabled={resettingTemplateDefault}
+                      className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                      Reset to Default
+                    </button>
+                    <button
+                      onClick={handleSaveTemplate}
+                      className="px-5 py-2 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-xs transition shadow-xs flex items-center gap-1.5"
+                    >
+                      <Check className="w-4 h-4 text-black" />
+                      Save Email Template
+                    </button>
+                  </div>
+                </div>
+
+                {/* Template Selector Tabs */}
+                <div className="flex gap-2">
                   {Object.keys(emailTemplates).map((key) => (
                     <button
                       key={key}
@@ -4505,118 +5021,569 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                         setSelectedTemplateKey(key);
                         setTemplateContentInput(emailTemplates[key].currentValue);
                       }}
-                      className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
                         selectedTemplateKey === key
                           ? 'bg-slate-950 text-white shadow-xs'
                           : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
                       }`}
                     >
+                      <Mail className="w-3.5 h-3.5 text-[#D4F63C]" />
                       {emailTemplates[key].name}
                     </button>
                   ))}
                 </div>
 
                 {emailTemplates[selectedTemplateKey] && (
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap gap-1.5 text-[11px] text-slate-500">
-                      <span className="font-bold text-slate-800">Supported Variables:</span>
-                      {emailTemplates[selectedTemplateKey].variables.map((v: string) => (
-                        <code key={v} className="bg-white text-slate-950 px-2 py-0.5 rounded-full border border-slate-200 font-mono font-bold">
-                          {v}
-                        </code>
-                      ))}
+                  <div className="space-y-4">
+                    {/* Variable Injection Chips */}
+                    <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-black text-slate-900 uppercase tracking-wider">
+                          1-Click Variable Insertion (Click to Insert):
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">Interpolated dynamically at dispatch</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {emailTemplates[selectedTemplateKey].variables.map((v: string) => (
+                          <button
+                            key={v}
+                            type="button"
+                            onClick={() => handleInsertVariable(v)}
+                            className="bg-[#f4f5f8] hover:bg-[#D4F63C] hover:text-black text-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 text-xs font-mono font-bold transition flex items-center gap-1 shadow-xs"
+                            title={`Insert ${v} into template`}
+                          >
+                            <Plus className="w-3 h-3 text-slate-500" />
+                            {v}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
-                    <textarea
-                      rows={6}
-                      value={templateContentInput}
-                      onChange={(e) => setTemplateContentInput(e.target.value)}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs text-slate-950 font-mono shadow-xs"
-                    />
+                    {/* Split View: Left (Editor) ⇄ Right (Inbox Simulator) */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {/* Left: Markdown Editor */}
+                      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-black text-slate-950 uppercase tracking-wider flex items-center gap-1.5">
+                              <Code className="w-3.5 h-3.5 text-slate-500" /> Markdown Template
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-mono">Supports markdown syntax</span>
+                          </div>
+                          <textarea
+                            rows={12}
+                            value={templateContentInput}
+                            onChange={(e) => setTemplateContentInput(e.target.value)}
+                            placeholder="Write your email template in Markdown..."
+                            className="w-full px-3.5 py-2.5 bg-[#fbfcfd] border border-slate-200 rounded-xl text-xs text-slate-950 font-mono shadow-inner focus:outline-none focus:ring-1 focus:ring-[#D4F63C] resize-y"
+                          />
+                        </div>
 
-                    <div className="flex justify-end">
-                      <button
-                        onClick={handleSaveTemplate}
-                        className="px-5 py-2.5 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-full text-xs transition shadow-xs"
-                      >
-                        Save Email Template
-                      </button>
+                        {/* Test Dispatch Drawer */}
+                        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
+                          <input
+                            type="email"
+                            placeholder="Enter recipient to send sample..."
+                            value={templateTestRecipient}
+                            onChange={(e) => setTemplateTestRecipient(e.target.value)}
+                            className="flex-1 px-3 py-1.5 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                          />
+                          <button
+                            onClick={handleDispatchTemplateTest}
+                            disabled={dispatchingTemplateTest || !templateTestRecipient}
+                            className="px-4 py-1.5 bg-slate-950 hover:bg-slate-800 disabled:opacity-50 text-white font-bold rounded-xl text-xs transition shadow-xs flex items-center gap-1.5 whitespace-nowrap"
+                          >
+                            <Send className="w-3 h-3 text-[#D4F63C]" />
+                            {dispatchingTemplateTest ? 'Sending...' : 'Send Sample'}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Right: Live Inbox Simulator */}
+                      <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs flex flex-col">
+                        <div className="px-4 py-3 bg-[#f4f5f8] border-b border-slate-200 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                            <span className="text-[11px] font-bold text-slate-600 ml-2">Inbox Preview (Interpolated)</span>
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-mono">Simulated client</span>
+                        </div>
+
+                        <div className="p-4 border-b border-slate-100 bg-white text-xs space-y-1">
+                          <div className="text-slate-500 text-[11px]">
+                            <span className="font-bold text-slate-800">From:</span> AEO Tracker &lt;no-reply@aeochecker.com&gt;
+                          </div>
+                          <div className="text-slate-500 text-[11px]">
+                            <span className="font-bold text-slate-800">Subject:</span> [AEO Alert] {emailTemplates[selectedTemplateKey].name}
+                          </div>
+                        </div>
+
+                        <div className="p-5 flex-1 bg-[#fbfcfd] overflow-y-auto max-h-[380px]">
+                          <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-xs space-y-3 text-xs text-slate-900 leading-relaxed font-sans">
+                            <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+                              <span className="w-2.5 h-2.5 rounded-full bg-[#D4F63C]" />
+                              <span className="font-black text-[11px] uppercase tracking-wider text-slate-950">AEO Tracker Dispatch</span>
+                            </div>
+
+                            <div className="space-y-2 whitespace-pre-wrap">
+                              {(() => {
+                                let txt = templateContentInput;
+                                const samples: Record<string, string> = {
+                                  '{{project_name}}': 'Acme Cloud Platform',
+                                  '{{domain}}': 'acme.com',
+                                  '{{score}}': '84',
+                                  '{{score_delta}}': '+6',
+                                  '{{share_of_voice}}': '68',
+                                  '{{total_mentions}}': '142',
+                                  '{{report_url}}': 'https://aeo-tracker.janhdonline.workers.dev/report/acme.com',
+                                  '{{dashboard_url}}': 'https://aeo-tracker.janhdonline.workers.dev/dashboard',
+                                };
+                                for (const [k, v] of Object.entries(samples)) {
+                                  txt = txt.split(k).join(v);
+                                }
+                                return txt;
+                              })()}
+                            </div>
+
+                            <div className="pt-3 border-t border-slate-100 text-[10px] text-slate-400 text-center">
+                              Automated notification sent via AEO Tracker Engine. Manage alerts in Dashboard.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Global System Settings */}
-              <div>
-                <h2 className="text-xl font-black text-slate-950 mb-1">Global System Settings</h2>
-                <p className="text-xs text-slate-500 mb-4">
-                  Dynamic variables stored in <code className="font-mono text-slate-900 font-bold">public.app_config</code>.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {appConfigs.map((cfg) => (
-                    <div key={cfg.key} className="bg-[#f8f9fb] border border-slate-200/70 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-mono text-xs font-black text-slate-950">{cfg.key}</span>
-                          <span className="text-[10px] uppercase font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
-                            {cfg.value_type}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-500 mb-3">{cfg.description || 'System setting'}</p>
-                      </div>
+              {/* 4. Categorized Global System Settings (app_config) */}
+              <div className="space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-950">Global System Settings</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Dynamic parameters stored in <code className="font-mono text-slate-900 font-bold">public.app_config</code> and cached at edge.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setIsAddingConfig(true)}
+                      className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Plus className="w-3.5 h-3.5 text-[#D4F63C]" />
+                      Add Config Key
+                    </button>
+                  </div>
+                </div>
 
-                      <div className="flex items-center gap-2 mt-2">
-                        <input
-                          type={cfg.is_secret ? 'password' : 'text'}
-                          defaultValue={cfg.value}
-                          id={`cfg-${cfg.key}`}
-                          className="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-950 font-mono shadow-xs focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
-                        />
-                        <button
-                          onClick={() => {
-                            const el = document.getElementById(`cfg-${cfg.key}`) as HTMLInputElement;
-                            if (el) handleUpdateConfig(cfg.key, el.value);
-                          }}
-                          className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-xs"
-                        >
-                          Save
-                        </button>
+                {/* Category Filter & Search Bar */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-[#f8f9fb] p-3 rounded-2xl border border-slate-200/70">
+                  <div className="flex items-center gap-1 overflow-x-auto w-full md:w-auto">
+                    {[
+                      { id: 'all', label: `All (${appConfigs.length})` },
+                      { id: 'general', label: 'General' },
+                      { id: 'ai_engine', label: 'AI Engine' },
+                      { id: 'billing', label: 'Billing' },
+                      { id: 'security', label: 'Security' },
+                      { id: 'system', label: 'System' },
+                    ].map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => setConfigCategoryTab(cat.id)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition whitespace-nowrap ${
+                          configCategoryTab === cat.id
+                            ? 'bg-slate-950 text-white shadow-xs'
+                            : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="relative w-full md:w-64">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      placeholder="Search config keys..."
+                      value={configSearchQuery}
+                      onChange={(e) => setConfigSearchQuery(e.target.value)}
+                      className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                    />
+                  </div>
+                </div>
+
+                {/* Config Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {appConfigs
+                    .filter((cfg) => {
+                      if (configCategoryTab === 'all') return true;
+                      const k = (cfg.key || '').toLowerCase();
+                      const d = (cfg.description || '').toLowerCase();
+                      let cat = 'general';
+                      if (d.includes('[ai_engine]') || k.includes('ai') || k.includes('gemini') || k.includes('openai') || k.includes('scan') || k.includes('model') || k.includes('engine') || k.includes('stuck')) cat = 'ai_engine';
+                      else if (d.includes('[billing]') || k.includes('currency') || k.includes('plan') || k.includes('price') || k.includes('spend')) cat = 'billing';
+                      else if (d.includes('[security]') || k.includes('password') || k.includes('admin') || k.includes('blacklist') || k.includes('token') || k.includes('auth')) cat = 'security';
+                      else if (d.includes('[system]') || k.includes('cache') || k.includes('timeout') || k.includes('version')) cat = 'system';
+                      return cat === configCategoryTab.toLowerCase();
+                    })
+                    .filter((cfg) => {
+                      if (!configSearchQuery.trim()) return true;
+                      const q = configSearchQuery.toLowerCase();
+                      return cfg.key.toLowerCase().includes(q) || (cfg.description || '').toLowerCase().includes(q);
+                    })
+                    .map((cfg) => {
+                      const k = (cfg.key || '').toLowerCase();
+                      const d = (cfg.description || '').toLowerCase();
+                      let inferredCategory = 'General';
+                      if (d.includes('[ai_engine]') || k.includes('ai') || k.includes('gemini') || k.includes('openai') || k.includes('scan') || k.includes('model') || k.includes('engine') || k.includes('stuck')) inferredCategory = 'AI Engine';
+                      else if (d.includes('[billing]') || k.includes('currency') || k.includes('plan') || k.includes('price') || k.includes('spend')) inferredCategory = 'Billing';
+                      else if (d.includes('[security]') || k.includes('password') || k.includes('admin') || k.includes('blacklist') || k.includes('token') || k.includes('auth')) inferredCategory = 'Security';
+                      else if (d.includes('[system]') || k.includes('cache') || k.includes('timeout') || k.includes('version')) inferredCategory = 'System';
+
+                      return (
+                      <div key={cfg.key} className="bg-[#f8f9fb] border border-slate-200/70 rounded-2xl p-5 flex flex-col justify-between shadow-xs hover:border-slate-300 transition">
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="font-mono text-xs font-black text-slate-950">{cfg.key}</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] uppercase font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
+                                {cfg.value_type}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-600 bg-slate-200/60 px-2 py-0.5 rounded-full">
+                                {inferredCategory}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-500 mb-3">{cfg.description || 'System configuration parameter'}</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-2">
+                          <input
+                            type={cfg.is_secret ? 'password' : 'text'}
+                            defaultValue={cfg.value}
+                            id={`cfg-${cfg.key}`}
+                            className="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-950 font-mono shadow-xs focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                          />
+                          <button
+                            onClick={() => {
+                              const el = document.getElementById(`cfg-${cfg.key}`) as HTMLInputElement;
+                              if (el) handleUpdateConfig(cfg.key, el.value);
+                            }}
+                            className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => handleDeleteConfig(cfg.key)}
+                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition"
+                            title="Delete config key"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Runtime Feature Flags */}
-              <div>
-                <h2 className="text-xl font-black text-slate-950 mb-1">Runtime Feature Flags</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                  {featureFlags.map((flag) => (
-                    <div key={flag.flag_key} className="bg-[#f8f9fb] border border-slate-200/70 rounded-2xl p-5 flex items-center justify-between shadow-xs">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-black text-slate-950">{flag.flag_key}</span>
-                          <span className="text-[10px] bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-mono font-bold">
-                            {flag.applies_to}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-1">{flag.description || 'Feature switch'}</p>
-                      </div>
-
-                      <button
-                        onClick={() => handleToggleFlag(flag.flag_key, flag.is_enabled)}
-                        className="p-1 text-slate-400 hover:text-black"
-                      >
-                        {flag.is_enabled ? (
-                          <ToggleRight className="w-8 h-8 text-lime-500" />
-                        ) : (
-                          <ToggleLeft className="w-8 h-8 text-slate-400" />
-                        )}
+              {/* Add Config Modal */}
+              {isAddingConfig && (
+                <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+                  <div className="bg-white border border-slate-200 rounded-[28px] max-w-md w-full p-6 shadow-2xl space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                      <h3 className="text-base font-black text-slate-950">Add Dynamic Configuration Key</h3>
+                      <button onClick={() => setIsAddingConfig(false)} className="p-1 text-slate-400 hover:text-slate-800">
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
-                  ))}
+
+                    <form onSubmit={handleCreateConfig} className="space-y-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Key Name</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. rate_limit_burst_threshold"
+                          value={newConfigForm.key}
+                          onChange={(e) => setNewConfigForm({ ...newConfigForm, key: e.target.value })}
+                          className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-mono focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Value</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Configuration value"
+                          value={newConfigForm.value}
+                          onChange={(e) => setNewConfigForm({ ...newConfigForm, value: e.target.value })}
+                          className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Value Type</label>
+                          <select
+                            value={newConfigForm.value_type}
+                            onChange={(e) => setNewConfigForm({ ...newConfigForm, value_type: e.target.value })}
+                            className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                          >
+                            <option value="string">String</option>
+                            <option value="number">Number</option>
+                            <option value="boolean">Boolean</option>
+                            <option value="json">JSON</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Category</label>
+                          <select
+                            value={newConfigForm.category}
+                            onChange={(e) => setNewConfigForm({ ...newConfigForm, category: e.target.value })}
+                            className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                          >
+                            <option value="general">General</option>
+                            <option value="ai_engine">AI Engine</option>
+                            <option value="billing">Billing</option>
+                            <option value="security">Security</option>
+                            <option value="system">System</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Description</label>
+                        <input
+                          type="text"
+                          placeholder="Purpose of this configuration parameter"
+                          value={newConfigForm.description}
+                          onChange={(e) => setNewConfigForm({ ...newConfigForm, description: e.target.value })}
+                          className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-1">
+                        <input
+                          type="checkbox"
+                          id="is_secret_cb"
+                          checked={newConfigForm.is_secret}
+                          onChange={(e) => setNewConfigForm({ ...newConfigForm, is_secret: e.target.checked })}
+                          className="rounded text-slate-950 focus:ring-0"
+                        />
+                        <label htmlFor="is_secret_cb" className="text-xs text-slate-700 font-semibold cursor-pointer">
+                          Mask value in UI (Secret / Credential)
+                        </label>
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => setIsAddingConfig(false)}
+                          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-xl text-xs transition shadow-xs"
+                        >
+                          Save & Invalidate Cache
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* 5. Runtime Feature Flags */}
+              <div className="space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-950">Runtime Feature Flags</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Toggle system subsystems and user-facing experiments on the fly without zero-downtime redeployments.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setIsAddingFlag(true)}
+                      className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Plus className="w-3.5 h-3.5 text-[#D4F63C]" />
+                      Register Feature Flag
+                    </button>
+                  </div>
+                </div>
+
+                {/* Filter and Search Bar */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-[#f8f9fb] p-3 rounded-2xl border border-slate-200/70">
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setFlagFilterMode('all')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${flagFilterMode === 'all' ? 'bg-slate-950 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}
+                    >
+                      All ({featureFlags.length})
+                    </button>
+                    <button
+                      onClick={() => setFlagFilterMode('enabled')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${flagFilterMode === 'enabled' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}
+                    >
+                      Enabled ({featureFlags.filter((f) => f.is_enabled).length})
+                    </button>
+                    <button
+                      onClick={() => setFlagFilterMode('disabled')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${flagFilterMode === 'disabled' ? 'bg-slate-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}
+                    >
+                      Disabled ({featureFlags.filter((f) => !f.is_enabled).length})
+                    </button>
+                  </div>
+
+                  <div className="relative w-full md:w-64">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      placeholder="Search flags..."
+                      value={flagSearchQuery}
+                      onChange={(e) => setFlagSearchQuery(e.target.value)}
+                      className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {featureFlags
+                    .filter((flag) => {
+                      if (flagFilterMode === 'enabled') return flag.is_enabled;
+                      if (flagFilterMode === 'disabled') return !flag.is_enabled;
+                      return true;
+                    })
+                    .filter((flag) => {
+                      if (!flagSearchQuery.trim()) return true;
+                      const q = flagSearchQuery.toLowerCase();
+                      return flag.flag_key.toLowerCase().includes(q) || (flag.description || '').toLowerCase().includes(q);
+                    })
+                    .map((flag) => (
+                      <div key={flag.flag_key} className="bg-[#f8f9fb] border border-slate-200/70 rounded-2xl p-5 flex items-center justify-between shadow-xs hover:border-slate-300 transition">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-black text-slate-950">{flag.flag_key}</span>
+                            <span className="text-[10px] bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-mono font-bold">
+                              {flag.applies_to}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">{flag.description || 'Feature switch'}</p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleToggleFlag(flag.flag_key, flag.is_enabled)}
+                            className="p-1 text-slate-400 hover:text-black transition"
+                            title={flag.is_enabled ? 'Disable flag' : 'Enable flag'}
+                          >
+                            {flag.is_enabled ? (
+                              <ToggleRight className="w-8 h-8 text-lime-500" />
+                            ) : (
+                              <ToggleLeft className="w-8 h-8 text-slate-400" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteFlag(flag.flag_key)}
+                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition"
+                            title="Delete flag"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
+
+              {/* Add Flag Modal */}
+              {isAddingFlag && (
+                <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+                  <div className="bg-white border border-slate-200 rounded-[28px] max-w-md w-full p-6 shadow-2xl space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                      <h3 className="text-base font-black text-slate-950">Register Runtime Feature Flag</h3>
+                      <button onClick={() => setIsAddingFlag(false)} className="p-1 text-slate-400 hover:text-slate-800">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleCreateFlag} className="space-y-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Flag Key</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. enable_vector_retrieval"
+                          value={newFlagForm.flag_key}
+                          onChange={(e) => setNewFlagForm({ ...newFlagForm, flag_key: e.target.value })}
+                          className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 font-mono focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Description</label>
+                        <input
+                          type="text"
+                          placeholder="What does this feature flag control?"
+                          value={newFlagForm.description}
+                          onChange={(e) => setNewFlagForm({ ...newFlagForm, description: e.target.value })}
+                          className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Applies To Scope</label>
+                        <select
+                          value={newFlagForm.applies_to}
+                          onChange={(e) => setNewFlagForm({ ...newFlagForm, applies_to: e.target.value })}
+                          className="w-full px-3.5 py-2 bg-[#f4f5f8] border border-slate-200 rounded-xl text-xs text-slate-950 focus:outline-none focus:ring-1 focus:ring-[#D4F63C]"
+                        >
+                          <option value="all">All Users (Global)</option>
+                          <option value="beta">Beta Users Only</option>
+                          <option value="enterprise">Enterprise Tier Only</option>
+                        </select>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-1">
+                        <input
+                          type="checkbox"
+                          id="is_flag_enabled_cb"
+                          checked={newFlagForm.is_enabled}
+                          onChange={(e) => setNewFlagForm({ ...newFlagForm, is_enabled: e.target.checked })}
+                          className="rounded text-slate-950 focus:ring-0"
+                        />
+                        <label htmlFor="is_flag_enabled_cb" className="text-xs text-slate-700 font-semibold cursor-pointer">
+                          Enable immediately on registration
+                        </label>
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => setIsAddingFlag(false)}
+                          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 bg-[#D4F63C] hover:bg-[#c6ea2f] text-black font-black rounded-xl text-xs transition shadow-xs"
+                        >
+                          Register Feature Flag
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -4625,47 +5592,202 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
           {/* ============================================================== */}
           {activeTab === 'db' && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 1-Click JSON Snapshot Backup */}
-                <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
+              {/* Database Capacity & JSON Snapshot Radar */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-5">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/60 pb-4">
                   <div>
-                    <h3 className="text-xl font-black text-slate-950 mb-1">1-Click Database JSON Backup</h3>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">1-Click Database JSON Backup & Radar</h2>
+                      <span className="px-2.5 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Production Snapshot
+                      </span>
+                    </div>
                     <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                      Stream a full JSON snapshot of all customer profiles, projects, keywords, app configs, and active API keys.
+                      Download full data dumps and monitor table volume across customer profiles, projects, app configs, and API vaults.
                     </p>
                   </div>
-                  <div className="mt-6">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleRefreshBackupSummary}
+                      disabled={loadingBackupSummary}
+                      className="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold rounded-full text-xs transition flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${loadingBackupSummary ? 'animate-spin' : ''}`} />
+                      Refresh Counts
+                    </button>
                     <a
                       href="/api/admin/backup"
                       download
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition shadow-sm"
+                      className="inline-flex items-center gap-2 px-5 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-full text-xs transition shadow-sm"
                     >
                       <Download className="w-4 h-4 text-[#D4F63C]" />
-                      Download Full JSON Snapshot
+                      Download Full Snapshot
                     </a>
                   </div>
                 </div>
 
-                {/* Database Storage Hygiene */}
-                <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 flex flex-col justify-between shadow-xs">
-                  <div>
-                    <h3 className="text-xl font-black text-slate-950 mb-1">Storage & Database Hygiene</h3>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                      Safely purge transient AI scan output responses older than 90 days and error logs to reclaim table storage.
-                    </p>
-                    {hygieneStats && (
-                      <div className="mt-3 text-xs text-slate-600 font-mono">
-                        Reclaimable rows: <span className="text-slate-950 font-black">{hygieneStats.totalReclaimableRows}</span> records
-                      </div>
-                    )}
+                {/* Capacity Metrics & Table Breakdown */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Stored Records</div>
+                    <div className="text-2xl font-black text-slate-950 mt-1">
+                      {backupSummary?.totalRows !== undefined ? backupSummary.totalRows.toLocaleString() : '...'}
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">Across 7 core production tables</div>
                   </div>
-                  <div className="mt-6">
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Estimated Backup Size</div>
+                    <div className="text-2xl font-black text-slate-950 mt-1">
+                      {backupSummary?.estimatedSizeKb !== undefined
+                        ? backupSummary.estimatedSizeKb > 1024
+                          ? `${(backupSummary.estimatedSizeKb / 1024).toFixed(2)} MB`
+                          : `${backupSummary.estimatedSizeKb} KB`
+                        : '...'}
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">Uncompressed JSON payload</div>
+                  </div>
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Snapshot Health</div>
+                    <div className="text-2xl font-black text-emerald-600 mt-1 flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                      Ready
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">
+                      {backupSummary?.timestamp ? `Generated: ${new Date(backupSummary.timestamp).toLocaleTimeString()}` : 'Live stream ready'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Granular Table Row Badges */}
+                {backupSummary?.tableCounts && (
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                    <div className="text-xs font-bold text-slate-700 mb-2.5">Table Density Breakdown</div>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(backupSummary.tableCounts).map(([table, count]) => (
+                        <div
+                          key={table}
+                          className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs"
+                        >
+                          <span className="font-mono text-slate-600">{table}</span>
+                          <span className="px-2 py-0.5 bg-[#D4F63C] text-black font-black text-[10px] rounded-full">
+                            {Number(count).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Storage & Database Hygiene */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-5">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/60 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-black text-slate-950">Database Retention & Storage Hygiene</h2>
+                      <span className="px-2.5 py-0.5 bg-rose-100 text-rose-700 font-black text-[10px] rounded-full uppercase tracking-wider">
+                        Reclaim Storage
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                      Safely purge stale query execution outputs, transient engine error logs, and watchdog pings based on configurable retention horizons.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={handleExecuteHygienePrune}
-                      className="px-5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-full text-xs transition shadow-xs"
+                      disabled={isPruningHygiene}
+                      className="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 disabled:opacity-50 text-white font-bold rounded-full text-xs transition shadow-xs flex items-center gap-1.5"
                     >
-                      Execute Hygiene Prune (Delete &gt;90d)
+                      <Trash2 className="w-3.5 h-3.5" />
+                      {isPruningHygiene ? 'Pruning Records...' : `Execute Prune (>${hygieneRetentionHorizon}d)`}
                     </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Retention Horizon Selector */}
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-900">Select Retention Horizon</span>
+                      <span className="text-[11px] font-mono font-bold text-slate-500">
+                        {hygieneStats?.horizons?.[hygieneRetentionHorizon]?.totalReclaimable ?? hygieneStats?.totalReclaimableRows ?? 0} rows candidate
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {(['30', '60', '90', '180'] as const).map((h) => {
+                        const count = hygieneStats?.horizons?.[h]?.totalReclaimable ?? 0;
+                        const isSelected = hygieneRetentionHorizon === h;
+                        return (
+                          <button
+                            key={h}
+                            type="button"
+                            onClick={() => setHygieneRetentionHorizon(h)}
+                            className={`p-3 rounded-xl border text-center transition ${
+                              isSelected
+                                ? 'bg-slate-950 text-white border-slate-950 shadow-xs'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            <div className="text-sm font-black">{h} Days</div>
+                            <div className={`text-[10px] mt-0.5 ${isSelected ? 'text-[#D4F63C]' : 'text-slate-400'}`}>
+                              {count} rows
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Target Tables to Prune */}
+                  <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs space-y-2.5">
+                    <span className="text-xs font-bold text-slate-900">Prune Target Selectors</span>
+                    <div className="space-y-2">
+                      <label className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-slate-100/60 cursor-pointer transition">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={pruneCheckboxes.queries}
+                            onChange={(e) => setPruneCheckboxes({ ...pruneCheckboxes, queries: e.target.checked })}
+                            className="rounded border-slate-300 text-slate-900 focus:ring-0"
+                          />
+                          <span className="text-xs font-medium text-slate-800">Transient Query Scan Results</span>
+                        </div>
+                        <span className="text-[11px] font-mono text-slate-500 font-bold">
+                          {hygieneStats?.horizons?.[hygieneRetentionHorizon]?.queries ?? hygieneStats?.oldQueries ?? 0} rows
+                        </span>
+                      </label>
+
+                      <label className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-slate-100/60 cursor-pointer transition">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={pruneCheckboxes.errors}
+                            onChange={(e) => setPruneCheckboxes({ ...pruneCheckboxes, errors: e.target.checked })}
+                            className="rounded border-slate-300 text-slate-900 focus:ring-0"
+                          />
+                          <span className="text-xs font-medium text-slate-800">Dead Webhook & Engine Error Logs</span>
+                        </div>
+                        <span className="text-[11px] font-mono text-slate-500 font-bold">
+                          {hygieneStats?.horizons?.[hygieneRetentionHorizon]?.errors ?? hygieneStats?.oldErrors ?? 0} rows
+                        </span>
+                      </label>
+
+                      <label className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/70 hover:bg-slate-100/60 cursor-pointer transition">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={pruneCheckboxes.health}
+                            onChange={(e) => setPruneCheckboxes({ ...pruneCheckboxes, health: e.target.checked })}
+                            className="rounded border-slate-300 text-slate-900 focus:ring-0"
+                          />
+                          <span className="text-xs font-medium text-slate-800">Watchdog Engine Health Pings</span>
+                        </div>
+                        <span className="text-[11px] font-mono text-slate-500 font-bold">
+                          {hygieneStats?.horizons?.[hygieneRetentionHorizon]?.healthLogs ?? hygieneStats?.oldHealthLogs ?? 0} rows
+                        </span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -4705,6 +5827,38 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   </div>
                 </div>
 
+                {/* Target Domain Single Pre-Warmer & Filter */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <form onSubmit={handleWarmSingleDomain} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Target domain (e.g. linear.app, stripe.com)"
+                      value={customDomainToWarm}
+                      onChange={(e) => setCustomDomainToWarm(e.target.value)}
+                      className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-mono focus:outline-hidden focus:border-slate-950 transition"
+                    />
+                    <button
+                      type="submit"
+                      disabled={warmingSingleDomain || !customDomainToWarm.trim()}
+                      className="px-4 py-2 bg-[#D4F63C] hover:bg-[#c6ea2f] disabled:opacity-50 text-black font-bold rounded-xl text-xs transition flex items-center gap-1 shadow-xs whitespace-nowrap"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      {warmingSingleDomain ? 'Warming...' : 'Warm Domain'}
+                    </button>
+                  </form>
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      placeholder="Filter cached reports by domain or brand..."
+                      value={cacheSearchQuery}
+                      onChange={(e) => setCacheSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-hidden focus:border-slate-950 transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Cached Reports Table */}
                 <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
@@ -4719,38 +5873,68 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {cachedReports.length === 0 ? (
+                        {cachedReports
+                          .filter((c) => {
+                            if (!cacheSearchQuery.trim()) return true;
+                            const q = cacheSearchQuery.toLowerCase();
+                            return (
+                              c.domain?.toLowerCase().includes(q) ||
+                              c.brand_name?.toLowerCase().includes(q)
+                            );
+                          })
+                          .length === 0 ? (
                           <tr>
                             <td colSpan={6} className="px-5 py-8 text-center text-slate-400">
-                              Cache is empty. Click &quot;Pre-warm Top 20&quot; to cache top domains for immediate sub-100ms prospective visits.
+                              {cacheSearchQuery
+                                ? `No cached reports matching "${cacheSearchQuery}"`
+                                : 'Cache is empty. Click "Pre-warm Top 20" or enter a domain above to pre-render.'}
                             </td>
                           </tr>
                         ) : (
-                          cachedReports.map((c) => (
-                            <tr key={c.domain} className="hover:bg-slate-50 transition">
-                              <td className="px-5 py-4 font-mono font-bold text-slate-900">{c.domain}</td>
-                              <td className="px-5 py-4 text-slate-700 font-semibold">{c.brand_name || 'Brand'}</td>
-                              <td className="px-5 py-4">
-                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#D4F63C] text-black">
-                                  {c.visibility_score || 0}%
-                                </span>
-                              </td>
-                              <td className="px-5 py-4 text-slate-600 font-mono text-[11px]">
-                                {c.share_of_voice_pct ? `${Math.round(Number(c.share_of_voice_pct) * 100)}%` : '—'}
-                              </td>
-                              <td className="px-5 py-4 text-slate-400 font-mono text-[11px]">
-                                {c.updated_at ? new Date(c.updated_at).toLocaleTimeString() : 'Fresh'}
-                              </td>
-                              <td className="px-5 py-4 text-right">
-                                <button
-                                  onClick={() => handlePurgeDomainCache(c.domain)}
-                                  className="text-rose-600 hover:text-rose-700 text-xs font-bold"
-                                >
-                                  Purge
-                                </button>
-                              </td>
-                            </tr>
-                          ))
+                          cachedReports
+                            .filter((c) => {
+                              if (!cacheSearchQuery.trim()) return true;
+                              const q = cacheSearchQuery.toLowerCase();
+                              return (
+                                c.domain?.toLowerCase().includes(q) ||
+                                c.brand_name?.toLowerCase().includes(q)
+                              );
+                            })
+                            .map((c) => (
+                              <tr key={c.domain} className="hover:bg-slate-50 transition">
+                                <td className="px-5 py-4 font-mono font-bold text-slate-900">
+                                  <a
+                                    href={`/report/${encodeURIComponent(c.domain)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:underline flex items-center gap-1.5 group"
+                                  >
+                                    <span>{c.domain}</span>
+                                    <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-slate-950 transition" />
+                                  </a>
+                                </td>
+                                <td className="px-5 py-4 text-slate-700 font-semibold">{c.brand_name || 'Brand'}</td>
+                                <td className="px-5 py-4">
+                                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#D4F63C] text-black">
+                                    {c.visibility_score || 0}%
+                                  </span>
+                                </td>
+                                <td className="px-5 py-4 text-slate-600 font-mono text-[11px]">
+                                  {c.share_of_voice_pct ? `${Math.round(Number(c.share_of_voice_pct) * 100)}%` : '—'}
+                                </td>
+                                <td className="px-5 py-4 text-slate-400 font-mono text-[11px]">
+                                  {c.updated_at ? new Date(c.updated_at).toLocaleTimeString() : 'Fresh'}
+                                </td>
+                                <td className="px-5 py-4 text-right">
+                                  <button
+                                    onClick={() => handlePurgeDomainCache(c.domain)}
+                                    className="text-rose-600 hover:text-rose-700 text-xs font-bold"
+                                  >
+                                    Purge
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
                         )}
                       </tbody>
                     </table>
@@ -4758,10 +5942,74 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                 </div>
               </div>
 
-              {/* Audit Logs */}
-              <div>
-                <h2 className="text-xl font-black text-slate-950 mb-1">Security & Action Audit Logs</h2>
-                <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs mt-3">
+              {/* Security & Action Audit Logs */}
+              <div className="bg-[#f8f9fb] border border-slate-200/70 rounded-[28px] p-6 shadow-xs space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/60 pb-3">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-950">Security & Action Audit Ledger</h2>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Immutable trail of sensitive admin actions including IP bans, config updates, feature flag mutations, and storage hygiene.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 font-mono">
+                      Showing {
+                        auditLogs.filter((log) => {
+                          if (auditCategoryFilter === 'auth') return log.action?.includes('auth') || log.action?.includes('ban') || log.action?.includes('blacklist');
+                          if (auditCategoryFilter === 'config') return log.action?.includes('config') || log.action?.includes('flag') || log.action?.includes('template');
+                          if (auditCategoryFilter === 'database') return log.action?.includes('cache') || log.action?.includes('prune') || log.action?.includes('backup');
+                          if (auditCategoryFilter === 'security') return log.action?.includes('security') || log.action?.includes('threat') || log.action?.includes('webhook');
+                          return true;
+                        }).filter((log) => {
+                          if (!auditSearchQuery.trim()) return true;
+                          const q = auditSearchQuery.toLowerCase();
+                          return (
+                            log.action?.toLowerCase().includes(q) ||
+                            log.target_type?.toLowerCase().includes(q) ||
+                            log.target_id?.toLowerCase().includes(q)
+                          );
+                        }).length
+                      } logs
+                    </span>
+                  </div>
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {[
+                      { id: 'all', label: 'All Events' },
+                      { id: 'auth', label: 'Auth & Bans' },
+                      { id: 'config', label: 'Config & Flags' },
+                      { id: 'database', label: 'Database & Cache' },
+                      { id: 'security', label: 'Security & Webhooks' },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setAuditCategoryFilter(tab.id as any)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${
+                          auditCategoryFilter === tab.id
+                            ? 'bg-slate-950 text-white'
+                            : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="relative w-full md:w-64">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      placeholder="Search audit trail..."
+                      value={auditSearchQuery}
+                      onChange={(e) => setAuditSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-hidden focus:border-slate-950 transition"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-[#f4f5f8] border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
@@ -4773,14 +6021,62 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {auditLogs.map((log) => (
-                          <tr key={log.id} className="hover:bg-slate-50 transition">
-                            <td className="px-5 py-4 font-mono font-bold text-slate-900">{log.action}</td>
-                            <td className="px-5 py-4 text-slate-600">{log.target_type}</td>
-                            <td className="px-5 py-4 font-mono text-[11px] text-slate-400">{log.target_id || '-'}</td>
-                            <td className="px-5 py-4 text-slate-500">{new Date(log.created_at).toLocaleString()}</td>
+                        {auditLogs
+                          .filter((log) => {
+                            if (auditCategoryFilter === 'auth') return log.action?.includes('auth') || log.action?.includes('ban') || log.action?.includes('blacklist');
+                            if (auditCategoryFilter === 'config') return log.action?.includes('config') || log.action?.includes('flag') || log.action?.includes('template');
+                            if (auditCategoryFilter === 'database') return log.action?.includes('cache') || log.action?.includes('prune') || log.action?.includes('backup');
+                            if (auditCategoryFilter === 'security') return log.action?.includes('security') || log.action?.includes('threat') || log.action?.includes('webhook');
+                            return true;
+                          })
+                          .filter((log) => {
+                            if (!auditSearchQuery.trim()) return true;
+                            const q = auditSearchQuery.toLowerCase();
+                            return (
+                              log.action?.toLowerCase().includes(q) ||
+                              log.target_type?.toLowerCase().includes(q) ||
+                              log.target_id?.toLowerCase().includes(q)
+                            );
+                          })
+                          .length === 0 ? (
+                          <tr>
+                            <td colSpan={4} className="px-5 py-8 text-center text-slate-400">
+                              No audit logs match current filters.
+                            </td>
                           </tr>
-                        ))}
+                        ) : (
+                          auditLogs
+                            .filter((log) => {
+                              if (auditCategoryFilter === 'auth') return log.action?.includes('auth') || log.action?.includes('ban') || log.action?.includes('blacklist');
+                              if (auditCategoryFilter === 'config') return log.action?.includes('config') || log.action?.includes('flag') || log.action?.includes('template');
+                              if (auditCategoryFilter === 'database') return log.action?.includes('cache') || log.action?.includes('prune') || log.action?.includes('backup');
+                              if (auditCategoryFilter === 'security') return log.action?.includes('security') || log.action?.includes('threat') || log.action?.includes('webhook');
+                              return true;
+                            })
+                            .filter((log) => {
+                              if (!auditSearchQuery.trim()) return true;
+                              const q = auditSearchQuery.toLowerCase();
+                              return (
+                                log.action?.toLowerCase().includes(q) ||
+                                log.target_type?.toLowerCase().includes(q) ||
+                                log.target_id?.toLowerCase().includes(q)
+                              );
+                            })
+                            .map((log) => (
+                              <tr key={log.id} className="hover:bg-slate-50 transition">
+                                <td className="px-5 py-4 font-mono font-bold text-slate-900">
+                                  <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 text-[11px]">
+                                    {log.action}
+                                  </span>
+                                </td>
+                                <td className="px-5 py-4 text-slate-600 font-medium">{log.target_type}</td>
+                                <td className="px-5 py-4 font-mono text-[11px] text-slate-400">{log.target_id || '-'}</td>
+                                <td className="px-5 py-4 text-slate-500 font-mono text-[11px]">
+                                  {new Date(log.created_at).toLocaleString()}
+                                </td>
+                              </tr>
+                            ))
+                        )}
                       </tbody>
                     </table>
                   </div>

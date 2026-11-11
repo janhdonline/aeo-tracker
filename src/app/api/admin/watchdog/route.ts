@@ -4,6 +4,8 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { getEngineAdapter } from '@/lib/engines';
 import { getApiKey } from '@/lib/config';
 
+export const dynamic = 'force-dynamic';
+
 interface HealthReport {
   engine: string;
   status: 'healthy' | 'degraded' | 'down';

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/middleware/admin-guard';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const { errorResponse, adminUser } = await requireAdmin(request);
   if (errorResponse) return errorResponse;
@@ -55,14 +57,30 @@ export async function GET(request: NextRequest) {
       },
     };
 
+    const jsonString = JSON.stringify(backupPayload, null, 2);
+
+    const isSummary = request.nextUrl.searchParams.get('summary') === 'true';
+    if (isSummary) {
+      return NextResponse.json({
+        success: true,
+        summary: {
+          app: 'AEO Tracker',
+          version: '2.0',
+          tableCounts: backupPayload.table_counts,
+          totalRows: Object.values(backupPayload.table_counts).reduce((a, b) => a + b, 0),
+          estimatedSizeKb: Math.round(jsonString.length / 1024),
+          generatedAt: nowIso,
+          exportedBy: adminUser?.email || 'admin',
+        },
+      });
+    }
+
     await admin.from('audit_logs').insert({
       admin_user_id: adminUser?.id === 'master-admin' ? null : adminUser?.id,
       action: 'database_json_backup_downloaded',
       target_type: 'database',
       new_value: { tableCounts: backupPayload.table_counts },
     });
-
-    const jsonString = JSON.stringify(backupPayload, null, 2);
 
     return new NextResponse(jsonString, {
       status: 200,
