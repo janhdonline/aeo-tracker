@@ -40,6 +40,7 @@ import { PlatformOptimizationTabs } from '@/components/PlatformOptimizationTabs'
 import { PageCitabilityTable } from '@/components/PageCitabilityTable';
 import { ScoreHistoryTimeline } from '@/components/ScoreHistoryTimeline';
 import { WebPresenceAudit } from '@/components/WebPresenceAudit';
+import { AnswerabilityAuditCard } from '@/components/AnswerabilityAuditCard';
 import type { FullReportData } from '@/lib/report-generator';
 
 interface Props {
@@ -1464,27 +1465,9 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
 
             {strategyOpen && (
               <div className="p-6 pt-0 space-y-6 border-t border-slate-100 text-xs">
-                {/* Content Answerability */}
-                <div className="space-y-2">
-                  <h4 className="font-display text-sm font-bold text-slate-900">Content Answerability</h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">Good Length</span>
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">Conversational</span>
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">Statistics</span>
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                      <span className="font-medium text-slate-700">Citations</span>
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    </div>
-                  </div>
+                {/* Content Answerability Diagnostic Engine (40–60 Word AI Quotation Rule) */}
+                <div className="pt-2">
+                  <AnswerabilityAuditCard domain={data.domain} brandName={data.domain.split('.')[0]} />
                 </div>
 
                 {/* Web Presence Footprint (Multi-Platform: Reddit, Wikipedia, YouTube, X) */}

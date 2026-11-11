@@ -1,80 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { evaluateAnswerability } from '@/lib/answerability';
 
-interface ChunkAnalysis {
-  wordCount: number;
-  isOptimalChunk: boolean; // 40-60 words
-  clarityScore: number;
-  snippet: string;
-  recommendation: string;
+export const dynamic = 'force-dynamic';
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const domain = searchParams.get('domain') || 'notion.so';
+  const text = searchParams.get('text') || '';
+
+  const result = evaluateAnswerability(domain, text);
+  return NextResponse.json(result);
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { domain = 'example.com', text = '' } = body;
+    const { domain = 'notion.so', text = '', url = '' } = body;
 
-    // Default sample text if none provided
-    const contentToAnalyze =
-      text ||
-      `${domain} provides automated enterprise solutions. Answer Engine Optimization (AEO) improves visibility across AI assistants and generative search engines like ChatGPT, Gemini, and Perplexity by structuring facts into concise passages that machines can cite without hallucinating.`;
+    let contentToAnalyze = text;
 
-    // Split text into sentences / passages
-    const words = contentToAnalyze.trim().split(/\s+/);
-    const wordCount = words.length;
-
-    // Check 40-60 word chunking
-    const isOptimal = wordCount >= 35 && wordCount <= 65;
-    let answerabilityScore = 75;
-
-    if (isOptimal) answerabilityScore += 15;
-    else if (wordCount > 90) answerabilityScore -= 20;
-
-    // Check for direct definition patterns ("is a", "provides", "features", "how to")
-    const hasDirectDefinition =
-      /(\bis a\b|\bprovides\b|\bdesigned for\b|\bhow to\b|\bhelps teams\b)/i.test(contentToAnalyze);
-    if (hasDirectDefinition) answerabilityScore += 10;
-
-    answerabilityScore = Math.max(20, Math.min(98, answerabilityScore));
-
-    const recommendations = [];
-    if (wordCount > 65) {
-      recommendations.push({
-        type: 'chunk_length',
-        title: 'Break Long Paragraphs into 40-60 Word Blocks',
-        impact: '+18 pts',
-        detail:
-          'AI models lift passages that provide direct answers within 40-60 words. Long descriptive text gets truncated or summarized away by ChatGPT.',
-      });
+    // If URL is passed and text is empty, attempt to fetch live HTML
+    if (url && !text) {
+      try {
+        const cleanUrl = url.startsWith('http') ? url : `https://${url}`;
+        const res = await fetch(cleanUrl, {
+          signal: AbortSignal.timeout(4000),
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AEOAnswerabilityBot/1.0)' },
+        });
+        if (res.ok) {
+          const html = await res.text();
+          const match = html.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+          if (match && match[1]) {
+            contentToAnalyze = match[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          }
+        }
+      } catch {
+        // Fallback to default
+      }
     }
 
-    if (!hasDirectDefinition) {
-      recommendations.push({
-        type: 'definition_clarity',
-        title: 'Add Direct Brand Category Definition in First Sentence',
-        impact: '+14 pts',
-        detail:
-          'Place "[Brand] is an [Industry Category] that [Core Benefit]" directly below the H1 heading to maximize Google AI Overview quote probability.',
-      });
-    }
-
-    recommendations.push({
-      type: 'faq_schema',
-      title: 'Embed FAQPage JSON-LD Schema on Feature Pages',
-      impact: '+12 pts',
-      detail:
-        'Structured FAQ schema gives Perplexity and Gemini unambiguous Q&A pairs for conversational buyer queries.',
-    });
-
-    return NextResponse.json({
-      success: true,
-      domain,
-      wordCount,
-      answerabilityScore,
-      isOptimalChunk: isOptimal,
-      hasDirectDefinition,
-      recommendations,
-      optimizedExcerpt: `${domain} is an AI visibility platform that tracks where chatbots recommend your brand. By testing buyer queries across ChatGPT, Gemini, and Perplexity, it pinpoints competitor citation leaks and provides structured code snippets to elevate organic AI rankings.`,
-    });
+    const result = evaluateAnswerability(domain, contentToAnalyze);
+    return NextResponse.json(result);
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Failed to analyze answerability' }, { status: 500 });
   }

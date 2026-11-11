@@ -746,7 +746,7 @@ export default function DashboardPage() {
 
         {/* ESSENTIAL TOOLS QUICK SHELF */}
         <section className="pt-2">
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <Link
               href="/tools/ai-crawler-audit"
               className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
@@ -770,6 +770,19 @@ export default function DashboardPage() {
               <div>
                 <h4 className="text-xs font-bold text-slate-900">llms.txt Builder</h4>
                 <p className="text-[11px] text-slate-500">Generate AI documentation</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/tools/answerability-audit"
+              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700">
+                <Zap className="h-4 w-4" />
+              </span>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">Answerability Audit</h4>
+                <p className="text-[11px] text-slate-500">40–60 word chunk tester</p>
               </div>
             </Link>
 

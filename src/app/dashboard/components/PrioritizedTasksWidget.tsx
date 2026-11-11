@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CheckCircle2,
@@ -15,6 +16,7 @@ import {
   ShieldCheck,
   Bot,
   ExternalLink,
+  Kanban,
 } from 'lucide-react';
 
 interface Task {
@@ -186,8 +188,17 @@ export function PrioritizedTasksWidget() {
           </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="inline-flex items-center rounded-xl bg-slate-100/90 p-1 border border-slate-200/60 text-xs font-semibold shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            href="/dashboard/projects"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors shadow-2xs"
+          >
+            <Kanban className="h-3.5 w-3.5 text-blue-600" />
+            <span>Open Kanban Action Board</span>
+          </Link>
+
+          {/* Filter Pills */}
+          <div className="inline-flex items-center rounded-xl bg-slate-100/90 p-1 border border-slate-200/60 text-xs font-semibold">
           <button
             onClick={() => setFilter('all')}
             className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
@@ -228,6 +239,7 @@ export function PrioritizedTasksWidget() {
           >
             Done ({completedCount})
           </button>
+        </div>
         </div>
       </div>
 
