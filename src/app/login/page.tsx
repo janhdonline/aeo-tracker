@@ -131,23 +131,33 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50/80 p-4 sm:p-6">
-      <div className="max-w-md w-full space-y-6 p-7 sm:p-8 bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/80">
+    <div className="min-h-screen relative flex items-center justify-center bg-[#0B0F17] text-slate-100 p-4 sm:p-6 overflow-hidden">
+      {/* Background glow effects */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[380px] bg-gradient-to-tr from-lime-500/10 via-emerald-500/10 to-transparent blur-3xl opacity-70" />
+        <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
+      </div>
+
+      <div className="relative max-w-md w-full space-y-6 p-7 sm:p-9 bg-[#111726]/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-800/90 ring-1 ring-white/5">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center">
           <Link href="/" className="mb-3 hover:opacity-90 transition-opacity">
             <LogoMark />
           </Link>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-            AEO Visibility Tracker
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-lime-400/10 px-3 py-1 text-[11px] font-bold text-[#D4F63C] ring-1 ring-lime-400/20 mb-3">
+            <Sparkles className="h-3 w-3 text-[#D4F63C]" />
+            AEO Intelligence Studio
+          </div>
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            {mode === 'signup' ? 'Create Your Account' : 'Welcome Back'}
           </h1>
-          <p className="mt-1.5 text-sm text-slate-500">
-            Track & boost your brand visibility across AI search engines
+          <p className="mt-1.5 text-xs sm:text-sm text-slate-400">
+            Monitor &amp; command your brand presence across ChatGPT, Perplexity &amp; Gemini
           </p>
         </div>
 
         {/* Tab Switcher: Sign In vs Sign Up */}
-        <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl">
+        <div className="grid grid-cols-2 p-1 bg-slate-900/90 rounded-2xl border border-slate-800">
           <button
             type="button"
             onClick={() => {
@@ -155,10 +165,10 @@ function LoginForm() {
               setError(null);
               setSuccessMessage(null);
             }}
-            className={`py-2 text-sm font-semibold rounded-lg transition-all duration-150 ${
+            className={`py-2 text-xs font-bold rounded-xl transition-all duration-150 ${
               mode === 'signin'
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#1e293b] text-white shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             Sign In
@@ -170,10 +180,10 @@ function LoginForm() {
               setError(null);
               setSuccessMessage(null);
             }}
-            className={`py-2 text-sm font-semibold rounded-lg transition-all duration-150 ${
+            className={`py-2 text-xs font-bold rounded-xl transition-all duration-150 ${
               mode === 'signup'
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#1e293b] text-white shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             Create Account
@@ -182,15 +192,15 @@ function LoginForm() {
 
         {/* Notifications: Error or Success */}
         {error && (
-          <div className="p-3.5 bg-red-50 border border-red-200/80 rounded-xl text-sm text-red-700 flex items-start gap-2.5">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs font-medium text-rose-300 flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
             <div className="leading-snug">{error}</div>
           </div>
         )}
 
         {successMessage && (
-          <div className="p-3.5 bg-emerald-50 border border-emerald-200/80 rounded-xl text-sm text-emerald-800 flex items-start gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+          <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs font-medium text-emerald-300 flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
             <div className="leading-snug">{successMessage}</div>
           </div>
         )}
@@ -201,7 +211,7 @@ function LoginForm() {
             type="button"
             onClick={handleGoogleAuth}
             disabled={googleLoading || loading}
-            className="w-full py-2.5 px-4 flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-medium text-sm shadow-sm transition-all duration-150 hover:shadow disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-2.5 px-4 flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-200 font-bold text-xs shadow-xs transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {googleLoading ? (
               <LogoLoader variant="mini" text="Connecting to Google..." />
@@ -220,8 +230,8 @@ function LoginForm() {
 
         {/* Divider */}
         <div className="relative flex items-center justify-center">
-          <div className="border-t border-slate-200 w-full" />
-          <span className="bg-white px-3 text-xs uppercase tracking-wider text-slate-400 font-medium shrink-0">
+          <div className="border-t border-slate-800 w-full" />
+          <span className="bg-[#111726] px-3 text-[10px] uppercase tracking-wider text-slate-500 font-bold shrink-0">
             or with email
           </span>
         </div>
@@ -229,11 +239,11 @@ function LoginForm() {
         {/* Email & Password Form */}
         <form className="space-y-4" onSubmit={handleEmailAuth}>
           <div>
-            <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+            <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1.5">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 id="email"
                 type="email"
@@ -241,22 +251,22 @@ function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@company.com"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-900/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4F63C] focus:border-[#D4F63C] transition-all"
               />
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+              <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-wider text-slate-300">
                 Password
               </label>
               {mode === 'signup' && (
-                <span className="text-[11px] text-slate-400">Min 6 characters</span>
+                <span className="text-[10px] text-slate-500">Min 6 characters</span>
               )}
             </div>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -264,12 +274,12 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••••••"
-                className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all"
+                className="w-full pl-10 pr-10 py-2.5 bg-slate-900/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4F63C] focus:border-[#D4F63C] transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -281,24 +291,24 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || googleLoading}
-            className="w-full mt-2 py-2.5 px-4 rounded-xl shadow-xs text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3 px-4 rounded-xl shadow-xs text-xs font-bold text-slate-950 bg-[#D4F63C] hover:bg-[#bce02b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4F63C] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
           >
             {loading ? (
               <LogoLoader variant="mini" text="Processing..." />
             ) : mode === 'signup' ? (
               <>
-                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <Sparkles className="w-4 h-4 text-slate-950" />
                 <span>Create Free Account</span>
               </>
             ) : (
-              <span>Sign In</span>
+              <span>Sign In to Studio</span>
             )}
           </button>
 
           {/* Mode Switch Footer */}
           <div className="text-center pt-2">
             {mode === 'signin' ? (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Don&apos;t have an account?{' '}
                 <button
                   type="button"
@@ -307,13 +317,13 @@ function LoginForm() {
                     setError(null);
                     setSuccessMessage(null);
                   }}
-                  className="font-semibold text-slate-900 hover:text-blue-600 underline underline-offset-2 transition-colors"
+                  className="font-bold text-[#D4F63C] hover:underline underline-offset-2 transition-colors cursor-pointer"
                 >
                   Sign up free
                 </button>
               </p>
             ) : (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Already have an account?{' '}
                 <button
                   type="button"
@@ -322,7 +332,7 @@ function LoginForm() {
                     setError(null);
                     setSuccessMessage(null);
                   }}
-                  className="font-semibold text-slate-900 hover:text-blue-600 underline underline-offset-2 transition-colors"
+                  className="font-bold text-[#D4F63C] hover:underline underline-offset-2 transition-colors cursor-pointer"
                 >
                   Sign in
                 </button>
@@ -331,7 +341,7 @@ function LoginForm() {
           </div>
 
           <div className="text-center pt-1">
-            <Link href="/" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+            <Link href="/" className="text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors">
               ← Back to homepage
             </Link>
           </div>
