@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, AlertTriangle, CheckCircle, XCircle, Bot, FileText } from 'lucide-react';
 
+import Link from 'next/link';
+import { LogoMark } from '@/components/landing/BrandLogos';
+
 interface AuditResult {
   domain: string;
   robotsTxtFetched: boolean;
@@ -46,12 +49,48 @@ export default function AICrawlerAuditPage() {
   const statusBg = result?.summary.status === 'pass' ? 'bg-emerald-50 border-emerald-200' : result?.summary.status === 'warning' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <Shield className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-slate-900">AI Crawler Readiness Audit</h1>
-          <p className="mt-2 text-slate-600">Check if your website is properly configured for AI crawlers like GPTBot, ClaudeBot, and PerplexityBot.</p>
+    <div className="min-h-screen bg-[#fafbfc] flex flex-col font-sans antialiased text-slate-900 selection:bg-[#D4F63C] selection:text-black">
+      {/* Top Header */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/80">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
+            <LogoMark className="h-8 w-8" />
+            <span className="font-black text-lg tracking-tight group-hover:text-slate-800 transition-colors">
+              AEO Checker
+            </span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/pricing"
+              className="text-xs font-bold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-xl transition"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/login"
+              className="text-xs font-bold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-xl transition"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white shadow-xs hover:bg-slate-800 transition"
+            >
+              Start Free
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1 max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 w-full">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-slate-950 text-white shadow-xs mb-3">
+            <Shield className="h-8 w-8 text-[#D4F63C]" />
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">AI Crawler Readiness Audit</h1>
+          <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-lg mx-auto">
+            Check if your website is properly configured for AI indexers like GPTBot, ClaudeBot, and PerplexityBot.
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-6 mb-8">
@@ -166,15 +205,54 @@ export default function AICrawlerAuditPage() {
 
               {/* CTA */}
               <div className="text-center pt-4">
-                <p className="text-slate-600 mb-3">Want to monitor and improve your AI visibility?</p>
-                <a href="/dashboard/projects/new" className="inline-block bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-semibold shadow-xs transition-all">
-                  Start Tracking Now
-                </a>
+                <p className="text-xs sm:text-sm text-slate-600 mb-3 font-medium">Want to monitor and improve your AI visibility automatically?</p>
+                <Link href="/login" className="inline-block bg-slate-950 hover:bg-slate-800 text-white px-6 py-3 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer">
+                  Start Tracking Now →
+                </Link>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
+            <Link href="/" className="flex items-center gap-2.5">
+              <LogoMark className="h-8 w-8" />
+              <span className="text-[15px] font-black tracking-[-0.03em] text-[#0B0F17]">
+                AEO Tracker
+              </span>
+            </Link>
+            <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+              {[
+                { label: 'Pricing', href: '/pricing' },
+                { label: 'About', href: '/about' },
+                { label: 'Contact', href: '/contact' },
+                { label: 'Compare', href: '/compare' },
+                { label: 'Privacy', href: '/privacy' },
+                { label: 'Terms', href: '/terms' },
+              ].map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-[11px] font-medium text-slate-400 sm:flex-row">
+            <p>© 2026 AEO Tracker. All rights reserved.</p>
+            <p className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+              Built for the AI Answer Engine era.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
