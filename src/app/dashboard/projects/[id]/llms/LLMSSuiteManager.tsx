@@ -196,14 +196,14 @@ location = /llms.txt {
 
   return (
     <div className="space-y-8 max-w-5xl">
-      {/* SECTION 1: Live Host Validator */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+      {/* SECTION 1: Live Host Validator (Bento Card) */}
+      <div className="rounded-bento border border-slate-200/90 bg-white p-6 sm:p-8 shadow-bento">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-[#D4F63C] shadow-2xs">
             <Zap className="h-5 w-5" />
           </span>
           <div>
-            <h3 className="font-display text-lg font-bold text-slate-900">Live llms.txt Host Validator</h3>
+            <h3 className="font-display text-lg font-black text-slate-950">Live llms.txt Host Validator</h3>
             <p className="text-xs text-slate-500">
               Audit if AI crawlers (GPTBot, ClaudeBot, Perplexity) can ingest your domain&apos;s canonical <code>/llms.txt</code> file without blocks.
             </p>
@@ -217,21 +217,21 @@ location = /llms.txt {
               value={testUrl}
               onChange={(e) => setTestUrl(e.target.value)}
               placeholder={`https://${project.domain}/llms.txt`}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-xs sm:text-sm font-mono text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-full border border-slate-200/90 bg-slate-50/60 px-5 py-3 text-xs sm:text-sm font-mono text-slate-900 focus:bg-white focus:border-slate-950 focus:outline-none focus:ring-2 focus:ring-[#D4F63C] transition-all"
             />
           </div>
           <button
             type="submit"
             disabled={isValidating}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 transition-all shrink-0"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-7 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs hover:bg-slate-800 disabled:opacity-50 transition-all shrink-0 cursor-pointer"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${isValidating ? 'animate-spin' : ''}`} />
-            {isValidating ? 'Auditing Host...' : 'Validate Live URL'}
+            <RefreshCw className={`h-3.5 w-3.5 text-[#D4F63C] ${isValidating ? 'animate-spin' : ''}`} />
+            <span>{isValidating ? 'Auditing Host...' : 'Validate Live URL'}</span>
           </button>
         </form>
 
         {validationError && (
-          <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 flex items-center gap-2">
+          <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-bold text-rose-800 flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0" />
             <span>{validationError}</span>
           </div>
@@ -239,7 +239,7 @@ location = /llms.txt {
 
         {/* Validation Score Results Card */}
         {validationResult && (
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50/70 p-6 space-y-6">
+          <div className="mt-6 rounded-bento border border-slate-200 bg-slate-50/70 p-6 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
               <div className="flex items-center gap-4">
                 <div className={`flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-black text-white shadow-sm ${
@@ -248,7 +248,7 @@ location = /llms.txt {
                   {validationResult.score}
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-slate-900">
+                  <h4 className="text-base font-black text-slate-950">
                     {validationResult.score === 100
                       ? 'Perfect AEO Ingestion Readiness'
                       : validationResult.score >= 60
@@ -256,7 +256,7 @@ location = /llms.txt {
                       : 'Endpoint Incomplete / Not Found'}
                   </h4>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Tested: <span className="font-mono text-slate-700">{validationResult.url}</span> ({validationResult.latencyMs}ms latency)
+                    Tested: <span className="font-mono font-bold text-slate-800">{validationResult.url}</span> ({validationResult.latencyMs}ms latency)
                   </p>
                 </div>
               </div>
@@ -294,7 +294,7 @@ location = /llms.txt {
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                   Live Response Preview (First 500 chars)
                 </span>
-                <pre className="p-3 bg-slate-900 text-slate-100 rounded-xl text-xs font-mono overflow-x-auto whitespace-pre-wrap">
+                <pre className="p-4 bg-slate-900 text-slate-100 rounded-xl text-xs font-mono overflow-x-auto whitespace-pre-wrap">
                   {validationResult.sampleSnippet}
                 </pre>
               </div>
@@ -303,15 +303,15 @@ location = /llms.txt {
         )}
       </div>
 
-      {/* SECTION 2: Authoritative llms.txt & llms-full.txt Generator */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+      {/* SECTION 2: Authoritative llms.txt & llms-full.txt Generator (Bento Card) */}
+      <div className="rounded-bento border border-slate-200/90 bg-white p-6 sm:p-8 shadow-bento">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100">
               <FileCode2 className="h-5 w-5" />
             </span>
             <div>
-              <h3 className="font-display text-lg font-bold text-slate-900">Authoritative llms.txt Blueprint</h3>
+              <h3 className="font-display text-lg font-black text-slate-950">Authoritative llms.txt Blueprint</h3>
               <p className="text-xs text-slate-500">Auto-generated with verified brand facts and commercial endpoints to feed LLM context windows.</p>
             </div>
           </div>
@@ -319,16 +319,16 @@ location = /llms.txt {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('standard')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'standard' ? 'bg-[#111827] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'standard' ? 'bg-slate-950 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               llms.txt (Standard)
             </button>
             <button
               onClick={() => setActiveTab('full')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'full' ? 'bg-[#111827] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'full' ? 'bg-slate-950 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               llms-full.txt (Deep)
@@ -336,21 +336,21 @@ location = /llms.txt {
           </div>
         </div>
 
-        {/* Code View Card */}
-        <div className="relative rounded-2xl border border-slate-200 bg-slate-950 p-4 sm:p-6 text-slate-100 shadow-inner">
+        {/* Code View Card (Obsidian Bento Dark Card) */}
+        <div className="relative rounded-2xl border border-slate-800 bg-[#0B0F17] p-5 sm:p-6 text-slate-100 shadow-bento">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-xs text-slate-400">
-            <span className="font-mono">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
+            <span className="font-mono font-bold text-[#D4F63C]">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleCopy(currentContent)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
               >
-                {copiedCode ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiedCode ? <Check className="h-3.5 w-3.5 text-[#D4F63C]" /> : <Copy className="h-3.5 w-3.5" />}
                 {copiedCode ? 'Copied!' : 'Copy'}
               </button>
               <button
                 onClick={() => handleDownload(activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt', currentContent)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors cursor-pointer"
               >
                 <Download className="h-3.5 w-3.5" />
                 Download
@@ -363,14 +363,14 @@ location = /llms.txt {
         </div>
       </div>
 
-      {/* SECTION 3: 1-Click Customer Deployment Blueprints */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+      {/* SECTION 3: 1-Click Hosting Blueprints for Clients (Bento Card) */}
+      <div className="rounded-bento border border-slate-200/90 bg-white p-6 sm:p-8 shadow-bento">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-50 text-purple-600 border border-purple-100">
             <Terminal className="h-5 w-5" />
           </span>
           <div>
-            <h3 className="font-display text-lg font-bold text-slate-900">1-Click Hosting Blueprints for Clients</h3>
+            <h3 className="font-display text-lg font-black text-slate-950">1-Click Hosting Blueprints for Dev Teams</h3>
             <p className="text-xs text-slate-500">Provide these ready-to-paste code snippets to your client&apos;s dev team to host <code>/llms.txt</code> instantly.</p>
           </div>
         </div>
@@ -378,45 +378,45 @@ location = /llms.txt {
         <div className="flex flex-wrap gap-2 mb-4">
           <button
             onClick={() => setActiveBlueprint('nextjs')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeBlueprint === 'nextjs' ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              activeBlueprint === 'nextjs' ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             Next.js (App Router)
           </button>
           <button
             onClick={() => setActiveBlueprint('cloudflare')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeBlueprint === 'cloudflare' ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              activeBlueprint === 'cloudflare' ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             Cloudflare Workers / Pages
           </button>
           <button
             onClick={() => setActiveBlueprint('nginx')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeBlueprint === 'nginx' ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              activeBlueprint === 'nginx' ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             Nginx Server
           </button>
           <button
             onClick={() => setActiveBlueprint('wordpress')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeBlueprint === 'wordpress' ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              activeBlueprint === 'wordpress' ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             WordPress / Apache
           </button>
         </div>
 
-        <div className="relative rounded-2xl bg-slate-900 p-4 sm:p-5 text-slate-100 font-mono text-xs overflow-x-auto">
+        <div className="relative rounded-2xl bg-[#0B0F17] border border-slate-800 p-5 text-slate-100 font-mono text-xs overflow-x-auto shadow-bento">
           <div className="flex justify-end mb-2">
             <button
               onClick={() => handleCopy(blueprints[activeBlueprint])}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
             >
-              {copiedCode ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+              {copiedCode ? <Check className="h-3 w-3 text-[#D4F63C]" /> : <Copy className="h-3 w-3" />}
               {copiedCode ? 'Copied!' : 'Copy Blueprint'}
             </button>
           </div>

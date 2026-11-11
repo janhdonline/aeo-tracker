@@ -130,65 +130,75 @@ export function CompetitorsManager({
 
   return (
     <div className="space-y-6">
-      {/* 4 SUMMARY STAT CARDS */}
+      {/* 4 SUMMARY STAT BENTO CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Tracked Competitors</span>
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+        {/* Card 1: Tracked Competitors */}
+        <div className="p-5 rounded-bento bg-white border border-slate-200/90 shadow-bento">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">Tracked Competitors</span>
+            <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-2xl font-bold text-slate-900">{competitors.length}</span>
-            <span className="text-xs text-slate-500 font-medium">domains monitored</span>
+            <span className="font-display text-3xl font-black text-slate-950">{competitors.length}</span>
+            <span className="text-xs text-slate-400 font-semibold">rivals in radar</span>
           </div>
+          <p className="mt-2.5 text-[11px] text-slate-500 font-medium">Audited across AI model recommendations</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Your Share of Voice</span>
-            <span className="inline-flex items-center text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+        {/* Card 2: Your Share of Voice (Obsidian Accent Card) */}
+        <div className="p-5 rounded-bento bg-[#0B0F17] border border-slate-800 shadow-bento text-white">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">Your Share of Voice</span>
+            <span className="inline-flex items-center text-[10px] font-bold text-[#10b981] bg-[#10b981]/20 px-2 py-0.5 rounded-full ring-1 ring-[#10b981]/30">
               Live Index
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-2xl font-bold text-emerald-600">{yourSoVPct}%</span>
-            <span className="text-xs text-slate-500 font-medium">{yourMentions} mentions</span>
+            <span className="font-display text-3xl font-black text-[#D4F63C]">{yourSoVPct}%</span>
+            <span className="text-xs text-slate-300 font-semibold">{yourMentions} brand citations</span>
+          </div>
+          <div className="mt-3 h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+            <div className="h-full rounded-full bg-gradient-to-r from-[#D4F63C] to-emerald-400" style={{ width: `${Math.max(8, yourSoVPct)}%` }} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Competitor Mentions</span>
-            <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+        {/* Card 3: Competitor Citation Pressure */}
+        <div className="p-5 rounded-bento bg-white border border-slate-200/90 shadow-bento">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">Competitor Citations</span>
+            <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full ring-1 ring-rose-200">
               Citation Pressure
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-2xl font-bold text-slate-900">{competitorTotalMentions}</span>
-            <span className="text-xs text-slate-500 font-medium">citations captured</span>
+            <span className="font-display text-3xl font-black text-slate-950">{competitorTotalMentions}</span>
+            <span className="text-xs text-slate-400 font-semibold">captured mentions</span>
           </div>
+          <p className="mt-2.5 text-[11px] text-slate-500 font-medium">Competitor citations in queries where you compete</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Head-to-Head Win Rate</span>
-            <Award className="h-4 w-4 text-blue-500" />
+        {/* Card 4: Head-to-Head Win Rate */}
+        <div className="p-5 rounded-bento bg-white border border-slate-200/90 shadow-bento">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">Head-to-Head Win Rate</span>
+            <Award className="h-4 w-4 text-blue-600" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-2xl font-bold text-blue-600">
+            <span className="font-display text-3xl font-black text-blue-600">
               {grandTotal > 0 ? Math.round((yourMentions / (yourMentions + Math.max(1, competitorTotalMentions))) * 100) : 65}%
             </span>
-            <span className="text-xs text-slate-500 font-medium">in buyer queries</span>
+            <span className="text-xs text-slate-400 font-semibold">win confidence</span>
           </div>
+          <p className="mt-2.5 text-[11px] text-slate-500 font-medium">Direct recommendation lead over rivals</p>
         </div>
       </div>
 
-      {/* ADD COMPETITOR CONTROL BAR */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-2xs space-y-4">
+      {/* ADD COMPETITOR CONTROL BAR (BENTO STYLED) */}
+      <div className="rounded-bento border border-slate-200/90 bg-white p-5 sm:p-6 shadow-bento space-y-4">
         <div>
-          <h3 className="font-display text-base font-bold text-slate-900">Add Competitor Web Property</h3>
+          <h3 className="font-display text-base font-black text-slate-950">Add Competitor Web Property</h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Track how rival vendors perform when potential buyers query ChatGPT, Perplexity, Gemini, and Claude for recommendations.
+            Track how rival vendors perform when prospective buyers query ChatGPT, Perplexity, Gemini, and Claude for recommendations.
           </p>
         </div>
 
@@ -200,7 +210,7 @@ export function CompetitorsManager({
           className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
         >
           <div className="relative flex-1">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
               <Globe className="h-4 w-4" />
             </div>
             <input
@@ -208,16 +218,16 @@ export function CompetitorsManager({
               value={newCompetitor}
               onChange={(e) => setNewCompetitor(e.target.value)}
               placeholder="e.g. coda.io, clickup.com, linear.app"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-9 pr-4 text-xs font-medium text-slate-900 placeholder:text-slate-400 shadow-2xs focus:border-slate-900 focus:bg-white focus:outline-none transition-all"
+              className="w-full rounded-full border border-slate-200/90 bg-slate-50/50 py-3 pl-11 pr-4 text-xs font-semibold text-slate-900 placeholder:text-slate-400 shadow-2xs focus:border-slate-950 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#D4F63C] transition-all"
             />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting || !newCompetitor.trim()}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all disabled:opacity-50 cursor-pointer shrink-0"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-6 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs hover:bg-slate-800 transition-all disabled:opacity-50 cursor-pointer shrink-0"
           >
-            <Plus className="h-3.5 w-3.5 text-emerald-400" />
+            <Plus className="h-4 w-4 text-[#D4F63C]" />
             <span>{isSubmitting ? 'Saving...' : 'Add Competitor'}</span>
           </button>
         </form>
@@ -225,15 +235,15 @@ export function CompetitorsManager({
         {/* Suggestion Chips */}
         {suggestions.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
-            <span className="text-[11px] font-semibold text-slate-400 mr-1 flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-amber-500" /> Suggested Rivals:
+            <span className="text-[11px] font-bold text-slate-400 mr-1 flex items-center gap-1">
+              <Sparkles className="h-3 w-3 text-amber-500" /> Suggested Tech Rivals:
             </span>
             {suggestions.map((sug) => (
               <button
                 key={sug}
                 type="button"
                 onClick={() => handleAddCompetitor(sug)}
-                className="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium text-[11px] transition-colors cursor-pointer flex items-center gap-1"
+                className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px] transition-colors cursor-pointer flex items-center gap-1"
               >
                 <span>+ {sug}</span>
               </button>
@@ -243,28 +253,28 @@ export function CompetitorsManager({
 
         {/* Status Alerts */}
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-800 flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs font-bold text-rose-800 flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
             <span>{success}</span>
           </div>
         )}
       </div>
 
-      {/* COMPETITORS RADAR TABLE */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-4">
+      {/* COMPETITORS RADAR TABLE (BENTO STYLED) */}
+      <div className="rounded-bento border border-slate-200/90 bg-white p-6 shadow-bento space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
           <div>
-            <h3 className="font-display text-base font-bold text-slate-900">Head-to-Head Competitor Radar</h3>
+            <h3 className="font-display text-base font-black text-slate-950">Head-to-Head Competitor Radar</h3>
             <p className="text-xs text-slate-500">Live comparison of market presence across commercial AI queries.</p>
           </div>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
             {competitors.length + 1} Properties Monitored
           </span>
         </div>

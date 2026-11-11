@@ -53,59 +53,62 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
 
   return (
     <div className="space-y-6">
-      {/* Overview Cards */}
+      {/* Overview Bento Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {/* Bento Tile 1: Total Influencing Sources */}
+        <div className="rounded-bento border border-slate-200/90 bg-white p-5 shadow-bento">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
               Total Influencing Sources
             </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-[#D4F63C] shadow-2xs">
               <Layers className="h-4 w-4" />
             </span>
           </div>
-          <p className="mt-3 text-3xl font-bold tracking-tight text-slate-900">{sources.length}</p>
-          <p className="mt-1 text-xs text-slate-500">
-            Domains feeding ChatGPT, Perplexity & Gemini answers
+          <p className="font-display text-3xl font-black text-slate-950">{sources.length}</p>
+          <p className="mt-1.5 text-xs text-slate-500 font-medium">
+            Domains feeding ChatGPT, Perplexity &amp; Gemini answers
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {/* Bento Tile 2: Community / Reddit Weight (Obsidian Accent Card) */}
+        <div className="rounded-bento border border-slate-800 bg-[#0B0F17] p-5 shadow-bento text-white">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
               Community / Reddit Weight
             </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/30">
               <MessageSquare className="h-4 w-4" />
             </span>
           </div>
-          <p className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+          <p className="font-display text-3xl font-black text-[#D4F63C]">
             {sources.length > 0 ? Math.round((communityCount / sources.length) * 100) : 34}%
           </p>
-          <p className="mt-1 text-xs text-emerald-600 font-medium">
-            High sentiment authority in AI RAG synthesis
+          <p className="mt-1.5 text-xs text-[#10b981] font-semibold">
+            High sentiment authority in AI generative synthesis
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {/* Bento Tile 3: Injection Blueprints Ready */}
+        <div className="rounded-bento border border-slate-200/90 bg-white p-5 shadow-bento">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
               Injection Blueprints Ready
             </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
               <Sparkles className="h-4 w-4" />
             </span>
           </div>
-          <p className="mt-3 text-3xl font-bold tracking-tight text-emerald-600">
+          <p className="font-display text-3xl font-black text-emerald-700">
             {sources.length} Actions
           </p>
-          <p className="mt-1 text-xs text-slate-500">
-            Ready-to-copy snippets to reclaim lost citations
+          <p className="mt-1.5 text-xs text-slate-500 font-medium">
+            Actionable playbooks to reclaim lost citations
           </p>
         </div>
       </div>
 
-      {/* Category Filter Tabs */}
+      {/* Category Filter Pills (Bento Styled) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {[
           { key: "all", label: `All Sources (${sources.length})` },
@@ -116,10 +119,10 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
           <button
             key={tab.key}
             onClick={() => setSelectedCategory(tab.key)}
-            className={`rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all ${
+            className={`rounded-full px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
               selectedCategory === tab.key
-                ? "border-emerald-600 bg-emerald-50 text-emerald-800 shadow-sm"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                ? "bg-slate-950 text-white shadow-xs"
+                : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
             }`}
           >
             {tab.label}
