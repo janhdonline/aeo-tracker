@@ -14,6 +14,8 @@ import { CompetitorLeaderboardWidget } from './components/CompetitorLeaderboardW
 import { ExecutiveExportDigestModal } from './components/ExecutiveExportDigestModal';
 import { ExecutivePulseCard } from './components/ExecutivePulseCard';
 import { LiveCitationTicker } from './components/LiveCitationTicker';
+import { AttributionLeakMeter } from './components/AttributionLeakMeter';
+import { QuickBuyerQuerySimulator } from './components/QuickBuyerQuerySimulator';
 import { WebPresenceAudit } from '@/components/WebPresenceAudit';
 import {
   Plus,
@@ -472,10 +474,23 @@ export default function DashboardPage() {
           ]}
         />
 
-        {/* DAILY ANALYTICS & HISTORICAL TRENDS (Matches aeochecker Daily Analytics) */}
+        {/* DAILY ANALYTICS & HISTORICAL TRENDS (Expansive Wave Spline) */}
         <DailyAnalyticsChart
           domain={selectedDomain}
           currentScore={avgScore > 0 ? avgScore : 84}
+        />
+
+        {/* AI TRAFFIC LEAK & ATTRIBUTION CONVERSION METER */}
+        <AttributionLeakMeter
+          domain={selectedDomain}
+          brandName={projects.find((p: any) => p.domain === selectedDomain)?.brand_name || selectedDomain.split('.')[0]}
+          citationsCount={48}
+        />
+
+        {/* LIVE COMMERCIAL BUYER PROMPT SIMULATOR */}
+        <QuickBuyerQuerySimulator
+          domain={selectedDomain}
+          brandName={projects.find((p: any) => p.domain === selectedDomain)?.brand_name || selectedDomain.split('.')[0]}
         />
 
         {/* LIVE AI CITATION & MENTION STREAM */}
@@ -746,57 +761,108 @@ export default function DashboardPage() {
 
         {/* ESSENTIAL TOOLS QUICK SHELF */}
         <section className="pt-2">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-display text-sm font-bold text-slate-900">
+              AEO Engineering & Diagnostic Tool Suite
+            </h4>
+            <span className="text-xs text-slate-400">6 Specialized Tools</span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             <Link
-              href="/tools/ai-crawler-audit"
-              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
+              href={projects.length > 0 ? `/dashboard/projects/${projects[0].id}/briefs` : '/dashboard'}
+              className="flex flex-col justify-between p-3.5 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs group"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
-                <Bot className="h-4 w-4" />
-              </span>
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-700 border border-amber-200/60">
+                  <Layers className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
+              </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">AI Crawler Audit</h4>
-                <p className="text-[11px] text-slate-500">Test robots.txt bot access</p>
+                <h5 className="text-xs font-bold text-slate-900">Kanban Board</h5>
+                <p className="text-[10px] text-slate-500 mt-0.5">4-column action queue</p>
               </div>
             </Link>
 
             <Link
-              href="/tools/llms-generator"
-              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
+              href={projects.length > 0 ? `/dashboard/projects/${projects[0].id}/facts` : '/dashboard'}
+              className="flex flex-col justify-between p-3.5 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs group"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-                <FileCode2 className="h-4 w-4" />
-              </span>
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60">
+                  <Compass className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
+              </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">llms.txt Builder</h4>
-                <p className="text-[11px] text-slate-500">Generate AI documentation</p>
+                <h5 className="text-xs font-bold text-slate-900">Product SKUs</h5>
+                <p className="text-[10px] text-slate-500 mt-0.5">Sub-entity AEO radar</p>
               </div>
             </Link>
 
             <Link
               href="/tools/answerability-audit"
-              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
+              className="flex flex-col justify-between p-3.5 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs group"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700">
-                <Zap className="h-4 w-4" />
-              </span>
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/60">
+                  <Zap className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
+              </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Answerability Audit</h4>
-                <p className="text-[11px] text-slate-500">40–60 word chunk tester</p>
+                <h5 className="text-xs font-bold text-slate-900">Answerability</h5>
+                <p className="text-[10px] text-slate-500 mt-0.5">40–60 word chunk tester</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/tools/ai-crawler-audit"
+              className="flex flex-col justify-between p-3.5 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                  <Bot className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <div>
+                <h5 className="text-xs font-bold text-slate-900">Crawler Audit</h5>
+                <p className="text-[10px] text-slate-500 mt-0.5">Robots.txt bot tester</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/tools/llms-generator"
+              className="flex flex-col justify-between p-3.5 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-50 text-teal-700 border border-teal-200/60">
+                  <FileCode2 className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <div>
+                <h5 className="text-xs font-bold text-slate-900">llms.txt Builder</h5>
+                <p className="text-[10px] text-slate-500 mt-0.5">LLM documentation</p>
               </div>
             </Link>
 
             <a
               href={projects.length > 0 ? `/api/export/csv?projectId=${projects[0].id}` : '/api/export/csv'}
               download
-              className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
+              className="flex flex-col justify-between p-3.5 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs group"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-700">
-                <Download className="h-4 w-4" />
-              </span>
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-purple-700 border border-purple-200/60">
+                  <Download className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
+              </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">CSV Export</h4>
-                <p className="text-[11px] text-slate-500">Download citation logs</p>
+                <h5 className="text-xs font-bold text-slate-900">CSV Export</h5>
+                <p className="text-[10px] text-slate-500 mt-0.5">Download citation logs</p>
               </div>
             </a>
           </div>
