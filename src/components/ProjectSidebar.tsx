@@ -13,6 +13,7 @@ import {
   FileCode2,
   Settings,
   Layers,
+  TrendingUp,
 } from 'lucide-react';
 
 interface NavItem {
@@ -63,7 +64,7 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
 
   const intelligenceItems: NavItem[] = [
     { label: 'Fact Watchdog', icon: ShieldAlert, href: `/dashboard/projects/${projectId}/facts`, key: 'facts' },
-    { label: 'AI Crawlers', icon: Bot, href: `/dashboard/projects/${projectId}/analytics`, key: 'analytics' },
+    { label: 'AI Traffic & ROI', icon: TrendingUp, href: `/dashboard/projects/${projectId}/analytics`, key: 'analytics', badge: 'NEW' },
     { label: 'Scan History', icon: ListChecks, href: `/dashboard/projects/${projectId}/runs`, key: 'runs' },
     { label: 'Public Report', icon: Globe, href: `/report/${domain}`, key: 'report' },
   ];
