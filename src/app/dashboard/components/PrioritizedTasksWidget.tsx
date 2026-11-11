@@ -166,7 +166,7 @@ export function PrioritizedTasksWidget() {
   const completedCount = tasks.filter((t) => t.completed).length;
 
   return (
-    <section className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs space-y-5">
+    <section id="aeo-action-center" className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs space-y-5 scroll-mt-6">
       {/* Header Strip */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
