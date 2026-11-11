@@ -33,6 +33,12 @@ import {
   Briefcase,
   ExternalLink,
 } from 'lucide-react';
+import { ScoreBreakdown } from '@/components/ScoreBreakdown';
+import { SuggestedFixesCard } from '@/components/SuggestedFixesCard';
+import { AIBotAccessMatrix } from '@/components/AIBotAccessMatrix';
+import { PlatformOptimizationTabs } from '@/components/PlatformOptimizationTabs';
+import { PageCitabilityTable } from '@/components/PageCitabilityTable';
+import { ScoreHistoryTimeline } from '@/components/ScoreHistoryTimeline';
 import type { FullReportData } from '@/lib/report-generator';
 
 interface Props {
@@ -962,6 +968,57 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   View full audit ▾
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* QUICK IN-PAGE JUMP BAR */}
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+            <a href="#score-breakdown" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+              Score Breakdown
+            </a>
+            <a href="#suggested-fixes" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+              Suggested Fixes
+            </a>
+            <a href="#ai-bot-access" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+              AI Bot Access (23 Crawlers)
+            </a>
+            <a href="#platform-optimization" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+              Platform Optimization
+            </a>
+            <a href="#page-citability" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+              Page Citability
+            </a>
+            <a href="#score-history" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+              Score History
+            </a>
+            <a href="#tasks-section" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+              Tasks
+            </a>
+          </div>
+
+          {/* ============================================================== */}
+          {/* 5.5 UNDERSTANDABLE READINESS & OPTIMIZATION SUITE              */}
+          {/* (Score Breakdown, Fixes Prompt Copy, 23 AI Bots, Citability,    */}
+          {/*  Platform Playbooks, Score History)                            */}
+          {/* ============================================================== */}
+          <div id="readiness-suite" className="space-y-6 pt-2">
+            <div id="score-breakdown">
+              <ScoreBreakdown />
+            </div>
+            <div id="suggested-fixes">
+              <SuggestedFixesCard domain={data.domain} />
+            </div>
+            <div id="ai-bot-access">
+              <AIBotAccessMatrix domain={data.domain} />
+            </div>
+            <div id="platform-optimization">
+              <PlatformOptimizationTabs domain={data.domain} />
+            </div>
+            <div id="page-citability">
+              <PageCitabilityTable domain={data.domain} />
+            </div>
+            <div id="score-history">
+              <ScoreHistoryTimeline currentScore={data.score} />
             </div>
           </div>
 

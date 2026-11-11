@@ -26,6 +26,12 @@ import {
 import { RunScanButton } from './RunScanButton';
 import { WebPresenceAudit } from '@/components/WebPresenceAudit';
 import { AnswerabilityAuditCard } from '@/components/AnswerabilityAuditCard';
+import { ScoreBreakdown } from '@/components/ScoreBreakdown';
+import { SuggestedFixesCard } from '@/components/SuggestedFixesCard';
+import { AIBotAccessMatrix } from '@/components/AIBotAccessMatrix';
+import { PlatformOptimizationTabs } from '@/components/PlatformOptimizationTabs';
+import { PageCitabilityTable } from '@/components/PageCitabilityTable';
+import { ScoreHistoryTimeline, ScanHistoryItem } from '@/components/ScoreHistoryTimeline';
 import type { FullReportData } from '@/lib/report-generator';
 
 // ============================================================================
@@ -124,7 +130,7 @@ function Counter({ value }: { value: number }) {
 }
 
 // ============================================================================
-// 2. PROJECT OVERVIEW VIEW COMPONENT (Matches Image 2 Competitor Layout)
+// 2. PROJECT OVERVIEW VIEW COMPONENT
 // ============================================================================
 
 interface Props {
@@ -161,6 +167,7 @@ interface Props {
     status: string;
     created_at: string;
   }>;
+  scoreHistory?: ScanHistoryItem[];
   reportData: FullReportData;
 }
 
@@ -171,6 +178,7 @@ export function ProjectOverviewView({
   latestRun,
   keywords,
   fixBriefs,
+  scoreHistory,
   reportData,
 }: Props) {
   const [showDailyBanner, setShowDailyBanner] = useState(true);
@@ -211,7 +219,7 @@ export function ProjectOverviewView({
 
   return (
     <div className="w-full space-y-6">
-      {/* 1. DAILY ANALYTICS NOTIFICATION BANNER (Matches Image 2) */}
+      {/* 1. DAILY ANALYTICS NOTIFICATION BANNER */}
       {showDailyBanner && (
         <motion.div
           initial={{ opacity: 0, y: -6 }}
@@ -238,7 +246,7 @@ export function ProjectOverviewView({
         </motion.div>
       )}
 
-      {/* 2. HERO BRAND CARD (Matches Image 2 Competitor Header with Actions) */}
+      {/* 2. HERO BRAND CARD (Matches Image 2 & Public Report Layout) */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="flex items-start sm:items-center gap-6">
@@ -331,7 +339,7 @@ export function ProjectOverviewView({
                 ))}
                 {productsList.length > 5 && (
                   <span className="text-[11px] font-semibold text-slate-500">
-                    +{productsList.length - 5} other products
+                    +{productsList.length - 5} more
                   </span>
                 )}
               </div>
@@ -373,7 +381,7 @@ export function ProjectOverviewView({
         </div>
       </div>
 
-      {/* 3. METRIC RIBBON (4 Clean Compact Cards Matches Image 2) */}
+      {/* 3. METRIC RIBBON (4 Clean Compact Cards) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
           <div className="flex items-center justify-between text-slate-500 mb-1">
@@ -422,7 +430,7 @@ export function ProjectOverviewView({
         </div>
       </div>
 
-      {/* 4. FOUR CORE ANALYSIS CARDS (2x2 Grid Matches Image 2) */}
+      {/* 4. FOUR CORE ANALYSIS CARDS (2x2 Grid) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: AI Presence */}
         <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
@@ -435,7 +443,6 @@ export function ProjectOverviewView({
             </div>
 
             <div className="space-y-3 pt-1">
-              {/* OpenAI / ChatGPT */}
               <div className="flex items-center justify-between text-xs font-medium text-slate-700">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
@@ -449,7 +456,6 @@ export function ProjectOverviewView({
                 </div>
               </div>
 
-              {/* Google Gemini */}
               <div className="flex items-center justify-between text-xs font-medium text-slate-700">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-blue-600 text-white shadow-2xs">
@@ -463,7 +469,6 @@ export function ProjectOverviewView({
                 </div>
               </div>
 
-              {/* Anthropic Claude */}
               <div className="flex items-center justify-between text-xs font-medium text-slate-700">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#D97706] text-white shadow-2xs">
@@ -477,7 +482,6 @@ export function ProjectOverviewView({
                 </div>
               </div>
 
-              {/* Perplexity Pro */}
               <div className="flex items-center justify-between text-xs font-medium text-slate-700">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-600 text-white shadow-2xs">
@@ -525,7 +529,6 @@ export function ProjectOverviewView({
                     {p.prompt || p.keyword}
                   </p>
                   <div className="flex items-center justify-between">
-                    {/* Mini AI Engine Icon Row */}
                     <div className="flex items-center gap-1.5 text-slate-400">
                       <span className="flex h-4 w-4 items-center justify-center rounded-sm bg-slate-900 text-white">
                         <OpenAIIcon className="h-2.5 w-2.5" />
@@ -622,7 +625,6 @@ export function ProjectOverviewView({
             </div>
 
             <div className="space-y-3 pt-1 text-xs">
-              {/* Answerability Progress Bar */}
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="font-medium text-slate-700">Answerability</span>
@@ -638,7 +640,6 @@ export function ProjectOverviewView({
                 </div>
               </div>
 
-              {/* Web Presence Strip */}
               <div>
                 <span className="font-medium text-slate-700 block mb-1">Web Presence</span>
                 <div className="flex items-center gap-2 p-1.5 rounded-xl bg-slate-50 border border-slate-100">
@@ -668,7 +669,6 @@ export function ProjectOverviewView({
                 </div>
               </div>
 
-              {/* Structured Data Progress Bar */}
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="font-medium text-slate-700">Structured Data</span>
@@ -684,7 +684,6 @@ export function ProjectOverviewView({
                 </div>
               </div>
 
-              {/* AI Crawler Accessibility */}
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="font-medium text-slate-700">AI Crawler Accessibility</span>
@@ -704,7 +703,7 @@ export function ProjectOverviewView({
 
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
             <a
-              href="#strategy-deep-audit"
+              href="#readiness-suite"
               className="font-bold text-slate-600 hover:text-slate-900 cursor-pointer flex items-center gap-1"
             >
               <span>View full audit</span>
@@ -714,7 +713,65 @@ export function ProjectOverviewView({
         </div>
       </div>
 
-      {/* 5. TASKS SECTION (Matches Image 2 with real project briefs) */}
+      {/* QUICK IN-PAGE JUMP BAR */}
+      <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+        <a href="#score-breakdown" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+          Score Breakdown
+        </a>
+        <a href="#suggested-fixes" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+          Suggested Fixes
+        </a>
+        <a href="#ai-bot-access" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+          AI Bot Access (23 Crawlers)
+        </a>
+        <a href="#platform-optimization" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+          Platform Optimization
+        </a>
+        <a href="#page-citability" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+          Page Citability
+        </a>
+        <a href="#score-history" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+          Score History
+        </a>
+        <a href="#tasks-section" className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs whitespace-nowrap">
+          Tasks & Action Plan
+        </a>
+      </div>
+
+      {/* 5. UNDERSTANDABLE READINESS & OPTIMIZATION SUITE (Matching User Reference Image) */}
+      <div id="readiness-suite" className="space-y-6 pt-2">
+        {/* Module A: Score Breakdown (5 categories × 20 pts) */}
+        <div id="score-breakdown">
+          <ScoreBreakdown />
+        </div>
+
+        {/* Module B: Suggested Fixes (Actionable checklist with Copy Prompt) */}
+        <div id="suggested-fixes">
+          <SuggestedFixesCard domain={project.domain} />
+        </div>
+
+        {/* Module C: AI Bot Access Matrix (23 AI Crawlers) */}
+        <div id="ai-bot-access">
+          <AIBotAccessMatrix domain={project.domain} />
+        </div>
+
+        {/* Module D: Platform Optimization (Per-engine tabs) */}
+        <div id="platform-optimization">
+          <PlatformOptimizationTabs domain={project.domain} />
+        </div>
+
+        {/* Module E: Page Citability Matrix */}
+        <div id="page-citability">
+          <PageCitabilityTable domain={project.domain} />
+        </div>
+
+        {/* Module F: Score History Timeline */}
+        <div id="score-history">
+          <ScoreHistoryTimeline history={scoreHistory} currentScore={effectiveScore} />
+        </div>
+      </div>
+
+      {/* 6. TASKS SECTION (Real Project Briefs with Kanban Link) */}
       <div id="tasks-section" className="pt-2">
         <div className="flex items-center justify-between mb-3">
           <div>
@@ -780,7 +837,7 @@ export function ProjectOverviewView({
         )}
       </div>
 
-      {/* 6. 90-DAY TRAJECTORY BANNER (Matches Image 2) */}
+      {/* 7. 90-DAY TRAJECTORY BANNER */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -802,7 +859,7 @@ export function ProjectOverviewView({
         </div>
       </div>
 
-      {/* 7. INTERACTIVE DEEP DIAGNOSTIC SUITE */}
+      {/* 8. DEEP STRATEGY AUDIT TOOLS */}
       <div id="strategy-deep-audit" className="space-y-6 pt-4 border-t border-slate-100">
         <div className="flex items-center justify-between">
           <div>

@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { AI_CRAWLERS } from '@/lib/constants/crawlers';
 
-const AI_CRAWLERS = [
-  { name: 'GPTBot', userAgent: 'Mozilla/5.0 (compatible; GPTBot/0.1; +https://openai.com/gptbot)' },
-  { name: 'ClaudeBot', userAgent: 'Mozilla/5.0 (compatible; ClaudeBot/0.1; +https://claude.ai/claudebot)' },
-  { name: 'PerplexityBot', userAgent: 'Mozilla/5.0 (compatible; PerplexityBot/0.1)' },
-  { name: 'CCBot', userAgent: 'CCBot/2.0 (https://commoncrawl.org/faq)' },
-  { name: 'Google-Extended', userAgent: 'Mozilla/5.0 (compatible; Google-Extended/0.1)' },
-];
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,77 +17,91 @@ export async function POST(request: NextRequest) {
     let llmsTxtFound = false;
     let jsShellDetected = false;
 
+    // Track status per crawler
+    const crawlerResults = AI_CRAWLERS.map((c) => ({
+      name: c.name,
+      company: c.company,
+      role: c.role,
+      allowed: true,
+      reason: 'Allowed by robots.txt',
+    }));
+
     // Fetch robots.txt
     try {
-      const rtRes = await fetch(`https://${d}/robots.txt`, { signal: AbortSignal.timeout(5000) });
+      const rtRes = await fetch(`https://${d}/robots.txt`, {
+        signal: AbortSignal.timeout(5000),
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
       robotsTxtFetched = rtRes.ok;
       if (rtRes.ok) {
         const rt = await rtRes.text();
-        for (const ai of AI_CRAWLERS) {
-          const lines = rt.split('\n');
-          let inBlock = false;
-          for (const line of lines) {
-            const t = line.trim().toLowerCase();
-            if (t.startsWith('user-agent:')) {
-              inBlock = t.includes(ai.name.toLowerCase());
+        const lines = rt.split('\n');
+
+        crawlerResults.forEach((cr) => {
+          let inTargetBlock = false;
+          let inWildcardBlock = false;
+
+          for (const rawLine of lines) {
+            const line = rawLine.trim().toLowerCase();
+            if (line.startsWith('user-agent:')) {
+              const ua = line.replace('user-agent:', '').trim();
+              inTargetBlock = ua === cr.name.toLowerCase() || ua.includes(cr.name.toLowerCase());
+              inWildcardBlock = ua === '*';
               continue;
             }
-            if (inBlock && t.startsWith('disallow:') && (t === 'disallow:/' || t === 'disallow:')) {
-              issues.push(`${ai.name} is blocked from your site by robots.txt`);
+
+            if (inTargetBlock && line.startsWith('disallow:')) {
+              const path = line.replace('disallow:', '').trim();
+              if (path === '/' || path === '/*') {
+                cr.allowed = false;
+                cr.reason = `Explicitly blocked in robots.txt (${cr.name})`;
+                issues.push(`${cr.name} is blocked from crawling your site in robots.txt`);
+              }
+            } else if (inWildcardBlock && cr.allowed && line.startsWith('disallow:')) {
+              const path = line.replace('disallow:', '').trim();
+              if (path === '/' || path === '/*') {
+                // Wildcard disallow applies if no specific rule allows
+                cr.allowed = false;
+                cr.reason = 'Blocked by wildcard Disallow: /';
+              }
             }
           }
-        }
+        });
       }
-    } catch { /* ignore */ }
-
-    // Fetch homepage with normal UA
-    let normalTextLen = 0;
-    try {
-      const normalRes = await fetch(`https://${d}`, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
-        signal: AbortSignal.timeout(10000),
-        redirect: 'follow',
-      });
-      const html = await normalRes.text();
-      normalTextLen = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().length;
-    } catch { /* ignore */ }
-
-    // Fetch homepage with GPTBot UA
-    let botTextLen = 0;
-    try {
-      const botRes = await fetch(`https://${d}`, {
-        headers: { 'User-Agent': AI_CRAWLERS[0].userAgent },
-        signal: AbortSignal.timeout(10000),
-        redirect: 'follow',
-      });
-      const html = await botRes.text();
-      botTextLen = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().length;
-    } catch { /* ignore */ }
-
-    if (normalTextLen > 0 && botTextLen / normalTextLen < 0.4) {
-      jsShellDetected = true;
-      issues.push(`JS Shell: Bot sees only ${Math.round((botTextLen / normalTextLen) * 100)}% of human-visible text`);
+    } catch {
+      warnings.push('Could not fetch robots.txt within timeout.');
     }
 
     // Check llms.txt
     try {
-      const llmsRes = await fetch(`https://${d}/llms.txt`, { signal: AbortSignal.timeout(5000) });
+      const llmsRes = await fetch(`https://${d}/llms.txt`, { signal: AbortSignal.timeout(4000) });
       llmsTxtFound = llmsRes.ok;
     } catch { /* ignore */ }
+
     if (!llmsTxtFound) {
-      warnings.push('No llms.txt found — consider adding one for better AI agent discoverability.');
+      warnings.push('No /llms.txt file detected — recommended for high-priority AI agent indexing.');
     }
 
-    const score = Math.max(0, 100 - issues.length * 20 - (jsShellDetected ? 30 : 0) - (!llmsTxtFound ? 10 : 0) - (!robotsTxtFetched ? 10 : 0));
+    const allowedCount = crawlerResults.filter((c) => c.allowed).length;
+    const blockedCount = crawlerResults.length - allowedCount;
+
+    const accessScore = Math.round((allowedCount / crawlerResults.length) * 100);
 
     return NextResponse.json({
       domain: d,
       robotsTxtFetched,
       llmsTxtFound,
       jsShellDetected,
+      crawlers: crawlerResults,
+      totalCrawlers: crawlerResults.length,
+      allowedCount,
+      blockedCount,
       issues,
       warnings,
-      summary: { score: Math.max(0, score), status: score >= 70 ? 'pass' : score >= 40 ? 'warning' : 'fail' },
+      summary: {
+        score: accessScore,
+        status: accessScore >= 80 ? 'pass' : accessScore >= 50 ? 'warning' : 'fail',
+      },
     });
   } catch (error) {
     return NextResponse.json({ error: 'Audit failed' }, { status: 500 });

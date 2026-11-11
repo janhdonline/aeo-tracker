@@ -46,6 +46,13 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     .limit(1)
     .single();
 
+  const { data: scoreHistoryData } = await supabase
+    .from('snapshot_scores')
+    .select('snapshot_date, visibility_score')
+    .eq('project_id', params.id)
+    .order('snapshot_date', { ascending: false })
+    .limit(20);
+
   const { data: latestRun } = await supabase
     .from('scan_runs')
     .select('id, started_at')
@@ -59,6 +66,23 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     .select('*')
     .eq('project_id', params.id)
     .order('created_at', { ascending: false });
+
+  // Format historical score checkpoints
+  const scoreHistory = (scoreHistoryData || []).map((s: any, idx: number, arr: any[]) => {
+    const prev = arr[idx + 1];
+    const delta = prev ? (s.visibility_score || 0) - (prev.visibility_score || 0) : 0;
+    return {
+      id: String(idx),
+      dateStr: new Date(s.snapshot_date).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      score: s.visibility_score || 0,
+      delta,
+    };
+  });
 
   // Generate domain-specific benchmark telemetry matching Image 2
   const reportData = generateFullReportData(project.domain);
@@ -84,6 +108,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
           latestRun={latestRun}
           keywords={keywords || []}
           fixBriefs={fixBriefs || []}
+          scoreHistory={scoreHistory}
           reportData={reportData}
         />
       </div>
