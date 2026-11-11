@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, ShieldCheck, Sparkles, Copy, Check, FileCode, FileCode2, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, ShieldCheck, Sparkles, Copy, Check, FileCode, FileCode2, AlertTriangle, Package, Layers } from 'lucide-react';
 import { AppShell } from '@/components/AppShell';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import { LogoLoader } from '@/components/LogoLoader';
+import { ProductSKUManager } from '@/components/ProductSKUManager';
 import Link from 'next/link';
 
 interface BrandFact {
@@ -17,6 +18,7 @@ interface BrandFact {
 }
 
 export default function BrandFactsPage({ params }: { params: { id: string } }) {
+  const [activeTab, setActiveTab] = useState<'products' | 'facts'>('products');
   const [facts, setFacts] = useState<BrandFact[]>([]);
   const [projectDomain, setProjectDomain] = useState('');
   const [brandName, setBrandName] = useState('');
@@ -164,8 +166,55 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
         <ProjectSidebar projectId={params.id} domain={projectDomain || 'domain'} current="facts" />
 
         <div className="w-full space-y-6">
-            {/* Header */}
-            <div className="mb-6">
+            {/* Top View Switcher: Products/SKU vs Facts Sheet */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+              <div className="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200/60 text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('products')}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                    activeTab === 'products'
+                      ? 'bg-white text-slate-900 shadow-xs font-bold'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <Package className="h-3.5 w-3.5 text-indigo-600" />
+                  <span>Product & SKU Hierarchy</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('facts')}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                    activeTab === 'facts'
+                      ? 'bg-white text-slate-900 shadow-xs font-bold'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Anti-Hallucination Facts ({facts.length})</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/dashboard/projects/${params.id}`}
+                  className="border border-slate-200 bg-white px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs"
+                >
+                  Back to Overview
+                </Link>
+              </div>
+            </div>
+
+            {activeTab === 'products' ? (
+              <ProductSKUManager
+                projectId={params.id}
+                domain={projectDomain}
+                brandName={brandName}
+              />
+            ) : (
+              <div>
+                {/* Header */}
+                <div className="mb-6">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
@@ -393,6 +442,8 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                     + Quick Add: 4 AI Engines
                   </button>
                 </div>
+              </div>
+            )}
               </div>
             )}
         </div>

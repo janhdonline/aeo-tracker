@@ -692,23 +692,23 @@ export default function Home() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-              className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-[11px] font-medium text-gray-600 shadow-sm sm:text-xs"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-700 shadow-xs sm:text-xs"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.12)]" />
-              63,100+ websites analysed
+              <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+              <span>63,100+ brands &amp; websites analyzed across AI engines</span>
             </motion.div>
 
             <motion.h1
               initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.13 }}
-              className="mx-auto mt-6 max-w-4xl text-[36px] font-semibold leading-[1.03] tracking-[-0.055em] text-[#111827] sm:text-6xl lg:text-[76px]"
+              className="mx-auto mt-6 max-w-4xl text-[38px] font-black leading-[1.03] tracking-[-0.055em] text-[#0B0F17] sm:text-6xl lg:text-[76px]"
             >
               Check your website{' '}
-              <span className="line-through decoration-slate-400/80 decoration-4 text-slate-300 font-normal">
+              <span className="line-through decoration-slate-300 decoration-4 text-slate-300 font-normal">
                 SEO
               </span>{' '}
-              <span className="font-extrabold text-[#111827]">
+              <span className="font-black text-[#0B0F17] underline decoration-[#D4F63C] decoration-wavy decoration-3">
                 AEO
               </span>
             </motion.h1>
@@ -717,9 +717,9 @@ export default function Home() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.21 }}
-              className="mx-auto mt-6 max-w-2xl text-balance text-[15px] leading-7 text-gray-500 sm:text-lg sm:leading-8"
+              className="mx-auto mt-6 max-w-2xl text-balance text-[15px] font-medium leading-7 text-slate-600 sm:text-lg sm:leading-8"
             >
-              Answer Engine Optimization improves your website&apos;s visibility to AIs like
+              Answer Engine Optimization measures and scales your brand&apos;s commercial visibility across AIs like
               <AiModelRotator />
             </motion.p>
 
@@ -730,12 +730,12 @@ export default function Home() {
               className="mx-auto mt-9 max-w-2xl"
             >
               <form id="analyze" onSubmit={handleAnalyze}>
-                <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-[0_16px_50px_-24px_rgba(17,24,39,0.32)] transition-all focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/50 sm:flex sm:items-center">
+                <div className="rounded-2xl sm:rounded-full border border-slate-200/90 bg-white/95 p-2 shadow-bento transition-all focus-within:border-slate-950 focus-within:ring-2 focus-within:ring-[#D4F63C] sm:flex sm:items-center">
                   <label htmlFor="website-url" className="sr-only">
                     Website URL
                   </label>
-                  <div className="flex flex-1 items-center gap-3 px-3 py-2">
-                    <Globe2 className="h-5 w-5 shrink-0 text-gray-400" strokeWidth={1.8} />
+                  <div className="flex flex-1 items-center gap-3 px-4 py-2">
+                    <Globe2 className="h-5 w-5 shrink-0 text-slate-400" strokeWidth={2} />
                     <input
                       ref={inputRef}
                       id="website-url"
@@ -746,25 +746,44 @@ export default function Home() {
                       spellCheck={false}
                       value={domain}
                       onChange={(event) => setDomain(event.target.value)}
-                      placeholder="Enter the website url"
-                      className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-gray-900 outline-none placeholder:font-normal placeholder:text-gray-400"
+                      placeholder="Enter website domain (e.g. stripe.com)"
+                      className="min-w-0 flex-1 bg-transparent text-[15px] font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-gray-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70 sm:mt-0 sm:w-auto"
+                    className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl sm:rounded-full bg-slate-950 px-7 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70 sm:mt-0 sm:w-auto"
                   >
                     {loading ? (
-                      <LogoLoader variant="mini" text="Analyzing..." />
+                      <LogoLoader variant="mini" text="Scanning Engines..." />
                     ) : (
                       <>
-                        <Search className="h-4 w-4" />
-                        Analyze
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                        <Search className="h-3.5 w-3.5 text-[#D4F63C]" />
+                        <span>Run Free Scan</span>
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                       </>
                     )}
                   </button>
+                </div>
+
+                {/* AI Engine Live Pulse Matrix */}
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    { name: 'Google Gemini', model: '2.5 Flash', status: 'Live' },
+                    { name: 'OpenAI', model: 'ChatGPT-4o', status: 'Live' },
+                    { name: 'Perplexity', model: 'Sonar Pro', status: 'Live' },
+                    { name: 'xAI Grok', model: 'Grok 3', status: 'Live' },
+                  ].map((engine) => (
+                    <div
+                      key={engine.name}
+                      className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-50/80 border border-slate-200/70 rounded-full text-[11px] font-semibold text-slate-700"
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+                      <span className="font-bold">{engine.name}</span>
+                      <span className="text-[10px] text-slate-400 hidden sm:inline">{engine.model}</span>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
@@ -913,20 +932,20 @@ export default function Home() {
                         ? undefined
                         : { y: -4, transition: { duration: 0.2, ease: "easeOut" } }
                     }
-                    className="group flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-emerald-200/80 hover:shadow-lg sm:p-6"
+                    className="group flex h-full flex-col rounded-[28px] border border-slate-200/90 bg-white p-6 shadow-bento transition-[border-color,box-shadow,transform] duration-300 hover:border-slate-400/80 hover:shadow-bento-hover"
                   >
                     <div className="flex items-start justify-between">
                       <span
-                        className={`flex h-11 w-11 items-center justify-center rounded-xl ring-1 ${feature.tone}`}
+                        className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${feature.tone}`}
                       >
                         <Icon className="h-5 w-5" strokeWidth={2} />
                       </span>
-                      <ArrowUpRight className="h-4 w-4 text-gray-300 opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-gray-500 group-hover:opacity-100" />
+                      <ArrowUpRight className="h-4 w-4 text-slate-300 opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-slate-600 group-hover:opacity-100" />
                     </div>
-                    <h3 className="mt-5 text-[17px] font-semibold tracking-[-0.025em] text-gray-900">
+                    <h3 className="mt-5 text-[17px] font-black tracking-[-0.025em] text-slate-950">
                       {feature.title}
                     </h3>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">{feature.description}</p>
+                    <p className="mt-2 text-xs leading-6 text-slate-500">{feature.description}</p>
                     <div className="mt-auto pt-5">
                       <FeatureVisual kind={feature.visual} />
                     </div>
@@ -938,16 +957,16 @@ export default function Home() {
         </section>
 
         {/* How it works + personalised insights */}
-        <section id="how-it-works" className="relative overflow-hidden border-y border-gray-200/70 bg-[#F9FAFB] py-20 sm:py-24">
-          <div className="pointer-events-none absolute right-[-8%] top-10 h-72 w-72 rounded-full bg-blue-100/40 blur-3xl" aria-hidden="true" />
+        <section id="how-it-works" className="relative overflow-hidden border-y border-slate-200/80 bg-slate-50/60 py-20 sm:py-24">
+          <div className="pointer-events-none absolute right-[-8%] top-10 h-72 w-72 rounded-full bg-emerald-100/30 blur-3xl" aria-hidden="true" />
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-start gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
               <div>
                 <SectionBadge icon={Globe2}>AEO / GEO explained</SectionBadge>
-                <h2 className="mt-4 max-w-lg text-3xl font-semibold tracking-[-0.045em] text-[#111827] sm:text-4xl lg:text-[42px]">
+                <h2 className="mt-4 max-w-lg text-3xl font-black tracking-[-0.045em] text-[#0B0F17] sm:text-4xl lg:text-[42px]">
                   How does AEO/GEO Work?
                 </h2>
-                <p className="mt-4 max-w-xl text-[15px] leading-7 text-gray-500 sm:text-base">
+                <p className="mt-4 max-w-xl text-[15px] font-medium leading-7 text-slate-600 sm:text-base">
                   AI engines don&apos;t just rank links—they synthesise answers from the sources they
                   trust. AEO/GEO aligns your content, citations, and reputation so your brand becomes
                   part of those answers.
@@ -969,12 +988,12 @@ export default function Home() {
                     },
                   ].map((step, index) => (
                     <div key={step.title} className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-white text-[10px] font-semibold text-emerald-700 shadow-sm">
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-white text-[11px] font-bold text-emerald-700 shadow-xs">
                         {index + 1}
                       </span>
                       <div>
-                        <p className="text-[13px] font-semibold text-gray-800">{step.title}</p>
-                        <p className="mt-0.5 text-xs leading-5 text-gray-500">{step.description}</p>
+                        <p className="text-[13px] font-bold text-slate-900">{step.title}</p>
+                        <p className="mt-0.5 text-xs leading-5 text-slate-500">{step.description}</p>
                       </div>
                     </div>
                   ))}
@@ -985,10 +1004,10 @@ export default function Home() {
 
               <div>
                 <SectionBadge icon={Sparkles}>Personalised for you</SectionBadge>
-                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[#111827] sm:text-[34px]">
+                <h2 className="mt-4 text-3xl font-black tracking-[-0.045em] text-[#0B0F17] sm:text-[34px]">
                   Get personalised insights
                 </h2>
-                <p className="mt-3 max-w-lg text-[15px] leading-7 text-gray-500">
+                <p className="mt-3 max-w-lg text-[15px] font-medium leading-7 text-slate-600">
                   Prioritised actions based on your actual gaps—not generic SEO advice.
                 </p>
 
@@ -999,7 +1018,7 @@ export default function Home() {
                       <a
                         key={insight.title}
                         href="#analyze"
-                        className="group flex w-full items-start gap-3 rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md"
+                        className="group flex w-full items-start gap-3 rounded-2xl border border-slate-200/90 bg-white p-4.5 text-left shadow-bento transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-bento-hover"
                       >
                         <span
                           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${insight.tone}`}
@@ -1008,15 +1027,15 @@ export default function Home() {
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-[13px] font-semibold tracking-[-0.01em] text-gray-900">
+                            <p className="text-[13px] font-bold tracking-[-0.01em] text-slate-900">
                               {insight.title}
                             </p>
-                            <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                            <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-200">
                               {insight.impact}
                             </span>
                           </div>
-                          <p className="mt-1 text-xs leading-5 text-gray-500">{insight.description}</p>
-                          <div className="mt-2 flex items-center gap-2 text-[9px] font-medium text-gray-400">
+                          <p className="mt-1 text-xs leading-5 text-slate-500">{insight.description}</p>
+                          <div className="mt-2 flex items-center gap-2 text-[10px] font-medium text-slate-400">
                             <span className="flex items-center gap-1">
                               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                               {insight.priority}
@@ -1025,7 +1044,7 @@ export default function Home() {
                             <span>{insight.time}</span>
                           </div>
                         </div>
-                        <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
+                        <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-slate-600" />
                       </a>
                     );
                   })}
@@ -1033,31 +1052,32 @@ export default function Home() {
 
                 <a
                   href="#features"
-                  className="group mt-4 flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-[12px] font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-300 hover:shadow-md"
+                  className="group mt-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-[12px] font-bold text-slate-700 shadow-bento transition-all hover:border-slate-400 hover:shadow-bento-hover"
                 >
-                  View all 12 personalised insights
-                  <ArrowRight className="h-4 w-4 text-gray-400 transition-transform group-hover:translate-x-0.5" />
+                  <span>View all 12 personalised insights</span>
+                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-0.5" />
                 </a>
 
-                <div className="mt-4 rounded-2xl bg-[#111827] p-5 text-white shadow-md">
+                {/* Obsidian Accent Card for Projected Impact */}
+                <div className="mt-4 rounded-bento border border-slate-800 bg-[#0B0F17] p-6 text-white shadow-bento">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-gray-400">
-                        Projected impact
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+                        Projected Impact
                       </p>
-                      <p className="mt-2 text-3xl font-semibold tracking-[-0.05em]">
-                        +26 <span className="text-base font-medium text-gray-400">pts</span>
+                      <p className="mt-2 text-3xl font-black tracking-[-0.05em] text-[#D4F63C]">
+                        +26 <span className="text-base font-semibold text-slate-300">pts</span>
                       </p>
                     </div>
-                    <span className="rounded-full bg-emerald-400/10 px-2.5 py-1 text-[9px] font-semibold text-emerald-300 ring-1 ring-emerald-400/20">
+                    <span className="rounded-full bg-[#10b981]/20 px-3 py-1 text-[10px] font-bold text-[#10b981] ring-1 ring-[#10b981]/30">
                       Next 30 days
                     </span>
                   </div>
-                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-emerald-400 to-blue-400" />
+                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-800">
+                    <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-[#D4F63C] to-[#10b981]" />
                   </div>
-                  <p className="mt-2 text-[9px] text-gray-400">
-                    If you complete the top 3 recommended actions.
+                  <p className="mt-2.5 text-[11px] text-slate-400">
+                    Calculated lift when completing the top 3 recommended priority actions.
                   </p>
                 </div>
               </div>
@@ -1074,16 +1094,16 @@ export default function Home() {
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl">
                 <SectionBadge icon={Sparkles}>Real brands, real data</SectionBadge>
-                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[#111827] sm:text-4xl lg:text-[42px]">
+                <h2 className="mt-4 text-3xl font-black tracking-[-0.045em] text-[#0B0F17] sm:text-4xl lg:text-[42px]">
                   View Examples
                 </h2>
-                <p className="mt-3 max-w-xl text-[15px] leading-7 text-gray-500 sm:text-base">
+                <p className="mt-3 max-w-xl text-[15px] font-medium leading-7 text-slate-600 sm:text-base">
                   See how leading brands show up across AI answers—and where their biggest
                   opportunities live.
                 </p>
               </div>
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-[11px] font-medium text-gray-500">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-[11px] font-bold text-slate-600">
+                <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
                 Updated weekly
               </span>
             </div>
@@ -1104,20 +1124,20 @@ export default function Home() {
                       : { scale: 1.02, y: -4, transition: { type: "spring", stiffness: 360, damping: 24 } }
                   }
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.995 }}
-                  className="group rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-gray-300 hover:shadow-lg"
+                  className="group rounded-bento border border-slate-200/90 bg-white p-5 text-left shadow-bento transition-[border-color,box-shadow] duration-300 hover:border-slate-400 hover:shadow-bento-hover"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-2.5">
-                      <BrandIcon brand={example.brand} className="h-7 w-7 rounded-md text-[9px]" />
+                      <BrandIcon brand={example.brand} className="h-8 w-8 rounded-xl text-[10px]" />
                       <div className="min-w-0">
                         <h3 className="truncate">
                           <BrandWordmark brand={example.brand} />
                         </h3>
-                        <p className="mt-0.5 truncate text-[10px] text-gray-400">{example.domain}</p>
+                        <p className="mt-0.5 truncate text-[11px] font-medium text-slate-400">{example.domain}</p>
                       </div>
                     </div>
                     <span
-                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold ${scoreTone(
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold ${scoreTone(
                         example.score
                       )}`}
                     >
@@ -1129,9 +1149,9 @@ export default function Home() {
 
                   <ExamplePreview score={example.score} trend={example.trend} />
 
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-[10px] font-medium text-gray-500">View full report</span>
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 text-gray-400 transition-all group-hover:border-emerald-200 group-hover:bg-emerald-50 group-hover:text-emerald-600">
+                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+                    <span className="text-[11px] font-bold text-slate-600 group-hover:text-slate-900">Run live audit</span>
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-400 transition-all group-hover:border-slate-900 group-hover:bg-[#0B0F17] group-hover:text-[#D4F63C]">
                       <ArrowUpRight className="h-3 w-3" />
                     </span>
                   </div>
@@ -1141,49 +1161,53 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Final CTA */}
+        {/* Final CTA - Obsidian Bento Showpiece */}
         <section className="bg-white pb-20 pt-2 sm:pb-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-[#F9FAFB] px-6 py-14 text-center shadow-soft sm:px-12 sm:py-16">
-              <div className="hero-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
+            <div className="relative overflow-hidden rounded-[32px] border border-slate-800 bg-[#0B0F17] px-6 py-16 text-center shadow-bento sm:px-12 sm:py-20">
+              <div className="hero-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden="true" />
               <div
-                className="pointer-events-none absolute left-1/2 top-[-90px] h-64 w-[480px] -translate-x-1/2 rounded-full bg-emerald-200/40 blur-3xl"
+                className="pointer-events-none absolute left-1/2 top-[-100px] h-72 w-[540px] -translate-x-1/2 rounded-full bg-[#D4F63C]/10 blur-[100px]"
                 aria-hidden="true"
               />
               <div className="relative mx-auto max-w-2xl">
-                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-1 text-[11px] font-semibold text-emerald-700 shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Start your free scan
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-3.5 py-1 text-[11px] font-bold text-[#D4F63C] shadow-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#D4F63C] animate-ping" />
+                  Start your free scan today
                 </span>
-                <h2 className="mt-5 text-balance text-4xl font-semibold tracking-[-0.055em] text-[#111827] sm:text-5xl">
+                <h2 className="mt-6 text-balance text-4xl font-black tracking-[-0.055em] text-white sm:text-5xl">
                   Be the answer your customers find.
                 </h2>
-                <p className="mx-auto mt-4 max-w-lg text-[15px] leading-7 text-gray-500 sm:text-base">
-                  Join 63,100+ marketers using AEO Checker to measure, improve, and win visibility
-                  in AI search.
+                <p className="mx-auto mt-4 max-w-lg text-[15px] font-medium leading-7 text-slate-300 sm:text-base">
+                  Join 63,100+ marketers and brands using AEO Tracker to measure, audit, and dominate
+                  visibility across AI search engines.
                 </p>
-                <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+                <div className="mt-8 flex flex-col items-stretch justify-center gap-3.5 sm:flex-row sm:items-center">
                   <Link
                     href={user ? "/dashboard" : "/login"}
-                    className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-8 py-4 text-[15px] font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-gray-800 hover:shadow-lg"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#D4F63C] px-8 py-4 text-xs font-black uppercase tracking-wider text-slate-950 shadow-glow-neon transition-all hover:bg-[#c2e42b] hover:scale-102"
                   >
-                    {user ? "Go to Dashboard" : "Try for free"}
+                    <span>{user ? "Go to Dashboard" : "Start Free Audit"}</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                   <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-8 py-4 text-[15px] font-semibold text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-gray-400 hover:text-gray-900 hover:shadow-md"
+                    href="/pricing"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-8 py-4 text-xs font-black uppercase tracking-wider text-white shadow-sm transition-all hover:bg-slate-800 hover:border-slate-500"
                   >
-                    Get in Touch
+                    View Pricing Plans
                   </Link>
                 </div>
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-gray-400">
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] font-medium text-slate-400">
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#10b981]" />
                     No credit card required
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#10b981]" />
+                    Instant live engine results
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#10b981]" />
                     Cancel anytime
                   </span>
                 </div>
@@ -1193,17 +1217,18 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white">
+      <footer className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
-            <a href="#" className="flex items-center gap-2.5" aria-label="AEO Checker home">
+            <a href="#" className="flex items-center gap-2.5" aria-label="AEO Tracker home">
               <LogoMark className="h-8 w-8" />
-              <span className="text-[15px] font-semibold tracking-[-0.03em] text-[#111827]">
-                AEO Checker
+              <span className="text-[15px] font-black tracking-[-0.03em] text-[#0B0F17]">
+                AEO Tracker
               </span>
             </a>
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2" aria-label="Footer navigation">
               {[
+                { label: "Pricing", href: "/pricing" },
                 { label: "About", href: "/about" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy", href: "/privacy" },
@@ -1212,16 +1237,19 @@ export default function Home() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-medium text-gray-400 transition-colors hover:text-gray-700"
+                  className="text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
                 >
                   {link.label}
                 </a>
               ))}
             </nav>
           </div>
-          <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-gray-100 pt-6 text-[11px] text-gray-400 sm:flex-row">
-            <p>© 2026 AEO Checker. All rights reserved.</p>
-            <p>Built for the AI search era.</p>
+          <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-[11px] font-medium text-slate-400 sm:flex-row">
+            <p>© 2026 AEO Tracker. All rights reserved.</p>
+            <p className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+              Built for the AI Answer Engine era.
+            </p>
           </div>
         </div>
       </footer>

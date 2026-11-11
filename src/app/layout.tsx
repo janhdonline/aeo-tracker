@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import { ChunkErrorRecovery } from "@/components/ChunkErrorRecovery";
 import { GlobalAnnouncementBanner } from "@/components/GlobalAnnouncementBanner";
 import { ImpersonationBanner } from "@/components/ImpersonationBanner";
@@ -8,12 +7,10 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  preload: false,
-});
+const inter = {
+  variable: "font-sans",
+  className: "font-sans",
+};
 
 const siteUrl = (
   process.env.NEXT_PUBLIC_APP_URL ||

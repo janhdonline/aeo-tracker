@@ -157,6 +157,22 @@ CREATE INDEX IF NOT EXISTS idx_mentions_result_id ON public.mentions(result_id);
 CREATE INDEX IF NOT EXISTS idx_competitor_appearances_result_id ON public.competitor_appearances(result_id);
 CREATE INDEX IF NOT EXISTS idx_scan_results_run_id ON public.scan_results(run_id);
 CREATE INDEX IF NOT EXISTS idx_snapshot_scores_project_id ON public.snapshot_scores(project_id);
+
+-- Product / SKU Entity Hierarchy (Phase 2.2)
+CREATE TABLE IF NOT EXISTS public.products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  sku_code TEXT,
+  category TEXT,
+  target_url TEXT,
+  description TEXT,
+  visibility_score INT DEFAULT 75,
+  citations_count INT DEFAULT 12,
+  status TEXT DEFAULT 'active',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_products_project_id ON public.products(project_id);
 -- Migration 002b: Execution loop tables (the differentiator)
 -- fix_briefs: gap -> recommendation -> status
 -- verification_runs: re-check briefs after being applied
