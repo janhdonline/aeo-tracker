@@ -105,7 +105,7 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
                     Hallucination Sentinel
                   </span>
                 </div>
-                <h1 className="font-display text-2xl font-black tracking-tight text-slate-950">
+                <h1 className="font-sans text-2xl font-black tracking-tight text-slate-950">
                   AI Discrepancy &amp; Hallucination Alerts
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -149,7 +149,7 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
               <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
                   <span>Resolved Truths</span>
-                  <CheckCircle className="h-4 w-4 text-emerald-500" />
+                  <CheckCircle className="h-4 w-4 text-slate-900" />
                 </div>
                 <div className="text-2xl font-black text-slate-950">
                   {alerts.filter(a => a.reviewed).length}
@@ -160,9 +160,9 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
               <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
                   <span>Watchdog Status</span>
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                  <span className="flex h-2 w-2 rounded-full bg-slate-50 animate-ping" />
                 </div>
-                <div className="text-sm font-black text-emerald-700">Autonomous Sentinel Active</div>
+                <div className="text-sm font-black text-slate-900">Autonomous Sentinel Active</div>
                 <p className="text-[11px] text-slate-400 mt-1">Running continuous checks across 6 frontier LLMs</p>
               </div>
             </div>
@@ -213,11 +213,11 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
                               </span>
                             </div>
 
-                            <div className="rounded-xl bg-emerald-50 border border-emerald-200/70 p-3">
-                              <span className="block text-[10px] font-black uppercase tracking-wider text-emerald-700 mb-1">
+                            <div className="rounded-xl bg-slate-50 border border-slate-200/70 p-3">
+                              <span className="block text-[10px] font-black uppercase tracking-wider text-slate-900 mb-1">
                                 Verified Ground Truth
                               </span>
-                              <span className="font-bold text-emerald-950 text-xs sm:text-sm">
+                              <span className="font-bold text-slate-900 text-xs sm:text-sm">
                                 {alert.expected_value}
                               </span>
                             </div>
@@ -228,7 +228,7 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
                           <div className="flex sm:flex-col items-center justify-end gap-2 shrink-0 pt-2 lg:pt-0">
                             <button
                               onClick={() => handleReview(alert.id, true)}
-                              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 text-xs font-bold transition-all shadow-xs cursor-pointer"
+                              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-50 hover:bg-slate-50 text-white px-4 py-2.5 text-xs font-bold transition-all shadow-xs cursor-pointer"
                             >
                               <CheckCircle className="h-4 w-4" />
                               Resolve Discrepancy
@@ -236,7 +236,7 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
                           </div>
                         ) : (
                           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 self-start">
-                            <CheckCircle className="h-4 w-4 text-emerald-500" />
+                            <CheckCircle className="h-4 w-4 text-slate-900" />
                             Resolved &amp; Logged
                           </div>
                         )}
@@ -247,7 +247,7 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
               </div>
             ) : (
               <div className="rounded-3xl border border-dashed border-slate-200 bg-white p-14 text-center">
-                <CheckCircle className="h-10 w-10 text-emerald-500 mx-auto mb-3" />
+                <CheckCircle className="h-10 w-10 text-slate-900 mx-auto mb-3" />
                 <h3 className="text-base font-black text-slate-900">Zero Hallucinations Detected</h3>
                 <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed">
                   All surveyed answer engines are currently representing your verified brand facts with 100% accuracy.

@@ -174,7 +174,7 @@ export default async function SourcesPage({ params }: { params: { id: string } }
                   Back to Overview
                 </Link>
                 <span className="text-slate-300">/</span>
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                <span className="text-xs font-semibold text-slate-900 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200 flex items-center gap-1">
                   <Sparkles className="h-3 w-3" />
                   Paid Power Feature
                 </span>

@@ -97,13 +97,13 @@ export function AnswerabilityAuditCard({ domain, brandName, compact = false }: A
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200/60">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-900 border border-slate-200/60">
               <Zap className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               Content &quot;Answerability&quot; Diagnostic Engine
             </h3>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-0.5 text-[11px] font-bold text-slate-900 border border-slate-200">
               40–60 Word Rule
             </span>
           </div>
@@ -117,7 +117,7 @@ export function AnswerabilityAuditCard({ domain, brandName, compact = false }: A
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               Answerability
             </span>
-            <span className="font-display text-lg font-extrabold text-slate-900 tabular-nums">
+            <span className="font-sans text-lg font-extrabold text-slate-900 tabular-nums">
               {score}/100
             </span>
           </div>
@@ -136,7 +136,7 @@ export function AnswerabilityAuditCard({ domain, brandName, compact = false }: A
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            <FileText className="h-3.5 w-3.5 text-emerald-600" />
+            <FileText className="h-3.5 w-3.5 text-slate-900" />
             <span>Passage Text Tester</span>
           </button>
           <button
@@ -177,9 +177,9 @@ export function AnswerabilityAuditCard({ domain, brandName, compact = false }: A
                 <div key={key} className="p-3 rounded-lg bg-white border border-slate-200/70 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-[11px] text-slate-900 truncate">{item.label}</span>
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-slate-900 shrink-0" />
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-bold block">+{item.score} pts passed</span>
+                  <span className="text-[10px] text-slate-900 font-bold block">+{item.score} pts passed</span>
                 </div>
               ))}
             </div>
@@ -232,7 +232,7 @@ export function AnswerabilityAuditCard({ domain, brandName, compact = false }: A
             <span
               className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold border ${
                 wordCount >= 35 && wordCount <= 65
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  ? 'bg-slate-50 text-slate-900 border-slate-200'
                   : 'bg-amber-50 text-amber-800 border-amber-200'
               }`}
             >
@@ -257,10 +257,10 @@ export function AnswerabilityAuditCard({ domain, brandName, compact = false }: A
       </div>
 
       {/* AI-Optimized Answer Passage */}
-      <div className="rounded-xl border border-emerald-200/80 bg-emerald-50/30 p-4 sm:p-5 space-y-3">
+      <div className="rounded-xl border border-slate-200/80 bg-slate-50/30 p-4 sm:p-5 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-emerald-600" />
+            <Sparkles className="h-4 w-4 text-slate-900" />
             <h4 className="text-xs font-bold text-slate-900">
               AI-Optimized Answer Passage ({rewriteWordCount} words)
             </h4>
@@ -268,28 +268,28 @@ export function AnswerabilityAuditCard({ domain, brandName, compact = false }: A
           <button
             type="button"
             onClick={handleCopy}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-white border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-white border border-slate-200 px-3 py-1 text-xs font-bold text-slate-900 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
           >
             {copied ? (
               <>
-                <Check className="h-3 w-3 text-emerald-600" />
-                <span>Copied!</span>
+                <Check className="h-3 w-3 text-slate-900" />
+                <span>Copied</span>
               </>
             ) : (
               <>
-                <Copy className="h-3 w-3 text-emerald-600" />
+                <Copy className="h-3 w-3 text-slate-900" />
                 <span>Copy Passage</span>
               </>
             )}
           </button>
         </div>
 
-        <p className="text-xs text-slate-700 leading-relaxed font-medium bg-white/80 p-3.5 rounded-lg border border-emerald-100">
+        <p className="text-xs text-slate-700 leading-relaxed font-medium bg-white/80 p-3.5 rounded-lg border border-slate-200">
           &ldquo;{optimizedRewrite}&rdquo;
         </p>
 
         <p className="text-[11px] text-slate-500">
-          💡 <strong>Why this wins:</strong> It defines the brand category immediately, lists 3 core value propositions, and cites specific AI engines within the exact 45-word window generative search summarizers lift.
+          <strong>Why this wins:</strong> It defines the brand category immediately, lists 3 core value propositions, and cites specific AI engines within the exact 45-word window generative search summarizers lift.
         </p>
       </div>
     </section>

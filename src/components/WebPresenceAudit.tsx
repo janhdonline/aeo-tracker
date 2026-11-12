@@ -99,7 +99,7 @@ export function WebPresenceAudit({ domain, brandName, compact = false }: WebPres
       iconType: 'wikipedia',
       score: 86,
       status: 'Verified Entity',
-      badgeStyle: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      badgeStyle: 'bg-slate-50 text-slate-900 border-slate-200',
       citations: 'Ground-truth knowledge anchor',
       role: 'Core E-E-A-T entity foundation for Claude & Google AI Overviews',
       insight: `Wikidata Q-ID and structured knowledge anchors prevent AI engines from confusing ${brand} with similarly named entities.`,
@@ -212,10 +212,10 @@ export function WebPresenceAudit({ domain, brandName, compact = false }: WebPres
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-200/60">
               <Globe className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               Web Presence & E-E-A-T Footprint
             </h3>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-0.5 text-[11px] font-bold text-slate-900 border border-slate-200">
               {avgPresenceScore}/100 Footprint Score
             </span>
             {loading && (
@@ -242,8 +242,8 @@ export function WebPresenceAudit({ domain, brandName, compact = false }: WebPres
           >
             {copiedTip ? (
               <>
-                <Check className="h-3.5 w-3.5 text-emerald-600" />
-                <span className="text-emerald-700">Copied sameAs!</span>
+                <Check className="h-3.5 w-3.5 text-slate-900" />
+                <span className="text-slate-900">Copied sameAs!</span>
               </>
             ) : (
               <>
@@ -310,7 +310,7 @@ export function WebPresenceAudit({ domain, brandName, compact = false }: WebPres
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="font-display text-base font-extrabold text-slate-900 block tabular-nums">
+                  <span className="font-sans text-base font-extrabold text-slate-900 block tabular-nums">
                     {plat.score}/100
                   </span>
                   <span
@@ -325,7 +325,7 @@ export function WebPresenceAudit({ domain, brandName, compact = false }: WebPres
               <div className="w-full bg-slate-200/70 h-1.5 rounded-full overflow-hidden mt-3 mb-3">
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${
-                    plat.score >= 80 ? 'bg-emerald-500' : plat.score >= 60 ? 'bg-indigo-500' : 'bg-amber-500'
+                    plat.score >= 80 ? 'bg-slate-50' : plat.score >= 60 ? 'bg-indigo-500' : 'bg-amber-500'
                   }`}
                   style={{ width: `${plat.score}%` }}
                 />
@@ -352,7 +352,7 @@ export function WebPresenceAudit({ domain, brandName, compact = false }: WebPres
 
             <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs">
               <span className="font-semibold text-[11px] text-slate-500 flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                <ShieldCheck className="h-3.5 w-3.5 text-slate-900" />
                 {plat.citations}
               </span>
               {plat.actionUrl && (

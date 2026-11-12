@@ -52,11 +52,11 @@ export default function AnswerabilityToolPage() {
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 space-y-10">
         {/* Hero Section */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 text-slate-900 text-xs font-bold border border-slate-200">
             <Zap className="h-3.5 w-3.5" />
             <span>Generative Search Quotation Standard</span>
           </div>
-          <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="font-sans text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Content &quot;Answerability&quot; Diagnostic
           </h1>
           <p className="text-sm text-slate-600 leading-relaxed">
@@ -70,10 +70,10 @@ export default function AnswerabilityToolPage() {
         {/* 3 Strategic Rules of AI Answerability */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-            <div className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm border border-emerald-100">
+            <div className="h-9 w-9 rounded-xl bg-slate-50 text-slate-900 flex items-center justify-center font-bold text-sm border border-slate-200">
               01
             </div>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               The 40–60 Word Window
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -85,7 +85,7 @@ export default function AnswerabilityToolPage() {
             <div className="h-9 w-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm border border-indigo-100">
               02
             </div>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               First Sentence Category Rule
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -97,7 +97,7 @@ export default function AnswerabilityToolPage() {
             <div className="h-9 w-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm border border-amber-100">
               03
             </div>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               FAQ Schema Synergy
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -109,7 +109,7 @@ export default function AnswerabilityToolPage() {
         {/* CTA Footer Card */}
         <section className="rounded-3xl border border-slate-900 bg-slate-900 text-white p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-card">
           <div className="space-y-2 text-center md:text-left">
-            <h3 className="font-display text-xl sm:text-2xl font-bold">
+            <h3 className="font-sans text-xl sm:text-2xl font-bold">
               Want automated answerability audits across all your pages?
             </h3>
             <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
@@ -118,7 +118,7 @@ export default function AnswerabilityToolPage() {
           </div>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-50 hover:bg-slate-50 text-slate-950 font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
           >
             <span>Open AEO Dashboard</span>
             <ArrowRight className="h-4 w-4" />

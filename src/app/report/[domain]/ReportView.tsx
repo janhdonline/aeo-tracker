@@ -214,24 +214,25 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
   };
 
   // Safe normalized fallback variables to prevent any undefined runtime crashes
-  const brandName = data.brandName || data.domain?.split('.')[0] || 'Brand';
-  const products = Array.isArray(data.products) && data.products.length > 0
-    ? data.products
+  const safeData = data || ({} as any);
+  const brandName = safeData.brandName || safeData.domain?.split('.')[0] || 'Brand';
+  const products = Array.isArray(safeData.products) && safeData.products.length > 0
+    ? safeData.products
     : [`${brandName} Core Platform`, `${brandName} Solutions`];
-  const productRankings = Array.isArray(data.productRankings) ? data.productRankings : [];
-  const prompts = Array.isArray(data.prompts) ? data.prompts : [];
-  const competitorNames = Array.isArray(data.competitorNames) && data.competitorNames.length > 0
-    ? data.competitorNames
+  const productRankings = Array.isArray(safeData.productRankings) ? safeData.productRankings : [];
+  const prompts = Array.isArray(safeData.prompts) ? safeData.prompts : [];
+  const competitorNames = Array.isArray(safeData.competitorNames) && safeData.competitorNames.length > 0
+    ? safeData.competitorNames
     : ['Market Alternative A', 'Industry Choice B'];
-  const competitorDots = Array.isArray(data.competitorDots) ? data.competitorDots : [];
-  const aiChatbotsTable = Array.isArray(data.aiChatbotsTable) ? data.aiChatbotsTable : [];
-  const aiModels = data.aiModels || {
+  const competitorDots = Array.isArray(safeData.competitorDots) ? safeData.competitorDots : [];
+  const aiChatbotsTable = Array.isArray(safeData.aiChatbotsTable) ? safeData.aiChatbotsTable : [];
+  const aiModels = safeData.aiModels || {
     chatgpt: { name: 'ChatGPT-4o', score: 85, checked: true },
     gemini: { name: 'Google Gemini', score: 82, checked: true },
     claude: { name: 'Claude 3.7', score: 79, checked: true },
     perplexity: { name: 'Perplexity Pro', score: 87, checked: true },
   };
-  const strategy = data.strategy || {
+  const strategy = safeData.strategy || {
     answerability: { score: 75, goodLength: true, conversational: true, statistics: true, citations: true },
     webPresence: { wikipedia: true, redditScore: 82, xScore: 68, youtubeScore: 74 },
     structuredData: { score: 85 },
@@ -259,16 +260,16 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             {!sidebarCollapsed ? (
               <Link href="/" className="flex items-center gap-2.5">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
-                  <Globe className="h-4 w-4 text-emerald-400" />
+                  <Globe className="h-4 w-4 text-slate-900" />
                 </span>
-                <span className="font-display text-base font-bold tracking-tight text-slate-900">
+                <span className="font-sans text-base font-bold tracking-tight text-slate-900">
                   AEO Tracker
                 </span>
               </Link>
             ) : (
               <Link href="/" className="mx-auto" title="AEO Tracker Home">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
-                  <Globe className="h-4 w-4 text-emerald-400" />
+                  <Globe className="h-4 w-4 text-slate-900" />
                 </span>
               </Link>
             )}
@@ -472,7 +473,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 <span
                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-extrabold tracking-wide uppercase shadow-2xs ${
                     isPro
-                      ? 'border-emerald-500/25 bg-emerald-50 text-emerald-700'
+                      ? 'border-slate-200/25 bg-slate-50 text-slate-900'
                       : 'border-blue-500/25 bg-blue-50 text-blue-700'
                   }`}
                 >
@@ -570,7 +571,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       cx="64"
                       cy="64"
                       r={radius}
-                      className="text-emerald-500"
+                      className="text-slate-900"
                       strokeWidth="7"
                       strokeDasharray={circumference}
                       initial={{ strokeDashoffset: circumference }}
@@ -585,7 +586,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     />
                   </svg>
                   <div className="absolute flex flex-col items-center justify-center text-center">
-                    <span className="font-display text-3xl font-extrabold tracking-tight text-slate-900">
+                    <span className="font-sans text-3xl font-extrabold tracking-tight text-slate-900">
                       <Counter value={data.score} />
                     </span>
                     <span className="text-[10px] font-bold text-slate-400 -mt-1">/100</span>
@@ -594,7 +595,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
 
                 {/* Brand Meta, Chips & Products */}
                 <div className="space-y-2">
-                  <h1 className="font-display text-2xl font-bold tracking-tight text-slate-950">
+                  <h1 className="font-sans text-2xl font-bold tracking-tight text-slate-950">
                     {data.brandName}
                   </h1>
 
@@ -669,7 +670,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-2xl font-bold text-slate-900">{data.productsFoundPct ?? 0}%</p>
+              <p className="font-sans text-2xl font-bold text-slate-900">{data.productsFoundPct ?? 0}%</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -680,7 +681,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-2xl font-bold text-slate-900">{data.yourProductsPct ?? 0}%</p>
+              <p className="font-sans text-2xl font-bold text-slate-900">{data.yourProductsPct ?? 0}%</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -691,7 +692,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-2xl font-bold text-slate-900">{data.competitorProductsPct ?? 0}%</p>
+              <p className="font-sans text-2xl font-bold text-slate-900">{data.competitorProductsPct ?? 0}%</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
@@ -702,7 +703,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 </span>
                 <Info className="h-3.5 w-3.5 text-slate-400" />
               </div>
-              <p className="font-display text-sm font-bold text-slate-900 truncate" title={data.bestProduct || '—'}>
+              <p className="font-sans text-sm font-bold text-slate-900 truncate" title={data.bestProduct || '—'}>
                 {data.bestProduct || '—'}
               </p>
             </div>
@@ -716,8 +717,8 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-display text-base font-bold text-slate-900">AI Presence</h3>
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+                  <h3 className="font-sans text-base font-bold text-slate-900">AI Presence</h3>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                     {data.aiPresenceScore}
                   </span>
                 </div>
@@ -732,7 +733,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       <span className="font-semibold text-slate-800">ChatGPT-4o</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <CheckCircle2 className="h-4 w-4 text-slate-900" />
                       <span className="font-bold text-slate-900">{aiModels.chatgpt?.score ?? 85}</span>
                     </div>
                   </div>
@@ -746,7 +747,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       <span className="font-semibold text-slate-800">Google Gemini</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <CheckCircle2 className="h-4 w-4 text-slate-900" />
                       <span className="font-bold text-slate-900">{aiModels.gemini?.score ?? 82}</span>
                     </div>
                   </div>
@@ -760,7 +761,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       <span className="font-semibold text-slate-800">Anthropic Claude</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <CheckCircle2 className="h-4 w-4 text-slate-900" />
                       <span className="font-bold text-slate-900">{aiModels.claude?.score ?? 79}</span>
                     </div>
                   </div>
@@ -774,7 +775,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       <span className="font-semibold text-slate-800">Perplexity Pro</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <CheckCircle2 className="h-4 w-4 text-slate-900" />
                       <span className="font-bold text-slate-900">{aiModels.perplexity?.score ?? 87}</span>
                     </div>
                   </div>
@@ -799,8 +800,8 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-display text-base font-bold text-slate-900">Key Prompts</h3>
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+                  <h3 className="font-sans text-base font-bold text-slate-900">Key Prompts</h3>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                     {data.keyPromptsScore}
                   </span>
                 </div>
@@ -853,8 +854,8 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-display text-base font-bold text-slate-900">Competitor Landscape</h3>
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+                  <h3 className="font-sans text-base font-bold text-slate-900">Competitor Landscape</h3>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                     {data.competitorLandscapeScore}
                   </span>
                 </div>
@@ -900,8 +901,8 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-display text-base font-bold text-slate-900">Strategy Review</h3>
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+                  <h3 className="font-sans text-base font-bold text-slate-900">Strategy Review</h3>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                     {data.strategyReviewScore}
                   </span>
                 </div>
@@ -948,7 +949,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                         </span>
                       </div>
                       <div className="flex items-center justify-center border-l border-slate-200 pl-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
                       </div>
                     </div>
                   </div>
@@ -1053,7 +1054,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
           {/* 6. TASKS SECTION (Matches Image 2)                             */}
           {/* ============================================================== */}
           <div id="tasks-section" className="pt-2">
-            <h3 className="font-display text-base font-bold text-slate-900">Tasks</h3>
+            <h3 className="font-sans text-base font-bold text-slate-900">Tasks</h3>
             <p className="text-xs text-slate-500 mt-0.5">
               Prioritized actions backed by the evidence in this report.
             </p>
@@ -1068,7 +1069,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
           <div className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs relative overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
-                <h3 className="font-display text-xl font-bold text-slate-900">
+                <h3 className="font-sans text-xl font-bold text-slate-900">
                   Grow your AEO in just 90 days
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1181,7 +1182,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 <span className="text-amber-600 font-bold">Day 1: Baseline ({data.score}%)</span>
                 <span>Day 30: AI Indexation</span>
                 <span>Day 60: Entity Graph Lift</span>
-                <span className="text-emerald-700 font-bold">Day 90: Projected Lift (~88%)</span>
+                <span className="text-slate-900 font-bold">Day 90: Projected Lift (~88%)</span>
               </div>
             </div>
           </div>
@@ -1199,7 +1200,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   {data.keyPromptsScore}
                 </span>
                 <div>
-                  <h3 className="font-display text-base font-bold text-slate-900">Key Prompts</h3>
+                  <h3 className="font-sans text-base font-bold text-slate-900">Key Prompts</h3>
                   <p className="text-xs text-slate-500">Live AI answers across Google AI Overviews, ChatGPT, Claude, and Perplexity</p>
                 </div>
               </div>
@@ -1216,7 +1217,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   </div>
                   <div>
                     <p className="text-[11px] font-bold text-slate-500 uppercase">Brand Mentions</p>
-                    <p className="text-xl font-extrabold text-emerald-600 mt-0.5">50%</p>
+                    <p className="text-xl font-extrabold text-slate-900 mt-0.5">50%</p>
                   </div>
                   <div>
                     <p className="text-[11px] font-bold text-slate-500 uppercase">Site Citations</p>
@@ -1228,8 +1229,8 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                 {prompts.map((p) => (
                   <div key={p.id} className="rounded-xl border border-slate-200 p-5 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <h4 className="font-display text-sm font-bold text-slate-900">&ldquo;{p.prompt}&rdquo;</h4>
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 self-start sm:self-auto">
+                      <h4 className="font-sans text-sm font-bold text-slate-900">&ldquo;{p.prompt}&rdquo;</h4>
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200 self-start sm:self-auto">
                         <CheckCircle2 className="h-3 w-3" />
                         {p.status}
                       </span>
@@ -1278,7 +1279,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   {products.length}
                 </span>
                 <div>
-                  <h3 className="font-display text-base font-bold text-slate-900">Products & Offerings</h3>
+                  <h3 className="font-sans text-base font-bold text-slate-900">Products & Offerings</h3>
                   <p className="text-xs text-slate-500">Ranking of your products vs competitor products in AI answers</p>
                 </div>
               </div>
@@ -1300,14 +1301,14 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {productRankings.map((p) => (
-                        <tr key={p.rank} className={p.isYourProduct ? 'bg-emerald-50/40 font-semibold' : ''}>
+                        <tr key={p.rank} className={p.isYourProduct ? 'bg-slate-50/40 font-semibold' : ''}>
                           <td className="py-3 font-bold text-slate-800">#{p.rank}</td>
                           <td className="py-3 text-slate-900 flex items-center gap-1.5">
                             <Package className="h-3 w-3 text-slate-400" />
                             <span>{p.name}</span>
                           </td>
                           <td className="py-3 text-slate-600">{p.brand}</td>
-                          <td className="py-3 text-right text-emerald-700 font-bold">{p.share}%</td>
+                          <td className="py-3 text-right text-slate-900 font-bold">{p.share}%</td>
                           <td className="py-3 text-right text-slate-700">{p.mentions}</td>
                         </tr>
                       ))}
@@ -1327,11 +1328,11 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
               className="w-full p-6 flex items-center justify-between text-left hover:bg-slate-50/50 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 text-xs font-bold">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-slate-900 text-xs font-bold">
                   {data.aiPresenceScore}
                 </span>
                 <div>
-                  <h3 className="font-display text-base font-bold text-slate-900">AI Chatbots Information Analysis</h3>
+                  <h3 className="font-sans text-base font-bold text-slate-900">AI Chatbots Information Analysis</h3>
                   <p className="text-xs text-slate-500">Breakdown across OpenAI, Gemini, Claude, Perplexity, Grok, and DeepSeek</p>
                 </div>
               </div>
@@ -1358,16 +1359,16 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                             {m.name} · <span className="font-normal text-slate-500">{m.subModel}</span>
                           </td>
                           <td className="py-3">
-                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                            <CheckCircle2 className="h-4 w-4 text-slate-900" />
                           </td>
                           <td className="py-3">
-                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                            <CheckCircle2 className="h-4 w-4 text-slate-900" />
                           </td>
                           <td className="py-3">
                             <span
                               className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                                 m.uncertainty === 'None'
-                                  ? 'bg-emerald-50 text-emerald-700'
+                                  ? 'bg-slate-50 text-slate-900'
                                   : 'bg-amber-50 text-amber-700'
                               }`}
                             >
@@ -1397,7 +1398,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   {data.competitorLandscapeScore}
                 </span>
                 <div>
-                  <h3 className="font-display text-base font-bold text-slate-900">Competitive Matrix</h3>
+                  <h3 className="font-sans text-base font-bold text-slate-900">Competitive Matrix</h3>
                   <p className="text-xs text-slate-500">Mention rate against sentiment of captured AI answers</p>
                 </div>
               </div>
@@ -1412,7 +1413,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       <div className="border-r border-b border-slate-200 p-2 text-[10px] font-bold text-slate-400">
                         Loved, less visible
                       </div>
-                      <div className="border-b border-slate-200 p-2 text-right text-[10px] font-bold text-emerald-700 bg-emerald-50/40">
+                      <div className="border-b border-slate-200 p-2 text-right text-[10px] font-bold text-slate-900 bg-slate-50/40">
                         ★ Leaders (High Visibility & Sentiment)
                       </div>
                       <div className="border-r border-slate-200 p-2 text-[10px] font-bold text-slate-400 flex items-end">
@@ -1434,11 +1435,11 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                         >
                           <div className="relative">
                             {dot.isYourBrand && (
-                              <span className="absolute -inset-1.5 rounded-full bg-emerald-400/50 animate-ping" />
+                              <span className="absolute -inset-1.5 rounded-full bg-slate-50/50 animate-ping" />
                             )}
                             <span
                               className={`relative flex h-6 w-6 items-center justify-center rounded-full text-white text-[10px] font-bold shadow-sm ring-2 ring-white ${
-                                dot.isYourBrand ? 'bg-emerald-600 ring-emerald-300 scale-125' : 'bg-indigo-600'
+                                dot.isYourBrand ? 'bg-slate-50 ring-emerald-300 scale-125' : 'bg-indigo-600'
                               }`}
                             >
                               {dot.name.charAt(0)}
@@ -1481,7 +1482,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   {data.strategyReviewScore}
                 </span>
                 <div>
-                  <h3 className="font-display text-base font-bold text-slate-900">Strategy Review & AI Crawlers</h3>
+                  <h3 className="font-sans text-base font-bold text-slate-900">Strategy Review & AI Crawlers</h3>
                   <p className="text-xs text-slate-500">Structured data, semantic tags, Reddit presence, and robots.txt accessibility</p>
                 </div>
               </div>
@@ -1502,15 +1503,15 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
 
                 {/* AI Crawler Accessibility */}
                 <div className="space-y-2">
-                  <h4 className="font-display text-sm font-bold text-slate-900">AI Crawler Accessibility</h4>
+                  <h4 className="font-sans text-sm font-bold text-slate-900">AI Crawler Accessibility</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                       <span className="font-medium text-slate-700">Sitemap (sitemap.xml)</span>
-                      <span className="text-emerald-700 font-bold">Valid ✓</span>
+                      <span className="text-slate-900 font-bold">Valid ✓</span>
                     </div>
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                       <span className="font-medium text-slate-700">Robots.txt (GPTBot/ClaudeBot)</span>
-                      <span className="text-emerald-700 font-bold">Allowed ✓</span>
+                      <span className="text-slate-900 font-bold">Allowed ✓</span>
                     </div>
                     <div className="p-3 rounded-xl bg-amber-50/50 border border-amber-200/60 flex items-center justify-between">
                       <span className="font-medium text-slate-700">llms.txt AI Knowledge File</span>
@@ -1518,7 +1519,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                     </div>
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                       <span className="font-medium text-slate-700">Pre-rendered HTML Text</span>
-                      <span className="text-emerald-700 font-bold">Supported ✓</span>
+                      <span className="text-slate-900 font-bold">Supported ✓</span>
                     </div>
                   </div>
                 </div>
@@ -1549,29 +1550,29 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
 
               <div className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-white shadow-xs">
-                  <Zap className="h-5 w-5 text-emerald-400 fill-current" />
+                  <Zap className="h-5 w-5 text-slate-900 fill-current" />
                 </span>
                 <div>
-                  <h4 className="font-display text-base font-bold text-slate-900">Unlock Continuous Tracking</h4>
+                  <h4 className="font-sans text-base font-bold text-slate-900">Unlock Continuous Tracking</h4>
                   <p className="text-xs text-slate-500">{modalFeature}</p>
                 </div>
               </div>
 
               <div className="space-y-2.5 rounded-xl bg-slate-50 p-4 border border-slate-100 text-xs text-slate-700">
                 <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
                   <span>Daily automated scans for {data.domain}</span>
                 </div>
                 <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
                   <span>50+ commercial buyer prompts monitored</span>
                 </div>
                 <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
                   <span>Real-time competitor citation leak alerts</span>
                 </div>
                 <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
                   <span>Automated weekly PDF & email digests</span>
                 </div>
               </div>
@@ -1582,7 +1583,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                   className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-xs font-bold text-white shadow-md hover:bg-slate-800 transition-colors"
                 >
                   <span>Sign In / Create Profile to Unlock</span>
-                  <ArrowRight className="h-3.5 w-3.5 text-emerald-400" />
+                  <ArrowRight className="h-3.5 w-3.5 text-slate-900" />
                 </Link>
 
                 <Link
@@ -1622,7 +1623,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
 
               <div className="flex items-center gap-2 text-slate-900 font-bold">
                 <AlertTriangle className="h-5 w-5 text-amber-500" />
-                <h4 className="font-display text-base">Report Data Discrepancy</h4>
+                <h4 className="font-sans text-base">Report Data Discrepancy</h4>
               </div>
 
               <p className="text-xs text-slate-600 leading-relaxed">

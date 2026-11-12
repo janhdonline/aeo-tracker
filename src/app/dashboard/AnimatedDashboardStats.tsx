@@ -95,11 +95,11 @@ const accentStyles = {
     glow: 'hover:border-purple-300 hover:ring-2 hover:ring-purple-100',
   },
   emerald: {
-    bg: 'bg-emerald-50/90',
-    border: 'border-emerald-200/70',
-    text: 'text-emerald-600',
-    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200/70',
-    glow: 'hover:border-emerald-300 hover:ring-2 hover:ring-emerald-100',
+    bg: 'bg-slate-50/90',
+    border: 'border-slate-200/70',
+    text: 'text-slate-900',
+    badge: 'bg-slate-50 text-slate-900 border-slate-200/70',
+    glow: 'hover:border-slate-300 hover:ring-2 hover:ring-slate-100',
   },
   amber: {
     bg: 'bg-amber-50/90',
@@ -135,7 +135,7 @@ export function AnimatedDashboardStats({ items }: { items: StatItem[] }) {
             className={`group relative rounded-3xl border border-slate-200/90 bg-white p-5 shadow-xs hover:shadow-card transition-all duration-200 ${styles.glow} overflow-hidden`}
           >
             {/* Subtle Top-Right Ambient Glow */}
-            <div className="pointer-events-none absolute -top-8 -right-8 h-20 w-20 rounded-full bg-slate-100/50 blur-xl group-hover:bg-emerald-100/30 transition-colors" />
+            <div className="pointer-events-none absolute -top-8 -right-8 h-20 w-20 rounded-full bg-slate-100/50 blur-xl group-hover:bg-slate-50/30 transition-colors" />
 
             <div className="flex items-center justify-between mb-3">
               <div
@@ -154,7 +154,7 @@ export function AnimatedDashboardStats({ items }: { items: StatItem[] }) {
             </div>
 
             <div>
-              <p className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              <p className="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
                 <SmartCountUp rawValue={s.value} />
               </p>
               <p className="text-xs font-bold text-slate-800 mt-1 leading-tight">

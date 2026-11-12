@@ -46,12 +46,12 @@ export function AnimatedStatCard({ items }: Props) {
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">{s.label}</h3>
             {s.badge && (
-              <span className="rounded-full bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 text-[9px] font-bold text-emerald-700">
+              <span className="rounded-full bg-slate-50 border border-slate-200/60 px-2 py-0.5 text-[9px] font-bold text-slate-900">
                 {s.badge}
               </span>
             )}
           </div>
-          <p className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mt-2">{s.value}</p>
+          <p className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mt-2">{s.value}</p>
           {s.subtext && (
             <p className="mt-1 text-[11px] font-medium text-slate-500 flex items-center gap-1">
               <span>{s.subtext}</span>

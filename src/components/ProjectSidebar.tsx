@@ -107,7 +107,7 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
               >
                 <Icon
                   className={`h-3.5 w-3.5 shrink-0 ${
-                    isActive ? 'text-emerald-400' : 'text-slate-400'
+                    isActive ? 'text-slate-400' : 'text-slate-400'
                   }`}
                   strokeWidth={isActive ? 2.2 : 1.8}
                 />
@@ -116,8 +116,8 @@ export function ProjectSidebar({ projectId, domain, current = 'overview' }: Proj
                   <span
                     className={`rounded-full px-1.5 py-0.2 text-[9px] font-bold ${
                       isActive
-                        ? 'bg-slate-800 text-emerald-300'
-                        : 'bg-emerald-50 text-emerald-700'
+                        ? 'bg-slate-800 text-slate-900'
+                        : 'bg-slate-50 text-slate-900'
                     }`}
                   >
                     {item.badge}

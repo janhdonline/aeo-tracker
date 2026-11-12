@@ -190,7 +190,7 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                       : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                  <ShieldCheck className="h-3.5 w-3.5 text-slate-900" />
                   <span>Anti-Hallucination Facts ({facts.length})</span>
                 </button>
               </div>
@@ -216,7 +216,7 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                 {/* Header */}
                 <div className="mb-6">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                <span className="text-xs font-semibold text-slate-900 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200 flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Fact Watchdog & Anti-Hallucination
                 </span>
@@ -241,7 +241,7 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                       <LogoLoader variant="mini" text="Auditing AI Models..." />
                     ) : (
                       <>
-                        <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                        <ShieldCheck className="h-3.5 w-3.5 text-slate-900" />
                         Run Fact Audit
                       </>
                     )}
@@ -266,8 +266,8 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
               </div>
 
               {auditResult && (
-                <div className="mt-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-medium text-emerald-900 flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-600 shrink-0" />
+                <div className="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 flex items-center gap-2">
+                  <Check className="h-4 w-4 text-slate-900 shrink-0" />
                   <span>{auditResult}</span>
                 </div>
               )}
@@ -287,7 +287,7 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                 <select
                   value={newType}
                   onChange={(e) => setNewType(e.target.value)}
-                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent bg-white"
                 >
                   <option value="price">Pricing (e.g. Starter tier)</option>
                   <option value="feature">Core Feature (e.g. SSO support)</option>
@@ -300,21 +300,21 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                   value={newKey}
                   onChange={(e) => setNewKey(e.target.value)}
                   placeholder="Fact Key (e.g. starter_plan_price)"
-                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent"
                 />
                 <input
                   type="text"
                   value={newValue}
                   onChange={(e) => setNewValue(e.target.value)}
                   placeholder="Expected True Value (e.g. $49/mo, 14-day trial)"
-                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent"
                 />
               </div>
               <div className="flex items-center justify-between">
                 <button
                   onClick={handleAdd}
                   disabled={loading || !newKey.trim() || !newValue.trim()}
-                  className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors shadow-sm"
+                  className="flex items-center gap-2 bg-slate-50 hover:bg-slate-50 text-white px-4 py-2 rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors shadow-sm"
                 >
                   <Plus className="h-4 w-4" />
                   Add Fact to Watchdog
@@ -323,9 +323,9 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                 {facts.length > 0 && (
                   <button
                     onClick={() => setShowPatch(!showPatch)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-emerald-700"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900"
                   >
-                    <FileCode className="h-4 w-4 text-emerald-600" />
+                    <FileCode className="h-4 w-4 text-slate-900" />
                     <span>{showPatch ? 'Hide llms.txt Patch' : 'Generate llms.txt Fact Patch'}</span>
                   </button>
                 )}
@@ -339,22 +339,22 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mb-6 overflow-hidden rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 shadow-sm"
+                  className="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/50 p-5 shadow-sm"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-emerald-600" />
-                      <h3 className="text-xs font-bold text-emerald-950 uppercase tracking-wide">
+                      <Sparkles className="h-4 w-4 text-slate-900" />
+                      <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wide">
                         Authoritative llms.txt Anti-Hallucination Patch
                       </h3>
                     </div>
                     <button
                       onClick={handleCopyPatch}
-                      className="flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50 shadow-sm transition-colors"
+                      className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50 shadow-sm transition-colors"
                     >
                       {copiedPatch ? (
                         <>
-                          <Check className="h-3.5 w-3.5 text-emerald-600" />
+                          <Check className="h-3.5 w-3.5 text-slate-900" />
                           <span>Copied Patch!</span>
                         </>
                       ) : (
@@ -425,7 +425,7 @@ ${facts.map((f) => `- [${f.fact_type.toUpperCase()}] ${f.key}: ${f.expected_valu
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
                   <button
                     onClick={() => handleQuickSeed('price', 'starter_plan_price', '$49/mo')}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-xs font-semibold text-emerald-800 transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-50 text-xs font-semibold text-slate-900 transition-colors"
                   >
                     + Quick Add: Starter Price ($49/mo)
                   </button>

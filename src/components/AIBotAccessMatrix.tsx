@@ -60,13 +60,13 @@ export function AIBotAccessMatrix({ domain, initialCrawlers }: AIBotAccessMatrix
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-600 text-white text-xs font-bold shadow-2xs">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-white text-xs font-bold shadow-2xs">
               <Bot className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-base font-bold text-slate-950">
+            <h3 className="font-sans text-base font-bold text-slate-950">
               AI Bot Access
             </h3>
-            <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
+            <span className="inline-flex items-center rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-900 border border-slate-200">
               {allowedCount}/{crawlers.length} Allowed
             </span>
             {blockedCount > 0 && (
@@ -118,7 +118,7 @@ export function AIBotAccessMatrix({ domain, initialCrawlers }: AIBotAccessMatrix
 
             <div className="shrink-0 mt-0.5">
               {c.allowed ? (
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                <CheckCircle2 className="h-4 w-4 text-slate-900" />
               ) : (
                 <XCircle className="h-4 w-4 text-rose-600" />
               )}

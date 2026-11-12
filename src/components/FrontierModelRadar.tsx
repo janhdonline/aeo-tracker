@@ -77,10 +77,10 @@ export function FrontierModelRadar({
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-base font-bold text-slate-950">
+              <h3 className="font-sans text-base font-bold text-slate-950">
                 10-Model Frontier AI Engine Radar
               </h3>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800 border border-emerald-200">
+              <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-900 border border-slate-200">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 10/10 Models Operational
               </span>
@@ -98,7 +98,7 @@ export function FrontierModelRadar({
           disabled={isProbingFleet}
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 text-xs font-bold shadow-xs transition-all cursor-pointer self-start sm:self-auto disabled:opacity-50"
         >
-          <RefreshCw className={`h-3.5 w-3.5 text-emerald-400 ${isProbingFleet ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`h-3.5 w-3.5 text-slate-900 ${isProbingFleet ? 'animate-spin' : ''}`} />
           <span>{isProbingFleet ? 'Probing 10 Engines...' : 'Probe All 10 Models'}</span>
         </button>
       </div>
@@ -142,7 +142,7 @@ export function FrontierModelRadar({
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block truncate">
                   {model.provider}
                 </span>
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-slate-900 shrink-0" />
               </div>
 
               <h4 className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight line-clamp-1">
@@ -152,7 +152,7 @@ export function FrontierModelRadar({
             </div>
 
             <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px]">
-              <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
+              <span className="font-mono font-bold text-slate-900 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200/60">
                 {model.latency}
               </span>
               <span className="text-slate-400 font-mono">Bot: {model.crawlBot}</span>
@@ -179,11 +179,11 @@ export function FrontierModelRadar({
                       {activeModel.provider}
                     </span>
                     <span className="text-xs text-slate-300">·</span>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <span className="text-[10px] font-bold text-slate-900 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200">
                       {activeModel.categoryLabel}
                     </span>
                   </div>
-                  <h3 className="font-display text-xl font-black text-slate-950">
+                  <h3 className="font-sans text-xl font-black text-slate-950">
                     {activeModel.name}
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
@@ -211,7 +211,7 @@ export function FrontierModelRadar({
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Crawl Agent</span>
-                  <span className="font-mono font-bold text-emerald-700 text-xs mt-0.5 block">{activeModel.crawlBot}</span>
+                  <span className="font-mono font-bold text-slate-900 text-xs mt-0.5 block">{activeModel.crawlBot}</span>
                 </div>
               </div>
 
@@ -226,11 +226,11 @@ export function FrontierModelRadar({
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
-                  <span className="font-bold text-emerald-900 block mb-1">
+                <div className="p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/80">
+                  <span className="font-bold text-slate-900 block mb-1">
                     AEO Optimization Directive:
                   </span>
-                  <p className="text-emerald-800 leading-relaxed text-[11px]">
+                  <p className="text-slate-900 leading-relaxed text-[11px]">
                     {activeModel.optimizationRule}
                   </p>
                 </div>
@@ -243,13 +243,13 @@ export function FrontierModelRadar({
                   <button
                     type="button"
                     onClick={() => copyBotDirective(activeModel.botDirective)}
-                    className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-900 hover:text-slate-900 transition-colors"
                   >
                     {copiedBot ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     <span>{copiedBot ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
-                <pre className="font-mono text-emerald-400 text-xs">
+                <pre className="font-mono text-slate-900 text-xs">
                   {activeModel.botDirective}
                 </pre>
               </div>

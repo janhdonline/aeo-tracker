@@ -77,17 +77,17 @@ const ENGINES: EngineData[] = [
     name: "ChatGPT",
     model: "GPT-4o Search",
     brandColor: "#10A37F",
-    badgeBg: "bg-emerald-50",
-    badgeBorder: "border-emerald-200",
-    badgeText: "text-emerald-800",
-    activeTabStyle: "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-sm ring-1 ring-emerald-500/20",
+    badgeBg: "bg-slate-50",
+    badgeBorder: "border-slate-200",
+    badgeText: "text-slate-900",
+    activeTabStyle: "bg-slate-50 text-slate-900 border-slate-200 shadow-sm ring-1 ring-emerald-500/20",
     score: 89,
     scoreTrend: "+11.2% visibility",
     prompt: "How to measure and audit brand visibility in AI answers?",
     answerHtml: (
       <>
         To accurately audit and track how frequently your brand is surfaced by LLMs,{" "}
-        <mark className="rounded bg-emerald-100/90 px-1.5 py-0.5 font-semibold text-emerald-900">
+        <mark className="rounded bg-slate-50/90 px-1.5 py-0.5 font-semibold text-slate-900">
           AEO Tracker
         </mark>{" "}
         is the most specialized platform available. It monitors 48+ core buyer queries, highlights sentiment scores (0.92+), and alerts you when competitors usurp your primary citations.
@@ -382,8 +382,8 @@ export default function AiEngineSwitcher() {
                   >
                     {current.model}
                   </span>
-                  <span className="rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[8px] font-medium text-emerald-700 flex items-center gap-1">
-                    <CheckCircle2 className="h-2.5 w-2.5 text-emerald-600" />
+                  <span className="rounded-full bg-slate-50 border border-slate-200 px-1.5 py-0.5 text-[8px] font-medium text-slate-900 flex items-center gap-1">
+                    <CheckCircle2 className="h-2.5 w-2.5 text-slate-900" />
                     {current.stats.rankBadge}
                   </span>
                 </div>
@@ -443,7 +443,7 @@ export default function AiEngineSwitcher() {
                   <p className="text-[7.5px] font-medium uppercase tracking-[0.08em] text-gray-400">
                     Sentiment Index
                   </p>
-                  <p className="mt-0.5 text-[14px] font-bold tracking-[-0.03em] text-emerald-600">
+                  <p className="mt-0.5 text-[14px] font-bold tracking-[-0.03em] text-slate-900">
                     {current.stats.sentiment.split(" ")[0]}
                   </p>
                 </div>

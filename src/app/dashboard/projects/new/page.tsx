@@ -122,7 +122,7 @@ export default function NewProjectPage() {
                   <Sparkles className="h-3 w-3 text-[#D4F63C]" />
                   AEO Visibility Studio Setup
                 </div>
-                <h1 className="font-display text-2xl font-black tracking-tight text-white">
+                <h1 className="font-sans text-2xl font-black tracking-tight text-white">
                   Track a New Web Property
                 </h1>
                 <p className="mt-1 text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
@@ -283,7 +283,7 @@ export default function NewProjectPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-slate-600">
           <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-2xs">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <ShieldCheck className="h-4 w-4 text-slate-900" />
               Real-time Citation Radar
             </div>
             <p className="text-[11px] text-slate-500 leading-relaxed">

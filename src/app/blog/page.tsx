@@ -74,7 +74,7 @@ export default function BlogPage() {
         <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+            <span className="font-sans font-bold text-base tracking-tight text-slate-900">
               AEO Tracker
             </span>
           </Link>
@@ -108,11 +108,11 @@ export default function BlogPage() {
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
           <div className="relative max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
-              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
               Engineering &amp; Empirical Research
             </div>
-            <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              The Answer Engine <span className="text-emerald-400">Optimization Journal</span>
+            <h1 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              The Answer Engine <span className="text-slate-900">Optimization Journal</span>
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               Algorithmic reverse-engineering, empirical citation data studies, and architectural blueprints for capturing AI answer recommendations.
@@ -139,7 +139,7 @@ export default function BlogPage() {
                   </span>
                 </div>
 
-                <h2 className="font-display text-base font-bold text-slate-950 group-hover:text-emerald-700 transition-colors mb-2.5 leading-snug">
+                <h2 className="font-sans text-base font-bold text-slate-950 group-hover:text-slate-900 transition-colors mb-2.5 leading-snug">
                   {post.title}
                 </h2>
                 <p className="text-xs text-slate-600 leading-relaxed">
@@ -147,7 +147,7 @@ export default function BlogPage() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">
+              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-900 group-hover:text-slate-900 transition-colors">
                 <span>Read Analysis</span>
                 <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 transition-transform" />
               </div>
@@ -162,7 +162,7 @@ export default function BlogPage() {
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <Link href="/" className="flex items-center gap-2.5">
               <LogoMark className="h-7 w-7" />
-              <span className="font-display text-sm font-bold tracking-tight text-slate-900">
+              <span className="font-sans text-sm font-bold tracking-tight text-slate-900">
                 AEO Tracker
               </span>
             </Link>
@@ -188,7 +188,7 @@ export default function BlogPage() {
           <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row">
             <p>© 2026 AEO Tracker. All rights reserved.</p>
             <p className="flex items-center gap-1.5 font-mono text-[11px]">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-50" />
               All systems operational · Enterprise telemetry active
             </p>
           </div>

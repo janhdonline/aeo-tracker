@@ -38,7 +38,7 @@ const SAMPLE_EVENTS: CitationEvent[] = [
   {
     id: 'evt-2',
     engine: 'ChatGPT-4o',
-    engineColor: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+    engineColor: 'text-slate-900 bg-slate-50 border-slate-200',
     prompt: 'notion pricing vs linear pricing comparison for small teams',
     citedUrl: 'notion.so/pricing',
     status: 'leak',
@@ -86,15 +86,15 @@ export function LiveCitationTicker({ domain = 'notion.so' }: { domain?: string }
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
-            <Activity className="h-4 w-4 text-emerald-400" />
+            <Activity className="h-4 w-4 text-slate-900" />
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-base font-bold text-slate-900">
+              <h3 className="font-sans text-base font-bold text-slate-900">
                 Live AI Citation & Mention Stream
               </h3>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-900 border border-slate-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-50 animate-ping" />
                 Live Stream
               </span>
             </div>
@@ -153,7 +153,7 @@ export function LiveCitationTicker({ domain = 'notion.so' }: { domain?: string }
 
                 {/* Prompt & Citation Target */}
                 <div className="space-y-0.5">
-                  <p className="text-xs font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                  <p className="text-xs font-semibold text-slate-900 group-hover:text-slate-900 transition-colors">
                     &ldquo;{item.prompt}&rdquo;
                   </p>
                   <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
@@ -172,8 +172,8 @@ export function LiveCitationTicker({ domain = 'notion.so' }: { domain?: string }
               {/* Status Badge */}
               <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                 {item.status === 'cited' ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/70">
-                    <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                  <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-0.5 text-[11px] font-bold text-slate-900 border border-slate-200/70">
+                    <CheckCircle2 className="h-3 w-3 text-slate-900" />
                     Cited with Link
                   </span>
                 ) : (

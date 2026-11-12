@@ -134,7 +134,6 @@ function LoginForm() {
     <div className="min-h-screen relative flex items-center justify-center bg-[#0B0F17] text-slate-100 p-4 sm:p-6 overflow-hidden">
       {/* Background glow effects */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[380px] bg-gradient-to-tr from-lime-500/10 via-emerald-500/10 to-transparent blur-3xl opacity-70" />
         <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
       </div>
 
@@ -144,11 +143,10 @@ function LoginForm() {
           <Link href="/" className="mb-3 hover:opacity-90 transition-opacity">
             <LogoMark />
           </Link>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-lime-400/10 px-3 py-1 text-[11px] font-bold text-[#D4F63C] ring-1 ring-lime-400/20 mb-3">
-            <Sparkles className="h-3 w-3 text-[#D4F63C]" />
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-800/80 px-3 py-1 text-[11px] font-semibold text-slate-300 ring-1 ring-slate-700 mb-3">
             AEO Intelligence Studio
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+          <h1 className="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             {mode === 'signup' ? 'Create Your Account' : 'Welcome Back'}
           </h1>
           <p className="mt-1.5 text-xs sm:text-sm text-slate-400">
@@ -199,8 +197,8 @@ function LoginForm() {
         )}
 
         {successMessage && (
-          <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs font-medium text-emerald-300 flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 bg-slate-50/10 border border-slate-200/30 rounded-2xl text-xs font-medium text-slate-900 flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-slate-900 shrink-0 mt-0.5" />
             <div className="leading-snug">{successMessage}</div>
           </div>
         )}
@@ -251,7 +249,7 @@ function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@company.com"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-900/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4F63C] focus:border-[#D4F63C] transition-all"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-900/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400 transition-all"
               />
             </div>
           </div>
@@ -274,7 +272,7 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••••••"
-                className="w-full pl-10 pr-10 py-2.5 bg-slate-900/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4F63C] focus:border-[#D4F63C] transition-all"
+                className="w-full pl-10 pr-10 py-2.5 bg-slate-900/70 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400 transition-all"
               />
               <button
                 type="button"
@@ -291,15 +289,12 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || googleLoading}
-            className="w-full mt-2 py-3 px-4 rounded-xl shadow-xs text-xs font-bold text-slate-950 bg-[#D4F63C] hover:bg-[#bce02b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4F63C] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full mt-2 py-3 px-4 rounded-xl shadow-xs text-xs font-semibold text-slate-950 bg-white hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer active:scale-95"
           >
             {loading ? (
               <LogoLoader variant="mini" text="Processing..." />
             ) : mode === 'signup' ? (
-              <>
-                <Sparkles className="w-4 h-4 text-slate-950" />
-                <span>Create Free Account</span>
-              </>
+              <span>Create Free Account</span>
             ) : (
               <span>Sign In to Studio</span>
             )}
@@ -317,7 +312,7 @@ function LoginForm() {
                     setError(null);
                     setSuccessMessage(null);
                   }}
-                  className="font-bold text-[#D4F63C] hover:underline underline-offset-2 transition-colors cursor-pointer"
+                  className="font-semibold text-white hover:underline underline-offset-2 transition-colors cursor-pointer"
                 >
                   Sign up free
                 </button>
@@ -332,7 +327,7 @@ function LoginForm() {
                     setError(null);
                     setSuccessMessage(null);
                   }}
-                  className="font-bold text-[#D4F63C] hover:underline underline-offset-2 transition-colors cursor-pointer"
+                  className="font-semibold text-white hover:underline underline-offset-2 transition-colors cursor-pointer"
                 >
                   Sign in
                 </button>

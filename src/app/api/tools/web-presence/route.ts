@@ -68,7 +68,7 @@ function calculatePlatformScores(domain: string, brand: string) {
       status: wikiScore >= 80 ? 'Verified Entity' : wikiScore >= 60 ? 'Growing Presence' : 'Optimization Needed',
       badgeStyle:
         wikiScore >= 80
-          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+          ? 'bg-slate-50 text-slate-900 border-slate-200'
           : 'bg-slate-100 text-slate-700 border-slate-300',
       citations: wikiScore >= 80 ? 'Ground-truth knowledge anchor' : 'Partial entity match',
       role: 'Core E-E-A-T entity foundation for Claude & Google AI Overviews',

@@ -89,8 +89,8 @@ export function AITrafficHub({
           conv: 7.2,
           duration: '2m 58s',
           bounce: '34.2%',
-          badge: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-          dot: 'bg-emerald-500',
+          badge: 'bg-slate-50 text-slate-900 border-slate-200',
+          dot: 'bg-slate-50',
         },
         {
           name: 'Claude 3.5 Sonnet',
@@ -266,14 +266,14 @@ Sitemap: https://${domain}/sitemap.xml`;
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1.5">
-              <Zap className="h-3.5 w-3.5 text-emerald-600" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-900 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200 flex items-center gap-1.5">
+              <Zap className="h-3.5 w-3.5 text-slate-900" />
               Phase 3.1: AI Traffic &amp; Conversion ROI Hub
             </span>
             <span className="text-xs text-slate-400">·</span>
             <span className="text-xs font-semibold text-slate-600">{domain}</span>
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+          <h1 className="font-sans text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
             AI Referral Traffic &amp; Attribution ROI
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 max-w-2xl leading-relaxed">
@@ -310,7 +310,7 @@ Sitemap: https://${domain}/sitemap.xml`;
           }`}
         >
           <span className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-emerald-600" />
+            <TrendingUp className="h-4 w-4 text-slate-900" />
             AI Referral Visits &amp; Conversions
           </span>
           {activeTab === 'traffic' && (
@@ -362,15 +362,15 @@ Sitemap: https://${domain}/sitemap.xml`;
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                   AI Referral Visits
                 </span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+                <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-slate-50 text-slate-900 border border-slate-200">
                   <Users className="h-3.5 w-3.5" />
                 </span>
               </div>
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="font-display text-3xl font-black text-slate-950 tabular-nums">
+                <span className="font-sans text-3xl font-black text-slate-950 tabular-nums">
                   {data.totalVisits.toLocaleString()}
                 </span>
-                <span className="inline-flex items-center text-xs font-bold text-emerald-600">
+                <span className="inline-flex items-center text-xs font-bold text-slate-900">
                   <ArrowUpRight className="h-3.5 w-3.5" />
                   {data.growthRate}
                 </span>
@@ -389,7 +389,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                 </span>
               </div>
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="font-display text-3xl font-black text-cyan-950 tabular-nums">
+                <span className="font-sans text-3xl font-black text-cyan-950 tabular-nums">
                   {data.totalSignups}
                 </span>
                 <span className="text-xs font-bold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded-md border border-cyan-200">
@@ -410,7 +410,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                 </span>
               </div>
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="font-display text-3xl font-black text-indigo-950 tabular-nums">
+                <span className="font-sans text-3xl font-black text-indigo-950 tabular-nums">
                   ${data.pipelineValue.toLocaleString()}
                 </span>
                 <span className="text-[10px] text-slate-400 font-semibold">ARR est.</span>
@@ -429,7 +429,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                 </span>
               </div>
               <div className="mt-2">
-                <span className="font-display text-lg font-bold text-slate-950 block truncate">
+                <span className="font-sans text-lg font-bold text-slate-950 block truncate">
                   Perplexity Pro
                 </span>
                 <span className="text-xs font-bold text-amber-700">52% of all AI referral clicks</span>
@@ -443,7 +443,7 @@ Sitemap: https://${domain}/sitemap.xml`;
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <h3 className="font-display text-sm font-bold text-slate-900">
+                <h3 className="font-sans text-sm font-bold text-slate-900">
                   AI Referral Daily Trajectory ({timeframe} Days)
                 </h3>
               </div>
@@ -465,7 +465,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                     <div className="space-y-1 text-[11px]">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Total Visits:</span>
-                        <strong className="text-emerald-400">{pts[hoveredIdx].d.total}</strong>
+                        <strong className="text-slate-900">{pts[hoveredIdx].d.total}</strong>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Perplexity:</span>
@@ -506,7 +506,7 @@ Sitemap: https://${domain}/sitemap.xml`;
           {/* Engine Referral Breakdown Table */}
           <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-display text-sm font-bold text-slate-900">
+              <h3 className="font-sans text-sm font-bold text-slate-900">
                 Frontier AI Referral Channel Performance
               </h3>
               <span className="text-xs text-slate-400">Ranked by Click Volume</span>
@@ -536,7 +536,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                       <td className="py-3 px-3 text-right font-bold text-slate-950 font-mono">
                         {eng.visits.toLocaleString()}
                       </td>
-                      <td className="py-3 px-3 text-right font-bold text-emerald-600 font-mono">
+                      <td className="py-3 px-3 text-right font-bold text-slate-900 font-mono">
                         {eng.signups}
                       </td>
                       <td className="py-3 px-3 text-right">
@@ -556,7 +556,7 @@ Sitemap: https://${domain}/sitemap.xml`;
           {/* Top Cited Landing Pages */}
           <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-display text-sm font-bold text-slate-900">
+              <h3 className="font-sans text-sm font-bold text-slate-900">
                 Top Landing Pages Cited in AI Answers
               </h3>
               <span className="text-xs text-slate-400">High-Conversion Destinations</span>
@@ -573,7 +573,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                       <span className="font-bold text-xs text-slate-900 truncate max-w-[240px]">
                         {lp.title}
                       </span>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="text-[10px] font-bold text-slate-900 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200">
                         {lp.conv}% Conv
                       </span>
                     </div>
@@ -598,35 +598,35 @@ Sitemap: https://${domain}/sitemap.xml`;
           <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                <ShieldCheck className="h-4 w-4 text-slate-900" />
                 Live Bot Access Status for {domain}
               </h3>
-              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              <span className="text-[11px] font-bold text-slate-900 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200">
                 Frontier Crawlers Unblocked
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-2xl border border-emerald-200/80 bg-emerald-50/50">
-                <span className="text-xs font-black text-emerald-950 block">GPTBot (OpenAI)</span>
-                <span className="text-[11px] font-bold text-emerald-700 mt-1 inline-flex items-center gap-1">
+              <div className="p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+                <span className="text-xs font-black text-slate-900 block">GPTBot (OpenAI)</span>
+                <span className="text-[11px] font-bold text-slate-900 mt-1 inline-flex items-center gap-1">
                   <CheckCircle className="h-3 w-3" /> Ready to Index
                 </span>
               </div>
-              <div className="p-3.5 rounded-2xl border border-emerald-200/80 bg-emerald-50/50">
-                <span className="text-xs font-black text-emerald-950 block">PerplexityBot</span>
-                <span className="text-[11px] font-bold text-emerald-700 mt-1 inline-flex items-center gap-1">
+              <div className="p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+                <span className="text-xs font-black text-slate-900 block">PerplexityBot</span>
+                <span className="text-[11px] font-bold text-slate-900 mt-1 inline-flex items-center gap-1">
                   <CheckCircle className="h-3 w-3" /> Live Citation Ready
                 </span>
               </div>
-              <div className="p-3.5 rounded-2xl border border-emerald-200/80 bg-emerald-50/50">
-                <span className="text-xs font-black text-emerald-950 block">ClaudeBot (Anthropic)</span>
-                <span className="text-[11px] font-bold text-emerald-700 mt-1 inline-flex items-center gap-1">
+              <div className="p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+                <span className="text-xs font-black text-slate-900 block">ClaudeBot (Anthropic)</span>
+                <span className="text-[11px] font-bold text-slate-900 mt-1 inline-flex items-center gap-1">
                   <CheckCircle className="h-3 w-3" /> Training Access
                 </span>
               </div>
-              <div className="p-3.5 rounded-2xl border border-emerald-200/80 bg-emerald-50/50">
-                <span className="text-xs font-black text-emerald-950 block">Google-Extended</span>
-                <span className="text-[11px] font-bold text-emerald-700 mt-1 inline-flex items-center gap-1">
+              <div className="p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+                <span className="text-xs font-black text-slate-900 block">Google-Extended</span>
+                <span className="text-[11px] font-bold text-slate-900 mt-1 inline-flex items-center gap-1">
                   <CheckCircle className="h-3 w-3" /> Gemini Grounding
                 </span>
               </div>
@@ -636,7 +636,7 @@ Sitemap: https://${domain}/sitemap.xml`;
           {/* Recommended robots.txt Directive */}
           <div className="rounded-3xl border border-slate-900 bg-slate-950 p-6 text-white shadow-xs space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <h3 className="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
                 <FileCode className="h-4 w-4" />
                 Optimized robots.txt for AI Indexing
               </h3>
@@ -645,8 +645,8 @@ Sitemap: https://${domain}/sitemap.xml`;
                 onClick={() => copyToClipboard(recommendedRobotsTxt, setCopiedRobots)}
                 className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-300 hover:text-white bg-slate-800 px-3 py-1 rounded-full cursor-pointer transition-colors"
               >
-                {copiedRobots ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
-                <span>{copiedRobots ? 'Copied!' : 'Copy Directive'}</span>
+                {copiedRobots ? <Check className="h-3 w-3 text-slate-900" /> : <Copy className="h-3 w-3" />}
+                <span>{copiedRobots ? 'Copied' : 'Copy Directive'}</span>
               </button>
             </div>
             <p className="text-xs text-slate-300">
@@ -670,14 +670,14 @@ Sitemap: https://${domain}/sitemap.xml`;
                   <Activity className="h-4 w-4" />
                 </span>
                 <div>
-                  <h3 className="font-display text-sm font-bold text-slate-900">
+                  <h3 className="font-sans text-sm font-bold text-slate-900">
                     Connect Google Analytics 4 (GA4)
                   </h3>
                   <p className="text-xs text-slate-500">Auto-sync ChatGPT, Perplexity, and Claude referral sessions</p>
                 </div>
               </div>
               {ga4Connected && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-xs font-bold border border-emerald-200">
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 text-slate-900 px-2.5 py-0.5 text-xs font-bold border border-slate-200">
                   <CheckCircle2 className="h-3.5 w-3.5" /> GA4 Connected
                 </span>
               )}
@@ -705,7 +705,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                   </button>
                 </div>
               </div>
-              {ga4SuccessMsg && <p className="text-xs text-emerald-600 font-bold">{ga4SuccessMsg}</p>}
+              {ga4SuccessMsg && <p className="text-xs text-slate-900 font-bold">{ga4SuccessMsg}</p>}
               {ga4ErrorMsg && <p className="text-xs text-rose-600 font-bold">{ga4ErrorMsg}</p>}
               <p className="text-[11px] text-slate-400">
                 Found in Google Analytics: Admin → Data Streams → Web Stream Details → Measurement ID
@@ -717,11 +717,11 @@ Sitemap: https://${domain}/sitemap.xml`;
           <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-slate-900 border border-slate-200">
                   <Code2 className="h-4 w-4" />
                 </span>
                 <div>
-                  <h3 className="font-display text-sm font-bold text-slate-900">
+                  <h3 className="font-sans text-sm font-bold text-slate-900">
                     Option A: 1-Line Zero-Dependency HTML Tracking Script
                   </h3>
                   <p className="text-xs text-slate-500">Lightweight (&lt; 1KB), zero performance overhead, works with any site</p>
@@ -732,12 +732,12 @@ Sitemap: https://${domain}/sitemap.xml`;
                 onClick={() => copyToClipboard(embedScript, setCopiedScript)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 text-xs font-bold transition-colors cursor-pointer"
               >
-                {copiedScript ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                <span>{copiedScript ? 'Copied!' : 'Copy Script Tag'}</span>
+                {copiedScript ? <Check className="h-3.5 w-3.5 text-slate-900" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedScript ? 'Copied' : 'Copy Script Tag'}</span>
               </button>
             </div>
 
-            <pre className="p-4 bg-slate-950 text-emerald-400 rounded-2xl text-xs font-mono overflow-x-auto whitespace-pre-wrap border border-slate-800">
+            <pre className="p-4 bg-slate-950 text-slate-900 rounded-2xl text-xs font-mono overflow-x-auto whitespace-pre-wrap border border-slate-800">
               {embedScript}
             </pre>
           </div>
@@ -750,7 +750,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                   <Layers className="h-4 w-4" />
                 </span>
                 <div>
-                  <h3 className="font-display text-sm font-bold text-slate-900">
+                  <h3 className="font-sans text-sm font-bold text-slate-900">
                     Option B: Next.js Edge Middleware Integration
                   </h3>
                   <p className="text-xs text-slate-500">Log AI referrals server-side without executing client JavaScript</p>
@@ -762,7 +762,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 text-xs font-bold transition-colors cursor-pointer"
               >
                 {copiedSnippet ? <Check className="h-3.5 w-3.5 text-blue-600" /> : <Copy className="h-3.5 w-3.5" />}
-                <span>{copiedSnippet ? 'Copied!' : 'Copy Middleware Code'}</span>
+                <span>{copiedSnippet ? 'Copied' : 'Copy Middleware Code'}</span>
               </button>
             </div>
 

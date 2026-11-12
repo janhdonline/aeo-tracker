@@ -139,7 +139,7 @@ export function CompetitorsManager({
             <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-slate-950">{competitors.length}</span>
+            <span className="font-sans text-3xl font-black text-slate-950">{competitors.length}</span>
             <span className="text-xs text-slate-400 font-semibold">rivals in radar</span>
           </div>
           <p className="mt-2.5 text-[11px] text-slate-500 font-medium">Audited across AI model recommendations</p>
@@ -154,11 +154,11 @@ export function CompetitorsManager({
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-emerald-400">{yourSoVPct}%</span>
+            <span className="font-sans text-3xl font-black text-slate-900">{yourSoVPct}%</span>
             <span className="text-xs text-slate-300 font-semibold">{yourMentions} brand citations</span>
           </div>
           <div className="mt-3 h-2 w-full rounded-full bg-slate-800 overflow-hidden">
-            <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.max(8, yourSoVPct)}%` }} />
+            <div className="h-full rounded-full bg-slate-50" style={{ width: `${Math.max(8, yourSoVPct)}%` }} />
           </div>
         </div>
 
@@ -171,7 +171,7 @@ export function CompetitorsManager({
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-slate-950">{competitorTotalMentions}</span>
+            <span className="font-sans text-3xl font-black text-slate-950">{competitorTotalMentions}</span>
             <span className="text-xs text-slate-400 font-semibold">captured mentions</span>
           </div>
           <p className="mt-2.5 text-[11px] text-slate-500 font-medium">Competitor citations in queries where you compete</p>
@@ -184,7 +184,7 @@ export function CompetitorsManager({
             <Award className="h-4 w-4 text-blue-600" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-blue-600">
+            <span className="font-sans text-3xl font-black text-blue-600">
               {grandTotal > 0 ? Math.round((yourMentions / (yourMentions + Math.max(1, competitorTotalMentions))) * 100) : 65}%
             </span>
             <span className="text-xs text-slate-400 font-semibold">win confidence</span>
@@ -196,7 +196,7 @@ export function CompetitorsManager({
       {/* ADD COMPETITOR CONTROL BAR (BENTO STYLED) */}
       <div className="rounded-bento border border-slate-200/90 bg-white p-5 sm:p-6 shadow-bento space-y-4">
         <div>
-          <h3 className="font-display text-base font-black text-slate-950">Add Competitor Web Property</h3>
+          <h3 className="font-sans text-base font-black text-slate-950">Add Competitor Web Property</h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Track how rival vendors perform when prospective buyers query ChatGPT, Perplexity, Gemini, and Claude for recommendations.
           </p>
@@ -260,8 +260,8 @@ export function CompetitorsManager({
         )}
 
         {success && (
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
             <span>{success}</span>
           </div>
         )}
@@ -271,7 +271,7 @@ export function CompetitorsManager({
       <div className="rounded-bento border border-slate-200/90 bg-white p-6 shadow-bento space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
           <div>
-            <h3 className="font-display text-base font-black text-slate-950">Head-to-Head Competitor Radar</h3>
+            <h3 className="font-sans text-base font-black text-slate-950">Head-to-Head Competitor Radar</h3>
             <p className="text-xs text-slate-500">Live comparison of market presence across commercial AI queries.</p>
           </div>
           <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
@@ -293,16 +293,16 @@ export function CompetitorsManager({
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
               {/* Your Brand Row */}
-              <tr className="bg-emerald-50/50 border-l-4 border-l-emerald-500">
+              <tr className="bg-slate-50/50 border-l-4 border-l-slate-900">
                 <td className="py-3.5 pl-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 font-bold text-xs">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-900 font-bold text-xs">
                       YOU
                     </span>
                     <div>
                       <div className="flex items-center gap-1.5">
                         <span className="font-bold text-slate-900 text-xs sm:text-sm">{brandName || domain}</span>
-                        <span className="inline-flex items-center rounded-md bg-emerald-100 px-1.5 py-0.2 text-[10px] font-bold text-emerald-800">
+                        <span className="inline-flex items-center rounded-md bg-slate-50 px-1.5 py-0.2 text-[10px] font-bold text-slate-900">
                           Primary Domain
                         </span>
                       </div>
@@ -311,7 +311,7 @@ export function CompetitorsManager({
                   </div>
                 </td>
                 <td className="py-3.5">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-slate-50/80 px-2.5 py-0.5 text-[10px] font-bold text-slate-900">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Monitored Active
                   </span>
                 </td>
@@ -322,15 +322,15 @@ export function CompetitorsManager({
                       <span className="text-slate-400">Baseline</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-slate-200/80 overflow-hidden">
-                      <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.max(10, yourSoVPct)}%` }} />
+                      <div className="h-full rounded-full bg-slate-50" style={{ width: `${Math.max(10, yourSoVPct)}%` }} />
                     </div>
                   </div>
                 </td>
-                <td className="py-3.5 text-center font-bold text-emerald-700 text-sm">
+                <td className="py-3.5 text-center font-bold text-slate-900 text-sm">
                   {yourMentions}
                 </td>
                 <td className="py-3.5 text-center">
-                  <span className="inline-flex items-center rounded-lg bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
+                  <span className="inline-flex items-center rounded-lg bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-900 border border-slate-200">
                     Defending Brand
                   </span>
                 </td>
@@ -338,7 +338,7 @@ export function CompetitorsManager({
                   <Link
                     href={`/report/${domain}`}
                     target="_blank"
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-900 transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900 hover:text-slate-900 transition-colors"
                   >
                     <span>View Report</span>
                     <ExternalLink className="h-3 w-3" />

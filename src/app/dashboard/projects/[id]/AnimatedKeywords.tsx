@@ -92,7 +92,7 @@ export function AnimatedKeywords({ projectId, keywords: initialKeywords }: Props
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               Monitored Keywords & Prompts ({keywords.length})
             </h3>
             <span className="inline-flex items-center rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-purple-700 border border-purple-200">
@@ -110,7 +110,7 @@ export function AnimatedKeywords({ projectId, keywords: initialKeywords }: Props
               onClick={() => setShowInput(true)}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 shadow-2xs transition-colors cursor-pointer"
             >
-              <Plus className="h-3.5 w-3.5 text-emerald-500" />
+              <Plus className="h-3.5 w-3.5 text-slate-900" />
               <span>Add Keyword</span>
             </button>
           )}
@@ -143,7 +143,7 @@ export function AnimatedKeywords({ projectId, keywords: initialKeywords }: Props
             disabled={isAdding || !newKeyword.trim()}
             className="inline-flex items-center gap-1 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-colors disabled:opacity-50 cursor-pointer shrink-0"
           >
-            <Plus className="h-3 w-3 text-emerald-400" />
+            <Plus className="h-3 w-3 text-slate-900" />
             <span>{isAdding ? 'Adding...' : 'Add'}</span>
           </button>
           <button
@@ -191,7 +191,7 @@ export function AnimatedKeywords({ projectId, keywords: initialKeywords }: Props
                 <span
                   className={`text-[9px] px-1.5 py-0.2 rounded-md uppercase font-bold tracking-wider ${
                     kw.source === 'discovery'
-                      ? 'bg-emerald-100 text-emerald-800'
+                      ? 'bg-slate-50 text-slate-900'
                       : 'bg-white/80 text-slate-600 border border-slate-200'
                   }`}
                 >

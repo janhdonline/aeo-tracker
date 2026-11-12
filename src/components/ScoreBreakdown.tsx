@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, CheckCircle2, XCircle, Info } from 'lucide-react';
+import { ChevronDown, ChevronUp, CheckCircle2, XCircle, Info, BarChart2 } from 'lucide-react';
 
 export interface CategoryCheckItem {
   name: string;
@@ -118,9 +118,9 @@ export function ScoreBreakdown({ categories: propCategories }: ScoreBreakdownPro
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 text-white text-xs font-bold shadow-2xs">
-              📊
+              <BarChart2 className="h-4 w-4 text-white" />
             </span>
-            <h3 className="font-display text-base font-bold text-slate-950">
+            <h3 className="font-sans text-base font-bold text-slate-950">
               Score Breakdown
             </h3>
           </div>
@@ -142,13 +142,13 @@ export function ScoreBreakdown({ categories: propCategories }: ScoreBreakdownPro
           const isMedium = pct >= 40 && pct < 70;
 
           const scoreColor = isGood
-            ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+            ? 'text-slate-900 bg-slate-50 border-slate-200'
             : isMedium
             ? 'text-amber-700 bg-amber-50 border-amber-200'
             : 'text-rose-700 bg-rose-50 border-rose-200';
 
           const barColor = isGood
-            ? 'bg-emerald-500'
+            ? 'bg-slate-50'
             : isMedium
             ? 'bg-amber-500'
             : 'bg-rose-500';
@@ -229,7 +229,7 @@ export function ScoreBreakdown({ categories: propCategories }: ScoreBreakdownPro
                         className="flex items-start gap-2.5 text-xs rounded-lg p-2 bg-white border border-slate-200/70"
                       >
                         {chk.passed ? (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0 mt-0.5" />
                         ) : (
                           <XCircle className="h-4 w-4 text-rose-500 shrink-0 mt-0.5" />
                         )}
@@ -242,7 +242,7 @@ export function ScoreBreakdown({ categories: propCategories }: ScoreBreakdownPro
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                             chk.passed
-                              ? 'bg-emerald-50 text-emerald-700'
+                              ? 'bg-slate-50 text-slate-900'
                               : 'bg-rose-50 text-rose-700'
                           }`}
                         >

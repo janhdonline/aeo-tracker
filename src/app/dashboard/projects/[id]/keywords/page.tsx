@@ -61,13 +61,13 @@ export default async function KeywordsPage({ params }: { params: { id: string } 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-6 border-b border-slate-200">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                <span className="text-[11px] font-black uppercase tracking-wider text-slate-900 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200">
                   Target Intent Engine
                 </span>
                 <span className="text-xs text-slate-400">·</span>
                 <span className="text-xs font-semibold text-slate-600">{project.domain}</span>
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+              <h1 className="font-sans text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
                 Commercial Prompts &amp; Keywords
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">

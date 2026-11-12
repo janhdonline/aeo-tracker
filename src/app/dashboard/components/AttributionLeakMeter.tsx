@@ -49,7 +49,7 @@ export function AttributionLeakMeter({
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-base font-bold text-slate-950">
+              <h3 className="font-sans text-base font-bold text-slate-950">
                 AI Traffic Leak & Attribution Conversion Meter
               </h3>
               <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-800 border border-amber-200">
@@ -97,7 +97,7 @@ export function AttributionLeakMeter({
             1. Total AI Impressions
           </span>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="font-display text-2xl font-black text-slate-950 tabular-nums">
+            <span className="font-sans text-2xl font-black text-slate-950 tabular-nums">
               {totalMentions.toLocaleString()}
             </span>
             <span className="text-xs text-slate-500 font-medium">brand mentions</span>
@@ -108,22 +108,22 @@ export function AttributionLeakMeter({
         </div>
 
         {/* Step 2: Clickable Citations */}
-        <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-300 ring-2 ring-emerald-200/40">
+        <div className="p-4 rounded-2xl bg-slate-50/60 border border-slate-200">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900 block">
               2. Verified Hyperlinks
             </span>
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="font-display text-2xl font-black text-emerald-950 tabular-nums">
+            <span className="font-sans text-2xl font-black text-slate-900 tabular-nums">
               {verifiedCitations}
             </span>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+            <span className="text-xs font-bold text-slate-900 bg-slate-50/80 px-2 py-0.5 rounded-md">
               {citationRate}% converted
             </span>
           </div>
-          <p className="text-[11px] text-emerald-700 mt-1">
+          <p className="text-[11px] text-slate-900 mt-1">
             Clickable references directing traffic
           </p>
         </div>
@@ -137,7 +137,7 @@ export function AttributionLeakMeter({
             <AlertTriangle className="h-3.5 w-3.5 text-rose-600" />
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="font-display text-2xl font-black text-rose-950 tabular-nums">
+            <span className="font-sans text-2xl font-black text-rose-950 tabular-nums">
               {leakedMentions.toLocaleString()}
             </span>
             <span className="text-xs font-bold text-rose-700">leaked</span>
@@ -154,7 +154,7 @@ export function AttributionLeakMeter({
               4. Recoverable Pipeline
             </span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="font-display text-2xl font-black text-emerald-400 tabular-nums">
+              <span className="font-sans text-2xl font-black text-slate-900 tabular-nums">
                 +${estimatedLostValue.toLocaleString()}
               </span>
               <span className="text-[10px] text-slate-400">/mo est.</span>
@@ -165,7 +165,7 @@ export function AttributionLeakMeter({
           </div>
           <Link
             href="/tools/answerability-audit"
-            className="mt-3 inline-flex items-center justify-between text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors pt-2 border-t border-slate-800"
+            className="mt-3 inline-flex items-center justify-between text-xs font-bold text-slate-900 hover:text-slate-900 transition-colors pt-2 border-t border-slate-800"
           >
             <span>Run 45-Word Chunk Fix</span>
             <ArrowRight className="h-3.5 w-3.5" />
@@ -184,7 +184,7 @@ export function AttributionLeakMeter({
         <div className="h-3 w-full rounded-full bg-slate-100 overflow-hidden flex shadow-inner">
           <div
             style={{ width: `${citationRate}%` }}
-            className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-l-full"
+            className="h-full bg-blue-600 rounded-l-full"
             title="Converted Citations"
           />
           <div
@@ -195,7 +195,7 @@ export function AttributionLeakMeter({
         </div>
         <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="h-2 w-2 rounded-full bg-blue-600" />
             Verified Clickable Links ({citationRate}%)
           </span>
           <span className="flex items-center gap-1.5">

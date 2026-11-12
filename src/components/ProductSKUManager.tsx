@@ -173,7 +173,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
             Tracked SKUs
           </span>
-          <span className="font-display text-2xl font-black text-slate-900 tabular-nums">
+          <span className="font-sans text-2xl font-black text-slate-900 tabular-nums">
             {products.length}
           </span>
           <span className="text-[11px] text-slate-500 block">Products under {brandName}</span>
@@ -183,7 +183,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
             Avg SKU Visibility
           </span>
-          <span className="font-display text-2xl font-black text-emerald-600 tabular-nums">
+          <span className="font-sans text-2xl font-black text-slate-900 tabular-nums">
             {avgProductScore}/100
           </span>
           <span className="text-[11px] text-slate-500 block">Roll-up AEO authority</span>
@@ -193,7 +193,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
             SKU AI Citations
           </span>
-          <span className="font-display text-2xl font-black text-blue-600 tabular-nums">
+          <span className="font-sans text-2xl font-black text-blue-600 tabular-nums">
             {totalCitations}
           </span>
           <span className="text-[11px] text-slate-500 block">Direct product mentions</span>
@@ -203,17 +203,17 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
             Citation Health
           </span>
-          <span className="font-display text-2xl font-black text-indigo-600 tabular-nums">
+          <span className="font-sans text-2xl font-black text-indigo-600 tabular-nums">
             {products.filter((p) => p.status === 'active').length}/{products.length}
           </span>
-          <span className="text-[11px] text-emerald-600 font-semibold block">Active in generative search</span>
+          <span className="text-[11px] text-slate-900 font-semibold block">Active in generative search</span>
         </div>
       </div>
 
       {/* Main Section Header with Add Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
         <div>
-          <h2 className="font-display text-lg font-bold text-slate-900 flex items-center gap-2">
+          <h2 className="font-sans text-lg font-bold text-slate-900 flex items-center gap-2">
             <Package className="h-5 w-5 text-indigo-600" />
             <span>Product & Sub-SKU Entity Hierarchy</span>
           </h2>
@@ -226,7 +226,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
           onClick={() => setShowAddModal(true)}
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 text-xs font-bold shadow-xs transition-colors cursor-pointer self-start sm:self-auto shrink-0"
         >
-          <Plus className="h-3.5 w-3.5 text-emerald-400" />
+          <Plus className="h-3.5 w-3.5 text-slate-900" />
           <span>Add Product SKU</span>
         </button>
       </div>
@@ -266,7 +266,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
                       <span
                         className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase border ${
                           prod.status === 'active'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            ? 'bg-slate-50 text-slate-900 border-slate-200'
                             : prod.status === 'leak'
                             ? 'bg-amber-50 text-amber-800 border-amber-200'
                             : 'bg-blue-50 text-blue-700 border-blue-200'
@@ -279,14 +279,14 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
                           : 'Optimizing'}
                       </span>
                     </div>
-                    <h3 className="font-display text-base font-bold text-slate-900 leading-snug">
+                    <h3 className="font-sans text-base font-bold text-slate-900 leading-snug">
                       {prod.name}
                     </h3>
                     <p className="text-[11px] text-slate-500 font-medium">{prod.category}</p>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <span className="font-display text-lg font-black text-slate-900 block tabular-nums">
+                    <span className="font-sans text-lg font-black text-slate-900 block tabular-nums">
                       {prod.visibility_score}/100
                     </span>
                     <span className="text-[10px] font-bold text-slate-400 block">AEO Score</span>
@@ -365,7 +365,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
               className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 space-y-4"
             >
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+                <h3 className="font-sans text-base font-bold text-slate-900 flex items-center gap-2">
                   <Package className="h-4 w-4 text-indigo-600" />
                   Add Sub-Product / SKU Entity
                 </h3>
@@ -469,10 +469,10 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
             >
               <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block mb-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900 block mb-0.5">
                     Live SKU Answer Radar Telemetry
                   </span>
-                  <h3 className="font-display text-base font-bold text-slate-900">
+                  <h3 className="font-sans text-base font-bold text-slate-900">
                     {auditResult.productName} Visibility Audit
                   </h3>
                 </div>
@@ -501,7 +501,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
                         <span className="font-bold text-slate-900">{eb.engine}</span>
                         <p className="text-[11px] text-slate-600 mt-0.5">{eb.snippet}</p>
                       </div>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded shrink-0">
+                      <span className="text-[10px] font-bold text-slate-900 bg-slate-50 px-2 py-0.5 rounded shrink-0">
                         {eb.position}
                       </span>
                     </div>
@@ -509,8 +509,8 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-emerald-50/50 border border-emerald-100 text-[11px] text-emerald-900 leading-relaxed">
-                💡 <strong>Optimization Tip:</strong> {auditResult.recommendation}
+              <div className="p-3 rounded-xl bg-slate-50/50 border border-slate-200 text-[11px] text-slate-900 leading-relaxed">
+                <strong>Optimization Tip:</strong> {auditResult.recommendation}
               </div>
 
               <div className="flex items-center justify-end pt-2 border-t border-slate-100">

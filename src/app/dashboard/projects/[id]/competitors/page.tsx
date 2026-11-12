@@ -79,7 +79,7 @@ export default async function CompetitorsPage({ params }: { params: { id: string
         <div className="w-full">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="font-display text-2xl font-bold text-slate-900">
+              <h2 className="font-sans text-2xl font-bold text-slate-900">
                 Competitor Landscape & Head-to-Head Radar
               </h2>
               <p className="text-xs text-slate-500 mt-1">

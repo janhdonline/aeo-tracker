@@ -62,10 +62,10 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
               Total Influencing Sources
             </span>
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
-              <Layers className="h-4 w-4 text-emerald-400" />
+              <Layers className="h-4 w-4 text-slate-900" />
             </span>
           </div>
-          <p className="font-display text-3xl font-black text-slate-950">{sources.length}</p>
+          <p className="font-sans text-3xl font-black text-slate-950">{sources.length}</p>
           <p className="mt-1.5 text-xs text-slate-500 font-medium">
             Domains feeding ChatGPT, Perplexity &amp; Gemini answers
           </p>
@@ -81,10 +81,10 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
               <MessageSquare className="h-4 w-4" />
             </span>
           </div>
-          <p className="font-display text-3xl font-black text-emerald-400">
+          <p className="font-sans text-3xl font-black text-slate-900">
             {sources.length > 0 ? Math.round((communityCount / sources.length) * 100) : 34}%
           </p>
-          <p className="mt-1.5 text-xs text-emerald-400 font-semibold">
+          <p className="mt-1.5 text-xs text-slate-900 font-semibold">
             High sentiment authority in AI generative synthesis
           </p>
         </div>
@@ -95,11 +95,11 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
               Injection Blueprints Ready
             </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-slate-900 border border-slate-200">
               <Sparkles className="h-4 w-4" />
             </span>
           </div>
-          <p className="font-display text-3xl font-black text-emerald-700">
+          <p className="font-sans text-3xl font-black text-slate-900">
             {sources.length} Actions
           </p>
           <p className="mt-1.5 text-xs text-slate-500 font-medium">
@@ -143,7 +143,7 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
               animate={{ opacity: 1, y: 0 }}
               className={`rounded-2xl border p-5 transition-all ${
                 isInjected
-                  ? "border-emerald-200 bg-emerald-50/30"
+                  ? "border-slate-200 bg-slate-50/30"
                   : "border-slate-200 bg-white shadow-sm"
               }`}
             >
@@ -174,7 +174,7 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
                     onClick={() => handleToggleInjected(source.id)}
                     className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
                       isInjected
-                        ? "border-emerald-600 bg-emerald-600 text-white"
+                        ? "border-slate-200 bg-slate-50 text-white"
                         : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                     }`}
                   >
@@ -210,13 +210,13 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
                 </div>
 
                 {/* The Injection Blueprint */}
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/40 p-4">
                   <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-900">
-                      <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-900">
+                      <Sparkles className="h-3.5 w-3.5 text-slate-900" />
                       <span>{source.injectionBlueprint.actionTitle}</span>
                     </div>
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                    <span className="rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-900">
                       {source.injectionBlueprint.estimatedLift}
                     </span>
                   </div>
@@ -238,8 +238,8 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
                     >
                       {isCopied ? (
                         <>
-                          <Check className="h-3.5 w-3.5 text-emerald-600" />
-                          <span className="text-emerald-700 font-bold">Copied to Clipboard!</span>
+                          <Check className="h-3.5 w-3.5 text-slate-900" />
+                          <span className="text-slate-900 font-bold">Copied to Clipboard!</span>
                         </>
                       ) : (
                         <>

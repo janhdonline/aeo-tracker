@@ -37,7 +37,7 @@ export function ScoreHistoryTimeline({ history: propHistory, currentScore }: Sco
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 text-white text-xs font-bold shadow-2xs">
             <History className="h-4 w-4" />
           </span>
-          <h3 className="font-display text-base font-bold text-slate-950">
+          <h3 className="font-sans text-base font-bold text-slate-950">
             Score History
           </h3>
         </div>
@@ -57,14 +57,14 @@ export function ScoreHistoryTimeline({ history: propHistory, currentScore }: Sco
             <div
               key={item.id || idx}
               className={`flex items-center justify-between p-3 text-xs transition-colors hover:bg-slate-50/60 ${
-                isLatest ? 'bg-emerald-50/20' : ''
+                isLatest ? 'bg-slate-50/20' : ''
               }`}
             >
               <div className="flex items-center gap-2.5">
                 <Clock className="h-3.5 w-3.5 text-slate-400" />
                 <span className="font-medium text-slate-800">{item.dateStr}</span>
                 {isLatest && (
-                  <span className="rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.2">
+                  <span className="rounded bg-slate-50 text-slate-900 text-[9px] font-bold px-1.5 py-0.2">
                     LATEST
                   </span>
                 )}
@@ -74,7 +74,7 @@ export function ScoreHistoryTimeline({ history: propHistory, currentScore }: Sco
                 {item.delta !== undefined && item.delta !== 0 && (
                   <span
                     className={`text-[10px] font-bold ${
-                      item.delta > 0 ? 'text-emerald-600' : 'text-rose-600'
+                      item.delta > 0 ? 'text-slate-900' : 'text-rose-600'
                     }`}
                   >
                     {item.delta > 0 ? `+${item.delta}` : item.delta}

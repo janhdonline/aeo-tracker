@@ -28,13 +28,13 @@ export function ShareOfVoice({ yourDomain, yourMentions, competitorCounts }: Pro
     <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-5 mb-6">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 className="font-display text-base font-bold text-slate-900">Share of Voice</h3>
+          <h3 className="font-sans text-base font-bold text-slate-900">Share of Voice</h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Mentions across {total} AI responses in the latest scan
           </p>
         </div>
         <div className="text-right">
-          <p className="font-display text-2xl font-bold text-emerald-600">{yourPct}%</p>
+          <p className="font-sans text-2xl font-bold text-slate-900">{yourPct}%</p>
           <p className="text-xs text-slate-500 font-medium">your share</p>
         </div>
       </div>
@@ -52,7 +52,7 @@ export function ShareOfVoice({ yourDomain, yourMentions, competitorCounts }: Pro
             initial={{ width: 0 }}
             animate={{ width: `${yourPct}%` }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="h-full rounded-full bg-emerald-500"
+            className="h-full rounded-full bg-slate-50"
           />
         </div>
       </div>

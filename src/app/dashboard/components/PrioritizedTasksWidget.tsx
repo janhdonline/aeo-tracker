@@ -176,10 +176,10 @@ export function PrioritizedTasksWidget() {
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-50 text-rose-600 border border-rose-200/60">
               <Sparkles className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               AEO Action Center: Prioritized Tasks & Fixes
             </h3>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-0.5 text-[11px] font-bold text-slate-900 border border-slate-200/60">
               {completedCount}/{tasks.length} Resolved
             </span>
           </div>
@@ -223,7 +223,7 @@ export function PrioritizedTasksWidget() {
             onClick={() => setFilter('quick_win')}
             className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
               filter === 'quick_win'
-                ? 'bg-white text-emerald-700 shadow-xs font-bold'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
@@ -247,7 +247,7 @@ export function PrioritizedTasksWidget() {
       <div className="space-y-3">
         {filteredTasks.length === 0 ? (
           <div className="text-center py-8 rounded-xl bg-slate-50 border border-dashed border-slate-200">
-            <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto mb-2" />
+            <CheckCircle2 className="h-8 w-8 text-slate-900 mx-auto mb-2" />
             <p className="text-xs font-bold text-slate-800">No tasks in this view</p>
             <p className="text-[11px] text-slate-500 mt-0.5">Switch filters above to inspect other opportunities.</p>
           </div>
@@ -273,7 +273,7 @@ export function PrioritizedTasksWidget() {
                       onClick={() => toggleComplete(t.id)}
                       className={`h-5 w-5 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 transition-colors cursor-pointer ${
                         t.completed
-                          ? 'bg-emerald-500 border-emerald-500 text-white'
+                          ? 'bg-slate-50 border-slate-200 text-white'
                           : 'border-slate-300 hover:border-slate-400 bg-white'
                       }`}
                       title={t.completed ? 'Mark as incomplete' : 'Mark as done'}
@@ -290,7 +290,7 @@ export function PrioritizedTasksWidget() {
                           </span>
                         )}
                         {t.priority === 'quick_win' && (
-                          <span className="inline-flex items-center rounded-md bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                          <span className="inline-flex items-center rounded-md bg-slate-50 border border-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-900">
                             QUICK WIN
                           </span>
                         )}
@@ -304,7 +304,7 @@ export function PrioritizedTasksWidget() {
                           {t.categoryLabel}
                         </span>
 
-                        <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                        <span className="text-[11px] font-bold text-slate-900 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200/60">
                           {t.impact}
                         </span>
                       </div>
@@ -367,7 +367,7 @@ export function PrioritizedTasksWidget() {
                     >
                       <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
                         <div className="flex items-center gap-2">
-                          <Code2 className="h-4 w-4 text-emerald-400" />
+                          <Code2 className="h-4 w-4 text-slate-900" />
                           <span className="text-xs font-mono text-slate-300">
                             Implementation Snippet ({t.snippetType.toUpperCase()})
                           </span>
@@ -378,8 +378,8 @@ export function PrioritizedTasksWidget() {
                         >
                           {isCopied ? (
                             <>
-                              <Check className="h-3.5 w-3.5 text-emerald-400" />
-                              <span className="text-emerald-400">Copied to Clipboard!</span>
+                              <Check className="h-3.5 w-3.5 text-slate-900" />
+                              <span className="text-slate-900">Copied to Clipboard!</span>
                             </>
                           ) : (
                             <>
@@ -390,11 +390,11 @@ export function PrioritizedTasksWidget() {
                         </button>
                       </div>
 
-                      <pre className="text-xs font-mono text-emerald-300 overflow-x-auto p-3 rounded-lg bg-black/50 border border-slate-800 leading-relaxed whitespace-pre-wrap">
+                      <pre className="text-xs font-mono text-slate-900 overflow-x-auto p-3 rounded-lg bg-black/50 border border-slate-800 leading-relaxed whitespace-pre-wrap">
                         {t.snippet}
                       </pre>
                       <p className="text-[11px] text-slate-400 mt-2">
-                        💡 Tip: Place this directly in your web project. Answer engines will reflect this on their next crawl cycle within 24-48 hours.
+                        Tip: Place this directly in your web project. Answer engines will reflect this on their next crawl cycle within 24-48 hours.
                       </p>
                     </motion.div>
                   )}

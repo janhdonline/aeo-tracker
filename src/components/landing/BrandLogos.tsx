@@ -19,7 +19,7 @@ export function LogoMark({
 
       {/* Subtle Verified Signal Indicator */}
       <span className="absolute bottom-1 right-1 flex h-1.5 w-1.5">
-        <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
+        <span className="inline-flex h-1.5 w-1.5 rounded-full bg-slate-50 ring-2 ring-slate-950" />
       </span>
     </span>
   );

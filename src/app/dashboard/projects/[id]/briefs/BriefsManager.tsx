@@ -258,7 +258,7 @@ export function BriefsManager({
             disabled={generating}
             className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 text-xs font-bold shadow-xs transition-colors disabled:opacity-50 cursor-pointer shrink-0"
           >
-            <Sparkles className={`h-3.5 w-3.5 text-emerald-400 ${generating ? 'animate-spin' : ''}`} />
+            <Sparkles className={`h-3.5 w-3.5 text-slate-900 ${generating ? 'animate-spin' : ''}`} />
             <span>{generating ? 'Scanning...' : 'Scan & Generate Briefs'}</span>
           </button>
         </div>
@@ -274,7 +274,7 @@ export function BriefsManager({
             <div className="flex items-center justify-between pb-2 border-b border-slate-200">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                <h4 className="font-display text-xs font-bold text-slate-900 uppercase tracking-wider">
+                <h4 className="font-sans text-xs font-bold text-slate-900 uppercase tracking-wider">
                   Backlog & AI Gaps
                 </h4>
               </div>
@@ -317,7 +317,7 @@ export function BriefsManager({
                       </div>
 
                       <div className="flex items-center justify-between pt-1 text-[11px]">
-                        <span className="font-bold text-emerald-700 text-[10px]">
+                        <span className="font-bold text-slate-900 text-[10px]">
                           {brief.recommendation?.impact || prio.impact}
                         </span>
                         <button
@@ -357,7 +357,7 @@ export function BriefsManager({
             <div className="flex items-center justify-between pb-2 border-b border-indigo-200/60">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-indigo-500 animate-pulse" />
-                <h4 className="font-display text-xs font-bold text-indigo-950 uppercase tracking-wider">
+                <h4 className="font-sans text-xs font-bold text-indigo-950 uppercase tracking-wider">
                   In Progress
                 </h4>
               </div>
@@ -427,7 +427,7 @@ export function BriefsManager({
             <div className="flex items-center justify-between pb-2 border-b border-teal-200/60">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-teal-500" />
-                <h4 className="font-display text-xs font-bold text-teal-950 uppercase tracking-wider">
+                <h4 className="font-sans text-xs font-bold text-teal-950 uppercase tracking-wider">
                   Applied (Verifying)
                 </h4>
               </div>
@@ -473,7 +473,7 @@ export function BriefsManager({
                       </button>
                       <button
                         onClick={() => handleUpdateStatus(brief.id, 'resolved')}
-                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 text-[10px] font-bold shadow-2xs transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 rounded-lg bg-slate-50 hover:bg-slate-50 text-white px-2.5 py-1 text-[10px] font-bold shadow-2xs transition-colors cursor-pointer"
                       >
                         <Check className="h-3 w-3" />
                         <span>Resolved</span>
@@ -486,35 +486,35 @@ export function BriefsManager({
           </div>
 
           {/* COLUMN 4: VERIFIED RESOLVED */}
-          <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/20 p-3.5 space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-emerald-200/60">
+          <div className="rounded-2xl border border-slate-200/80 bg-slate-50/20 p-3.5 space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                <h4 className="font-display text-xs font-bold text-emerald-950 uppercase tracking-wider">
+                <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
+                <h4 className="font-sans text-xs font-bold text-slate-900 uppercase tracking-wider">
                   Verified Resolved
                 </h4>
               </div>
-              <span className="rounded-full bg-white border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+              <span className="rounded-full bg-white border border-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-900">
                 {resolvedBriefs.length}
               </span>
             </div>
 
             <div className="space-y-3 min-h-[300px]">
               {resolvedBriefs.length === 0 ? (
-                <div className="text-center py-12 rounded-xl bg-white/60 border border-dashed border-emerald-200 text-xs text-emerald-600/70">
+                <div className="text-center py-12 rounded-xl bg-white/60 border border-dashed border-slate-200 text-xs text-slate-900/70">
                   Resolved tasks will be archived here.
                 </div>
               ) : (
                 resolvedBriefs.map((brief) => (
                   <div
                     key={brief.id}
-                    className="rounded-xl border border-emerald-200 bg-white/90 p-3.5 shadow-2xs space-y-2 border-l-4 border-l-emerald-500"
+                    className="rounded-xl border border-slate-200 bg-white/90 p-3.5 shadow-2xs space-y-2 border-l-4 border-l-slate-900"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900">
                         VERIFIED
                       </span>
-                      <Check className="h-3.5 w-3.5 text-emerald-600" />
+                      <Check className="h-3.5 w-3.5 text-slate-900" />
                     </div>
 
                     <p className="text-xs font-semibold text-slate-800 leading-snug">
@@ -579,7 +579,7 @@ export function BriefsManager({
                   {brief.status !== 'applied' && brief.status !== 'resolved' && (
                     <button
                       onClick={() => handleUpdateStatus(brief.id, 'applied')}
-                      className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 rounded-lg bg-slate-50 hover:bg-slate-50 text-white px-3 py-1.5 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
                     >
                       <Check className="h-3.5 w-3.5" />
                       <span>Apply</span>
@@ -606,10 +606,10 @@ export function BriefsManager({
             >
               <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block mb-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900 block mb-0.5">
                     AEO Implementation Blueprint
                   </span>
-                  <h3 className="font-display text-base font-bold text-slate-900">
+                  <h3 className="font-sans text-base font-bold text-slate-900">
                     {activeSnippetBrief.gap_description}
                   </h3>
                 </div>
@@ -635,11 +635,11 @@ export function BriefsManager({
                           )
                       )
                     }
-                    className="inline-flex items-center gap-1 font-bold text-emerald-700 hover:text-emerald-800 cursor-pointer"
+                    className="inline-flex items-center gap-1 font-bold text-slate-900 hover:text-slate-900 cursor-pointer"
                   >
                     {copiedSnippet ? (
                       <>
-                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                        <Check className="h-3.5 w-3.5 text-slate-900" />
                         <span>Copied to Clipboard!</span>
                       </>
                     ) : (
@@ -685,7 +685,7 @@ export function BriefsManager({
                     handleUpdateStatus(activeSnippetBrief.id, 'applied');
                     setActiveSnippetBrief(null);
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-50 text-white text-xs font-bold shadow-xs cursor-pointer"
                 >
                   <Check className="h-3.5 w-3.5" />
                   <span>Mark Applied to Website</span>

@@ -200,10 +200,10 @@ location = /llms.txt {
       <div className="rounded-bento border border-slate-200/90 bg-white p-6 sm:p-8 shadow-bento">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-2xs">
-            <Zap className="h-5 w-5 text-emerald-400" />
+            <Zap className="h-5 w-5 text-slate-900" />
           </span>
           <div>
-            <h3 className="font-display text-lg font-black text-slate-950">Live llms.txt Host Validator</h3>
+            <h3 className="font-sans text-lg font-black text-slate-950">Live llms.txt Host Validator</h3>
             <p className="text-xs text-slate-500">
               Audit if AI crawlers (GPTBot, ClaudeBot, Perplexity) can ingest your domain&apos;s canonical <code>/llms.txt</code> file without blocks.
             </p>
@@ -243,7 +243,7 @@ location = /llms.txt {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
               <div className="flex items-center gap-4">
                 <div className={`flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-black text-white shadow-sm ${
-                  validationResult.score >= 80 ? 'bg-emerald-600' : validationResult.score >= 50 ? 'bg-amber-500' : 'bg-rose-500'
+                  validationResult.score >= 80 ? 'bg-slate-50' : validationResult.score >= 50 ? 'bg-amber-500' : 'bg-rose-500'
                 }`}>
                   {validationResult.score}
                 </div>
@@ -261,7 +261,7 @@ location = /llms.txt {
                 </div>
               </div>
               <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold self-start sm:self-auto ${
-                validationResult.isReachable ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                validationResult.isReachable ? 'bg-slate-50 text-slate-900' : 'bg-rose-100 text-rose-800'
               }`}>
                 {validationResult.isReachable ? 'HTTP 200 OK' : `HTTP ${validationResult.statusCode || 'Unreachable'}`}
               </span>
@@ -273,11 +273,11 @@ location = /llms.txt {
                 <div
                   key={c.id}
                   className={`flex items-start gap-3 p-3.5 rounded-xl border bg-white ${
-                    c.passed ? 'border-emerald-200' : 'border-slate-200'
+                    c.passed ? 'border-slate-200' : 'border-slate-200'
                   }`}
                 >
                   {c.passed ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0 mt-0.5" />
                   ) : (
                     <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                   )}
@@ -311,7 +311,7 @@ location = /llms.txt {
               <FileCode2 className="h-5 w-5" />
             </span>
             <div>
-              <h3 className="font-display text-lg font-black text-slate-950">Authoritative llms.txt Blueprint</h3>
+              <h3 className="font-sans text-lg font-black text-slate-950">Authoritative llms.txt Blueprint</h3>
               <p className="text-xs text-slate-500">Auto-generated with verified brand facts and commercial endpoints to feed LLM context windows.</p>
             </div>
           </div>
@@ -339,18 +339,18 @@ location = /llms.txt {
         {/* Code View Card (Executive Dark Card) */}
         <div className="relative rounded-2xl border border-slate-800 bg-slate-950 p-5 sm:p-6 text-slate-100 shadow-bento">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-xs text-slate-400">
-            <span className="font-mono font-bold text-emerald-400">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
+            <span className="font-mono font-bold text-slate-900">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleCopy(currentContent)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
               >
-                {copiedCode ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-                {copiedCode ? 'Copied!' : 'Copy'}
+                {copiedCode ? <Check className="h-3.5 w-3.5 text-slate-900" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiedCode ? 'Copied' : 'Copy'}
               </button>
               <button
                 onClick={() => handleDownload(activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt', currentContent)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-50 text-white text-xs font-bold transition-colors cursor-pointer"
               >
                 <Download className="h-3.5 w-3.5" />
                 Download
@@ -370,7 +370,7 @@ location = /llms.txt {
             <Terminal className="h-5 w-5" />
           </span>
           <div>
-            <h3 className="font-display text-lg font-black text-slate-950">1-Click Hosting Blueprints for Dev Teams</h3>
+            <h3 className="font-sans text-lg font-black text-slate-950">1-Click Hosting Blueprints for Dev Teams</h3>
             <p className="text-xs text-slate-500">Provide these ready-to-paste code snippets to your client&apos;s dev team to host <code>/llms.txt</code> instantly.</p>
           </div>
         </div>
@@ -416,8 +416,8 @@ location = /llms.txt {
               onClick={() => handleCopy(blueprints[activeBlueprint])}
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
             >
-              {copiedCode ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
-              {copiedCode ? 'Copied!' : 'Copy Blueprint'}
+              {copiedCode ? <Check className="h-3 w-3 text-slate-900" /> : <Copy className="h-3 w-3" />}
+              {copiedCode ? 'Copied' : 'Copy Blueprint'}
             </button>
           </div>
           <pre className="whitespace-pre-wrap leading-relaxed">

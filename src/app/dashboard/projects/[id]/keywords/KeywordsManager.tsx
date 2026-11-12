@@ -158,17 +158,17 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
               Active Prompts
             </span>
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
-              <Target className="h-4 w-4 text-emerald-400" />
+              <Target className="h-4 w-4 text-slate-900" />
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-slate-950">{keywords.length}</span>
+            <span className="font-sans text-3xl font-black text-slate-950">{keywords.length}</span>
             <span className="text-xs font-semibold text-slate-400">/ {planLimit} capacity</span>
           </div>
           <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                usagePct > 90 ? 'bg-rose-500' : 'bg-gradient-to-r from-emerald-500 to-emerald-600'
+                usagePct > 90 ? 'bg-rose-500' : 'bg-slate-900'
               }`}
               style={{ width: `${usagePct}%` }}
             />
@@ -181,13 +181,13 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Commercial Intent
             </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-slate-900 border border-slate-200 shadow-2xs">
               <TrendingUp className="h-4 w-4" />
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-slate-950">{commercialCount}</span>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            <span className="font-sans text-3xl font-black text-slate-950">{commercialCount}</span>
+            <span className="text-xs font-bold text-slate-900 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200">
               {keywords.length > 0 ? Math.round((commercialCount / keywords.length) * 100) : 0}% high-value
             </span>
           </div>
@@ -207,7 +207,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-slate-950">{informationalCount}</span>
+            <span className="font-sans text-3xl font-black text-slate-950">{informationalCount}</span>
             <span className="text-xs font-semibold text-slate-400">how-to / definitions</span>
           </div>
           <p className="mt-2.5 text-[11px] text-slate-500 font-medium">
@@ -223,7 +223,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             </span>
             <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
           </div>
-          <span className="font-display text-3xl font-black text-white">
+          <span className="font-sans text-3xl font-black text-white">
             {planConfig.engines.length}{' '}
             <span className="text-base font-normal text-slate-300">Frontier Models</span>
           </span>
@@ -282,7 +282,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
                 type="button"
                 onClick={handleDiscover}
                 disabled={discoverLoading}
-                className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-6 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all hover:bg-emerald-700 disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-6 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all hover:bg-slate-50 disabled:opacity-50 cursor-pointer"
               >
                 <Sparkles className={`h-4 w-4 ${discoverLoading ? 'animate-spin' : ''}`} />
                 <span>{discoverLoading ? 'Scanning...' : 'AI Discover'}</span>
@@ -294,12 +294,12 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             <div
               className={`flex items-center gap-2 rounded-xl p-3 text-xs font-semibold ${
                 feedbackMsg.type === 'success'
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                  ? 'bg-slate-50 text-slate-900 border border-slate-200'
                   : 'bg-rose-50 text-rose-800 border border-rose-200'
               }`}
             >
               {feedbackMsg.type === 'success' ? (
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
               ) : (
                 <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
               )}
@@ -388,7 +388,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
                             isCommercial
-                              ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                              ? 'bg-slate-50 text-slate-900 ring-1 ring-slate-200'
                               : isNavigational
                               ? 'bg-purple-50 text-purple-700 ring-1 ring-purple-200'
                               : 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'

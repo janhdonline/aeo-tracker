@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+            <span className="font-sans font-bold text-base tracking-tight text-slate-900">
               AEO Tracker
             </span>
           </Link>
@@ -70,7 +70,7 @@ export default function PrivacyPage() {
         <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-10 shadow-card space-y-8 text-xs sm:text-sm leading-relaxed text-slate-600">
           <div>
             <h2 className="text-base font-black text-slate-950 mb-2 flex items-center gap-2">
-              <Database className="h-4 w-4 text-emerald-600" />
+              <Database className="h-4 w-4 text-slate-900" />
               1. Information We Collect
             </h2>
             <p>
@@ -104,7 +104,7 @@ export default function PrivacyPage() {
             </h2>
             <p>
               For data export requests, workspace deletion, or compliance inquiries, please email{' '}
-              <a href="mailto:contact@aeovisibility.com" className="font-bold text-slate-950 underline hover:text-emerald-600">
+              <a href="mailto:contact@aeovisibility.com" className="font-bold text-slate-950 underline hover:text-slate-900">
                 contact@aeovisibility.com
               </a>.
             </p>

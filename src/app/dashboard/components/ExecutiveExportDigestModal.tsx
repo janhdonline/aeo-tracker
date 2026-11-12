@@ -80,11 +80,11 @@ export function ExecutiveExportDigestModal({
           onClick={() => setModalOpen(true)}
           className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
             digestActive
-              ? 'border-emerald-200 bg-emerald-50/80 text-emerald-800 hover:bg-emerald-100/70 shadow-2xs'
+              ? 'border-slate-200 bg-slate-50/80 text-slate-900 hover:bg-slate-50/70 shadow-2xs'
               : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
           }`}
         >
-          <Mail className="h-3.5 w-3.5 text-emerald-600" />
+          <Mail className="h-3.5 w-3.5 text-slate-900" />
           <span>Weekly Digest: {digestActive ? 'Active' : 'Paused'}</span>
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
         </button>
@@ -110,11 +110,11 @@ export function ExecutiveExportDigestModal({
 
               {/* Title & Badge */}
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-900 border border-slate-200/60">
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-display text-base font-bold text-slate-900">
+                  <h3 className="font-sans text-base font-bold text-slate-900">
                     Executive AI Visibility Digest
                   </h3>
                   <p className="text-xs text-slate-500">
@@ -136,7 +136,7 @@ export function ExecutiveExportDigestModal({
                   <button
                     onClick={() => setDigestActive(!digestActive)}
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      digestActive ? 'bg-emerald-600' : 'bg-slate-300'
+                      digestActive ? 'bg-slate-50' : 'bg-slate-300'
                     }`}
                   >
                     <span
@@ -154,7 +154,7 @@ export function ExecutiveExportDigestModal({
                   </span>
                   <div className="p-2.5 rounded-lg bg-white border border-slate-200 font-medium text-slate-800 flex items-center justify-between">
                     <span>{userEmail}</span>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                    <span className="text-[10px] font-bold text-slate-900 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200">
                       Primary Admin
                     </span>
                   </div>
@@ -170,7 +170,7 @@ export function ExecutiveExportDigestModal({
                   </div>
                   <div className="p-2.5 rounded-lg bg-white border border-slate-200">
                     <span className="text-slate-400 block font-semibold">Latest Confidence</span>
-                    <span className="font-bold text-emerald-700 text-xs mt-0.5 block">
+                    <span className="font-bold text-slate-900 text-xs mt-0.5 block">
                       {avgScore}/100 Average
                     </span>
                   </div>
@@ -179,8 +179,8 @@ export function ExecutiveExportDigestModal({
 
               {/* Status or Success Notification */}
               {sentSuccess && (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-900">
+                  <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
                   <span>{sentMessage}</span>
                 </div>
               )}

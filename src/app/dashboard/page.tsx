@@ -72,7 +72,7 @@ const BENCHMARK_EXAMPLES = [
 ];
 
 const AI_ENGINES = [
-  { name: 'ChatGPT-4o', provider: 'OpenAI', latency: '110ms', status: 'SearchGPT Live', tone: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+  { name: 'ChatGPT-4o', provider: 'OpenAI', latency: '110ms', status: 'SearchGPT Live', tone: 'text-slate-900 bg-slate-50 border-slate-200' },
   { name: 'Google Gemini', provider: 'Google AI', latency: '95ms', status: 'Overview Synthesis', tone: 'text-blue-700 bg-blue-50 border-blue-200' },
   { name: 'Perplexity Pro', provider: 'Perplexity', latency: '142ms', status: 'Web Citations', tone: 'text-teal-700 bg-teal-50 border-teal-200' },
   { name: 'Claude 3.5 Sonnet', provider: 'Anthropic', latency: '120ms', status: 'Entity Knowledge', tone: 'text-amber-800 bg-amber-50 border-amber-200' },
@@ -308,7 +308,7 @@ export default function DashboardPage() {
                     cx="64"
                     cy="64"
                     r={54}
-                    className="text-emerald-500 transition-all duration-1000 ease-out"
+                    className="text-slate-900 transition-all duration-1000 ease-out"
                     strokeWidth="7"
                     strokeDasharray={2 * Math.PI * 54}
                     strokeDashoffset={2 * Math.PI * 54 - ((avgScore > 0 ? avgScore : 84) / 100) * 2 * Math.PI * 54}
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center justify-center text-center">
-                  <span className="font-display text-3xl font-extrabold tracking-tight text-slate-900">
+                  <span className="font-sans text-3xl font-extrabold tracking-tight text-slate-900">
                     {avgScore > 0 ? avgScore : 84}
                   </span>
                   <span className="text-[10px] font-bold text-slate-400 -mt-1">/100</span>
@@ -329,12 +329,12 @@ export default function DashboardPage() {
               {/* Studio Meta & Subtitle */}
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="font-display text-2xl font-bold tracking-tight text-slate-950">
+                  <h1 className="font-sans text-2xl font-bold tracking-tight text-slate-950">
                     AEO Visibility Studio
                   </h1>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-2.5 py-0.5 text-[11px] font-semibold text-slate-900">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    6 AI Engines Synced
+                    6 AI engines synced
                   </span>
                 </div>
 
@@ -387,7 +387,7 @@ export default function DashboardPage() {
                     disabled={quickSubmitting}
                     className="absolute right-1 top-1 bottom-1 inline-flex items-center justify-center gap-1 rounded-lg bg-slate-900 px-3 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all disabled:opacity-50 cursor-pointer"
                   >
-                    <Plus className="h-3 w-3 text-emerald-400" />
+                    <Plus className="h-3 w-3 text-slate-400" />
                     <span>{quickSubmitting ? '...' : 'Track'}</span>
                   </button>
                 </div>
@@ -501,7 +501,7 @@ export default function DashboardPage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-display text-xl font-bold text-slate-900">
+              <h2 className="font-sans text-xl font-bold text-slate-900">
                 Tracked Web Properties
               </h2>
               <p className="text-xs text-slate-500">
@@ -523,11 +523,11 @@ export default function DashboardPage() {
               <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
                   <div className="flex items-start gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-xs">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-50 text-slate-900 border border-slate-200/60 shadow-xs">
                       <Sparkles className="h-6 w-6" />
                     </div>
                     <div>
-                      <h3 className="font-display text-lg font-bold text-slate-900">
+                      <h3 className="font-sans text-lg font-bold text-slate-900">
                         Start Your First AI Visibility Audit
                       </h3>
                       <p className="text-xs sm:text-sm text-slate-500 mt-0.5 max-w-xl leading-relaxed">
@@ -542,7 +542,7 @@ export default function DashboardPage() {
                     }}
                     className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all shrink-0"
                   >
-                    <Plus className="h-4 w-4 text-emerald-400" />
+                    <Plus className="h-4 w-4 text-slate-400" />
                     <span>Add Website Above</span>
                   </button>
                 </div>
@@ -553,7 +553,7 @@ export default function DashboardPage() {
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                       Explore How Leading Tech Brands Perform in AI Answers
                     </span>
-                    <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
+                    <span className="text-[11px] font-semibold text-slate-900 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200/60">
                       Live Sample Reports
                     </span>
                   </div>
@@ -569,7 +569,7 @@ export default function DashboardPage() {
                             <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                               {b.domain}
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200/60">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-900 border border-slate-200/60">
                               {b.score}/100 AEO
                             </span>
                           </div>
@@ -605,7 +605,7 @@ export default function DashboardPage() {
                               const el = document.querySelector('input[placeholder*="domain"]') as HTMLInputElement;
                               el?.focus();
                             }}
-                            className="text-[11px] font-semibold text-emerald-700 hover:underline"
+                            className="text-[11px] font-semibold text-slate-900 hover:underline"
                           >
                             + Track This
                           </button>
@@ -627,7 +627,7 @@ export default function DashboardPage() {
                     onClick={() => setSelectedDomain(p.domain)}
                     className={`rounded-3xl border bg-white p-5 sm:p-6 shadow-xs hover:shadow-card transition-all duration-200 flex flex-col justify-between group cursor-pointer ${
                       isSelected
-                        ? 'border-emerald-500 ring-2 ring-emerald-400/40 shadow-sm'
+                        ? 'border-slate-900 ring-1 ring-slate-900 shadow-sm'
                         : 'border-slate-200/90 hover:border-slate-300'
                     }`}
                   >
@@ -635,24 +635,24 @@ export default function DashboardPage() {
                       <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
                         <div className="flex items-center gap-3">
                           <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-colors ${
-                            isSelected ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-800 border-slate-200/80'
+                            isSelected ? 'bg-slate-50 text-slate-900 border-slate-200' : 'bg-slate-100 text-slate-800 border-slate-200/80'
                           }`}>
                             <Globe className="h-5 w-5" />
                           </span>
                           <div>
-                            <h3 className="font-display text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                            <h3 className="font-sans text-base font-bold text-slate-900 group-hover:text-slate-900 transition-colors">
                               {p.domain}
                             </h3>
                             <p className="text-xs text-slate-500">{p.brand_name || p.domain}</p>
                           </div>
                         </div>
                         {isSelected ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500 text-white px-2.5 py-0.5 text-[10px] font-bold shadow-2xs shrink-0">
-                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> In Radar
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 text-white px-2.5 py-0.5 text-[10px] font-medium shadow-2xs shrink-0">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-600 border border-slate-200 shrink-0">
-                            Click to View
+                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-medium text-slate-600 border border-slate-200 shrink-0">
+                            Select
                           </span>
                         )}
                       </div>
@@ -670,7 +670,7 @@ export default function DashboardPage() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                             Tracking Mode
                           </span>
-                          <span className="font-bold text-emerald-700 mt-0.5 block">
+                          <span className="font-bold text-slate-900 mt-0.5 block">
                             Weekly Radar
                           </span>
                         </div>
@@ -684,7 +684,7 @@ export default function DashboardPage() {
                         className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 shadow-xs transition-colors"
                       >
                         Open Workspace
-                        <ArrowRight className="h-3.5 w-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                       </Link>
 
                       <div className="flex items-center gap-1.5">
@@ -735,7 +735,7 @@ export default function DashboardPage() {
         {/* ESSENTIAL TOOLS QUICK SHELF */}
         <section className="pt-2">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-display text-sm font-bold text-slate-900">
+            <h4 className="font-sans text-sm font-bold text-slate-900">
               AEO Engineering & Diagnostic Tool Suite
             </h4>
             <span className="text-xs text-slate-400">6 Specialized Tools</span>
@@ -795,7 +795,7 @@ export default function DashboardPage() {
               className="flex flex-col justify-between p-3.5 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs group"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-slate-900 border border-slate-200/60">
                   <Bot className="h-4 w-4" />
                 </span>
                 <ArrowRight className="h-3 w-3 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />

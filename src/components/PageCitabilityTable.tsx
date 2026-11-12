@@ -87,7 +87,7 @@ export function PageCitabilityTable({ domain, initialPages }: PageCitabilityTabl
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-600 text-white text-xs font-bold shadow-2xs">
               <FileText className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-base font-bold text-slate-950">
+            <h3 className="font-sans text-base font-bold text-slate-950">
               Page Citability
             </h3>
             <span className="inline-flex items-center rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold text-teal-700 border border-teal-200">
@@ -117,7 +117,7 @@ export function PageCitabilityTable({ domain, initialPages }: PageCitabilityTabl
                 const isHigh = row.score >= 80;
                 const isMedium = row.score >= 60 && row.score < 80;
                 const scoreColor = isHigh
-                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                  ? 'text-slate-900 bg-slate-50 border-slate-200'
                   : isMedium
                   ? 'text-amber-700 bg-amber-50 border-amber-200'
                   : 'text-rose-700 bg-rose-50 border-rose-200';
@@ -141,7 +141,7 @@ export function PageCitabilityTable({ domain, initialPages }: PageCitabilityTabl
                           title={`Content Length & Chunking: ${row.dimensions.length}%`}
                         />
                         <div
-                          className="h-2 rounded-full bg-emerald-500"
+                          className="h-2 rounded-full bg-slate-50"
                           style={{ width: `${Math.max(15, row.dimensions.structure * 0.4)}px` }}
                           title={`Heading Structure: ${row.dimensions.structure}%`}
                         />
@@ -154,7 +154,7 @@ export function PageCitabilityTable({ domain, initialPages }: PageCitabilityTabl
                     </td>
                     <td className="py-3 px-4 text-right">
                       {row.schemaValid ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-900">
                           <CheckCircle2 className="h-3 w-3" /> Valid
                         </span>
                       ) : (

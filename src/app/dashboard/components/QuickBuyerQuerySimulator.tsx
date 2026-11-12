@@ -97,7 +97,7 @@ export function QuickBuyerQuerySimulator({
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-base font-bold text-slate-950">
+              <h3 className="font-sans text-base font-bold text-slate-950">
                 Live Commercial Buyer Prompt Simulator
               </h3>
               <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-800 border border-indigo-200">
@@ -154,8 +154,8 @@ export function QuickBuyerQuerySimulator({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-0.5 text-xs font-bold border border-emerald-300/60">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 text-slate-900 px-2.5 py-0.5 text-xs font-bold border border-slate-200/60">
+              <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
               {activePreset.yourRank}
             </span>
             <span className="text-xs text-slate-500 font-mono">
@@ -178,7 +178,7 @@ export function QuickBuyerQuerySimulator({
               </span>
               <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                 activePreset.engines.chatgpt.cited
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  ? 'bg-slate-50 text-slate-900 border border-slate-200'
                   : 'bg-rose-50 text-rose-700 border border-rose-200'
               }`}>
                 {activePreset.engines.chatgpt.cited ? 'Cited Link' : 'No Link'}
@@ -198,7 +198,7 @@ export function QuickBuyerQuerySimulator({
               </span>
               <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                 activePreset.engines.perplexity.cited
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  ? 'bg-slate-50 text-slate-900 border border-slate-200'
                   : 'bg-rose-50 text-rose-700 border border-rose-200'
               }`}>
                 {activePreset.engines.perplexity.cited ? 'Cited Link' : 'No Link'}
@@ -218,7 +218,7 @@ export function QuickBuyerQuerySimulator({
               </span>
               <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                 activePreset.engines.claude.cited
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  ? 'bg-slate-50 text-slate-900 border border-slate-200'
                   : 'bg-rose-50 text-rose-700 border border-rose-200'
               }`}>
                 {activePreset.engines.claude.cited ? 'Cited Link' : 'No Link'}
@@ -238,7 +238,7 @@ export function QuickBuyerQuerySimulator({
               </span>
               <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                 activePreset.engines.gemini.cited
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  ? 'bg-slate-50 text-slate-900 border border-slate-200'
                   : 'bg-rose-50 text-rose-700 border border-rose-200'
               }`}>
                 {activePreset.engines.gemini.cited ? 'Cited Link' : 'No Link'}

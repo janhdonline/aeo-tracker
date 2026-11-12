@@ -585,26 +585,23 @@ export function DailyAnalyticsChart({
 
   return (
     <section className="relative rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-6 overflow-hidden">
-      {/* Background Ambient Glow (Electric Emerald + Cyan + Indigo) */}
-      <div className="pointer-events-none absolute -top-36 right-1/4 h-96 w-[700px] rounded-full bg-gradient-to-br from-emerald-100/35 via-cyan-100/25 to-indigo-100/20 blur-3xl -z-0" />
-
       {/* Top Header & Range Controls */}
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-xs">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
               <TrendingUp className="h-5 w-5" />
             </span>
-            <h3 className="font-display text-xl font-bold text-slate-950 tracking-tight">
+            <h3 className="font-sans text-xl font-bold text-slate-950 tracking-tight">
               AI Visibility & Citation Radar
             </h3>
             {domain && (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white shadow-2xs">
-                <Globe className="h-3 w-3 text-emerald-400" />
+                <Globe className="h-3 w-3 text-slate-300" />
                 {domain}
               </span>
             )}
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1 text-xs font-bold text-slate-900 border border-slate-200">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               Live Telemetry Sync
             </span>
@@ -624,7 +621,7 @@ export function DailyAnalyticsChart({
             className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 text-xs font-bold shadow-xs transition-all cursor-pointer disabled:opacity-50"
             title="Probe all 6 AI engines right now"
           >
-            <RefreshCw className={`h-3.5 w-3.5 text-emerald-400 ${isSimulatingProbe ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 text-slate-900 ${isSimulatingProbe ? 'animate-spin' : ''}`} />
             <span>{isSimulatingProbe ? 'Probing LLMs...' : 'Trigger Radar Probe'}</span>
           </button>
 
@@ -659,7 +656,7 @@ export function DailyAnalyticsChart({
           {/* Metric Filter Tabs */}
           <div className="inline-flex items-center rounded-xl bg-slate-100/90 p-1 border border-slate-200/70 text-xs shadow-inner">
             {[
-              { id: 'visibility', label: 'Visibility Score', dot: 'bg-emerald-500' },
+              { id: 'visibility', label: 'Visibility Score', dot: 'bg-slate-50' },
               { id: 'citations', label: 'Citations', dot: 'bg-cyan-500' },
               { id: 'sentiment', label: 'Sentiment', dot: 'bg-indigo-500' },
               { id: 'competitor', label: 'vs Rivals', dot: 'bg-amber-500' },
@@ -698,22 +695,22 @@ export function DailyAnalyticsChart({
           onClick={() => setActiveMetric('visibility')}
           className={`group p-4 rounded-2xl border transition-all cursor-pointer ${
             activeMetric === 'visibility'
-              ? 'bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-300/40 shadow-xs'
+              ? 'bg-slate-50/70 border-slate-900 ring-1 ring-slate-900 shadow-xs'
               : 'bg-slate-50/70 border-slate-200/80 hover:bg-white hover:border-slate-300 hover:shadow-2xs'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-700 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-900 transition-colors">
               Latest AEO Score
             </span>
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="h-2 w-2 rounded-full bg-slate-900" />
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="font-display text-2xl font-black tracking-tight text-slate-950 tabular-nums">
+            <span className="font-sans text-2xl font-black tracking-tight text-slate-950 tabular-nums">
               {activePoint ? activePoint.d.visibility : currentScore}
               <span className="text-sm font-bold text-slate-400">/100</span>
             </span>
-            <span className="inline-flex items-center text-xs font-bold text-emerald-600">
+            <span className="inline-flex items-center text-xs font-bold text-slate-900">
               <ArrowUpRight className="h-3.5 w-3.5" />
               {activePoint?.d.deltaText || '+8.4%'}
             </span>
@@ -737,7 +734,7 @@ export function DailyAnalyticsChart({
             <span className="h-2 w-2 rounded-full bg-cyan-500" />
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="font-display text-2xl font-black tracking-tight text-cyan-950 tabular-nums">
+            <span className="font-sans text-2xl font-black tracking-tight text-cyan-950 tabular-nums">
               {activePoint ? activePoint.d.citations : 48}
             </span>
             <span className="text-xs font-semibold text-cyan-600">+12 this wk</span>
@@ -761,7 +758,7 @@ export function DailyAnalyticsChart({
             <span className="h-2 w-2 rounded-full bg-indigo-500" />
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="font-display text-2xl font-black tracking-tight text-indigo-950 tabular-nums">
+            <span className="font-sans text-2xl font-black tracking-tight text-indigo-950 tabular-nums">
               {activePoint ? activePoint.d.sentiment : 93}%
             </span>
             <span className="text-xs font-semibold text-indigo-600">Favorable</span>
@@ -785,7 +782,7 @@ export function DailyAnalyticsChart({
             <span className="h-2 w-2 rounded-full bg-amber-500" />
           </div>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="font-display text-lg font-bold tracking-tight text-slate-950 truncate">
+            <span className="font-sans text-lg font-bold tracking-tight text-slate-950 truncate">
               {activePoint ? activePoint.d.topEngine : 'Perplexity Pro'}
             </span>
           </div>
@@ -822,7 +819,7 @@ export function DailyAnalyticsChart({
                   <span className="text-xs font-bold text-slate-100 block">{activePoint.d.displayDate}</span>
                   <span className="text-[10px] text-slate-400 font-mono">{activePoint.d.timeLabel}</span>
                 </div>
-                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/20 px-2 py-0.5 text-[11px] font-bold text-emerald-300">
+                <span className="inline-flex items-center gap-1 rounded-md bg-slate-50/20 px-2 py-0.5 text-[11px] font-bold text-slate-900">
                   {activePoint.d.deltaText}
                 </span>
               </div>
@@ -831,10 +828,10 @@ export function DailyAnalyticsChart({
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                    <span className="h-2 w-2 rounded-full bg-slate-50" />
                     AEO Visibility:
                   </span>
-                  <span className="font-bold font-mono text-emerald-300">
+                  <span className="font-bold font-mono text-slate-900">
                     {activePoint.d.visibility}/100
                   </span>
                 </div>
@@ -870,7 +867,7 @@ export function DailyAnalyticsChart({
               </div>
 
               {activePoint.d.eventNote && (
-                <div className="mt-2 pt-1.5 border-t border-slate-800/80 text-[10px] text-emerald-400 flex items-center gap-1">
+                <div className="mt-2 pt-1.5 border-t border-slate-800/80 text-[10px] text-slate-900 flex items-center gap-1">
                   <Sparkles className="h-3 w-3 shrink-0" />
                   <span className="truncate">{activePoint.d.eventNote}</span>
                 </div>
@@ -1030,17 +1027,6 @@ export function DailyAnalyticsChart({
           )}
 
           {/* Live Traveling Particle on Wave (Simulates Real-Time Streaming Telemetry) */}
-          {(activeMetric === 'visibility' || activeMetric === 'all') && visPath && (
-            <circle r={4.5} className="fill-white stroke-emerald-400 stroke-2" style={{ filter: 'drop-shadow(0 0 6px #10b981)' }}>
-              <animateMotion
-                path={visPath}
-                dur="8s"
-                repeatCount="indefinite"
-                rotate="auto"
-              />
-            </circle>
-          )}
-
           {/* Interactive Laser Crosshair & Hotspots */}
           {points.map((pt, i) => {
             const isLast = i === points.length - 1;
@@ -1069,20 +1055,12 @@ export function DailyAnalyticsChart({
 
                 {/* Animated Pulsing Beacon on Today (Live) point */}
                 {isLast && (activeMetric === 'visibility' || activeMetric === 'all') && (
-                  <>
-                    <circle
-                      cx={pt.x}
-                      cy={pt.yVis}
-                      r={18}
-                      className="fill-emerald-400/20 animate-ping"
-                    />
-                    <circle
-                      cx={pt.x}
-                      cy={pt.yVis}
-                      r={10}
-                      className="fill-emerald-500/30 animate-pulse"
-                    />
-                  </>
+                  <circle
+                    cx={pt.x}
+                    cy={pt.yVis}
+                    r={8}
+                    className="fill-emerald-500/20 animate-pulse"
+                  />
                 )}
 
                 {/* Visibility Dot */}
@@ -1090,13 +1068,8 @@ export function DailyAnalyticsChart({
                   <circle
                     cx={pt.x}
                     cy={pt.yVis}
-                    r={isHovered ? 7.5 : 5}
-                    className="fill-emerald-500 stroke-white stroke-2 transition-all duration-150"
-                    style={{
-                      filter: isHovered
-                        ? 'drop-shadow(0 0 12px rgba(16, 185, 129, 0.95))'
-                        : 'drop-shadow(0 0 4px rgba(16, 185, 129, 0.45))',
-                    }}
+                    r={isHovered ? 6 : 4}
+                    className="fill-slate-900 stroke-white stroke-2 transition-all duration-150"
                   />
                 )}
 
@@ -1158,7 +1131,7 @@ export function DailyAnalyticsChart({
         <div className="flex flex-wrap items-center justify-between gap-4 px-6 sm:px-8 pt-3 border-t border-slate-100 text-xs">
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex items-center gap-2">
-              <span className="h-2.5 w-6 rounded-full bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-400 shadow-2xs inline-block" />
+              <span className="h-2.5 w-6 rounded-full bg-slate-900 shadow-2xs inline-block" />
               <span className="font-semibold text-slate-900">AEO Visibility Wave</span>
             </div>
             <div className="flex items-center gap-2">
@@ -1176,7 +1149,7 @@ export function DailyAnalyticsChart({
           </div>
 
           <div className="flex items-center gap-2 text-slate-500 text-xs">
-            <ShieldCheck className="h-4 w-4 text-emerald-600" />
+            <ShieldCheck className="h-4 w-4 text-slate-900" />
             <span>Full-width telemetry sync • Multi-LLM verified</span>
           </div>
         </div>

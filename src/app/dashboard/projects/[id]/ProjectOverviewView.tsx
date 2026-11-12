@@ -22,6 +22,10 @@ import {
   Sparkles,
   ShieldCheck,
   Zap,
+  BarChart2,
+  Eye,
+  Users,
+  Award,
 } from 'lucide-react';
 import { RunScanButton } from './RunScanButton';
 import { WebPresenceAudit } from '@/components/WebPresenceAudit';
@@ -189,7 +193,7 @@ export function ProjectOverviewView({
     : reportData.score;
 
   const brandName = project.brand_name || reportData.brandName || project.domain;
-  const productsList = reportData.products && reportData.products.length > 0
+  const productsList = Array.isArray(reportData?.products) && reportData.products.length > 0
     ? reportData.products
     : [
         `${brandName} Core Workspace`,
@@ -198,14 +202,16 @@ export function ProjectOverviewView({
         `${brandName} Developer APIs`,
       ];
 
-  const competitorNamesList = project.competitor_domains && project.competitor_domains.length > 0
+  const competitorNamesList = Array.isArray(project?.competitor_domains) && project.competitor_domains.length > 0
     ? project.competitor_domains
-    : reportData.competitorNames;
+    : Array.isArray(reportData?.competitorNames)
+    ? reportData.competitorNames
+    : [];
 
   // Key prompts: prefer project's keywords table seeds, fallback to reportData
-  const displayPrompts = keywords && keywords.length > 0
+  const displayPrompts = Array.isArray(keywords) && keywords.length > 0
     ? keywords.map((k) => ({ id: k.id, prompt: k.keyword }))
-    : reportData.prompts && reportData.prompts.length > 0
+    : Array.isArray(reportData?.prompts) && reportData.prompts.length > 0
     ? reportData.prompts
     : [
         { id: '1', prompt: `Which solutions offer multi-currency and commercial scalability for ${project.industry || 'software'}?` },
@@ -224,10 +230,12 @@ export function ProjectOverviewView({
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-blue-200/80 bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-white p-3.5 sm:px-5 flex items-center justify-between shadow-2xs"
+          className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5 sm:px-5 flex items-center justify-between shadow-2xs"
         >
           <div className="flex items-center gap-2.5 text-xs text-slate-700">
-            <span className="text-blue-600 font-bold text-sm">📊</span>
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white border border-slate-200 text-slate-700">
+              <BarChart2 className="h-3.5 w-3.5" />
+            </span>
             <span>
               <strong>Daily Analytics:</strong> Active monitoring for{' '}
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white border border-slate-200 font-bold text-slate-900">
@@ -266,7 +274,7 @@ export function ProjectOverviewView({
                   cx="64"
                   cy="64"
                   r={radius}
-                  className="text-emerald-500"
+                  className="text-slate-900"
                   strokeWidth="7"
                   strokeDasharray={circumference}
                   initial={{ strokeDashoffset: circumference }}
@@ -281,7 +289,7 @@ export function ProjectOverviewView({
                 />
               </svg>
               <div className="absolute flex flex-col items-center justify-center text-center">
-                <span className="font-display text-3xl font-extrabold tracking-tight text-slate-900">
+                <span className="font-sans text-3xl font-extrabold tracking-tight text-slate-900">
                   <Counter value={effectiveScore} />
                 </span>
                 <span className="text-[10px] font-bold text-slate-400 -mt-1">/100</span>
@@ -291,10 +299,10 @@ export function ProjectOverviewView({
             {/* Brand Meta, Chips & Products */}
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-2xl font-bold tracking-tight text-slate-950">
+                <h1 className="font-sans text-2xl font-bold tracking-tight text-slate-950">
                   {brandName}
                 </h1>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold text-slate-900 border border-slate-200">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Live Monitoring
                 </span>
@@ -391,40 +399,40 @@ export function ProjectOverviewView({
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-2xl font-bold text-slate-900">{reportData.productsFoundPct ?? 0}%</p>
+          <p className="font-sans text-2xl font-bold text-slate-900">{reportData.productsFoundPct ?? 0}%</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
           <div className="flex items-center justify-between text-slate-500 mb-1">
             <span className="text-xs font-semibold flex items-center gap-1.5">
-              <span>👁️</span>
+              <Eye className="h-3.5 w-3.5 text-slate-400" />
               Your products
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-2xl font-bold text-slate-900">{reportData.yourProductsPct ?? 0}%</p>
+          <p className="font-sans text-2xl font-bold text-slate-900">{reportData.yourProductsPct ?? 0}%</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
           <div className="flex items-center justify-between text-slate-500 mb-1">
             <span className="text-xs font-semibold flex items-center gap-1.5">
-              <span>👥</span>
+              <Users className="h-3.5 w-3.5 text-slate-400" />
               Competitor products
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-2xl font-bold text-slate-900">{reportData.competitorProductsPct ?? 0}%</p>
+          <p className="font-sans text-2xl font-bold text-slate-900">{reportData.competitorProductsPct ?? 0}%</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs">
           <div className="flex items-center justify-between text-slate-500 mb-1">
             <span className="text-xs font-semibold flex items-center gap-1.5">
-              <span>🎖️</span>
+              <Award className="h-3.5 w-3.5 text-slate-400" />
               Your Best Product
             </span>
             <Info className="h-3.5 w-3.5 text-slate-400" />
           </div>
-          <p className="font-display text-sm font-bold text-slate-900 truncate" title={reportData.bestProduct || '—'}>
+          <p className="font-sans text-sm font-bold text-slate-900 truncate" title={reportData.bestProduct || '—'}>
             {reportData.bestProduct || '—'}
           </p>
         </div>
@@ -436,8 +444,8 @@ export function ProjectOverviewView({
         <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display text-base font-bold text-slate-900">AI Presence</h3>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+              <h3 className="font-sans text-base font-bold text-slate-900">AI Presence</h3>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                 {reportData.aiPresenceScore}
               </span>
             </div>
@@ -451,7 +459,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">ChatGPT-4o</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.chatgpt.score}</span>
                 </div>
               </div>
@@ -464,7 +472,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">Google Gemini</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.gemini.score}</span>
                 </div>
               </div>
@@ -477,7 +485,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">Anthropic Claude</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.claude.score}</span>
                 </div>
               </div>
@@ -490,7 +498,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">Perplexity Pro</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.perplexity.score}</span>
                 </div>
               </div>
@@ -516,8 +524,8 @@ export function ProjectOverviewView({
         <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display text-base font-bold text-slate-900">Key Prompts</h3>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+              <h3 className="font-sans text-base font-bold text-slate-900">Key Prompts</h3>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                 {reportData.keyPromptsScore}
               </span>
             </div>
@@ -570,8 +578,8 @@ export function ProjectOverviewView({
         <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display text-base font-bold text-slate-900">Competitor Landscape</h3>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+              <h3 className="font-sans text-base font-bold text-slate-900">Competitor Landscape</h3>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                 {reportData.competitorLandscapeScore}
               </span>
             </div>
@@ -618,8 +626,8 @@ export function ProjectOverviewView({
         <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display text-base font-bold text-slate-900">Strategy Review</h3>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-700 shadow-2xs">
+              <h3 className="font-sans text-base font-bold text-slate-900">Strategy Review</h3>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 shadow-2xs">
                 {reportData.strategyReviewScore}
               </span>
             </div>
@@ -664,7 +672,7 @@ export function ProjectOverviewView({
                     </span>
                   </div>
                   <div className="flex items-center justify-center border-l border-slate-200 pl-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
                   </div>
                 </div>
               </div>
@@ -775,7 +783,7 @@ export function ProjectOverviewView({
       <div id="tasks-section" className="pt-2">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="font-display text-base font-bold text-slate-900">Tasks</h3>
+            <h3 className="font-sans text-base font-bold text-slate-900">Tasks</h3>
             <p className="text-xs text-slate-500 mt-0.5">
               Prioritized actions backed by the evidence in this report.
             </p>
@@ -841,7 +849,7 @@ export function ProjectOverviewView({
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-display text-xl font-bold text-slate-900">
+            <h3 className="font-sans text-xl font-bold text-slate-900">
               Grow your AEO in just 90 days
             </h3>
             <p className="text-xs text-slate-500 mt-1">
@@ -863,7 +871,7 @@ export function ProjectOverviewView({
       <div id="strategy-deep-audit" className="space-y-6 pt-4 border-t border-slate-100">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               Deep Strategy Diagnostics & Repair Tools
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">

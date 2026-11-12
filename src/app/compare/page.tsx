@@ -66,7 +66,7 @@ export default function ComparePage() {
         <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+            <span className="font-sans font-bold text-base tracking-tight text-slate-900">
               AEO Tracker
             </span>
           </Link>
@@ -100,11 +100,11 @@ export default function ComparePage() {
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
           <div className="relative max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
-              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
               Competitive Architecture Benchmark
             </div>
-            <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Why High-Growth Teams Choose <span className="text-emerald-400">AEO Tracker</span>
+            <h1 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              Why High-Growth Teams Choose <span className="text-slate-900">AEO Tracker</span>
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               Legacy SEO suites were built for traditional search engines and 10 blue links. AEO Tracker is purpose-engineered from the ground up for the generative answer engine era.
@@ -123,7 +123,7 @@ export default function ComparePage() {
                   </th>
                   <th className="py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-900 bg-slate-50/80 rounded-t-xl w-2/5">
                     <div className="flex items-center gap-2">
-                      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-emerald-400 text-[10px]">
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-slate-900 text-[10px]">
                         ★
                       </span>
                       <span>AEO Tracker</span>
@@ -138,14 +138,14 @@ export default function ComparePage() {
                 {comparisons.map((row) => (
                   <tr key={row.feature} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-4 pl-4 pr-6 align-top">
-                      <div className="font-display font-bold text-slate-900 text-sm">{row.feature}</div>
+                      <div className="font-sans font-bold text-slate-900 text-sm">{row.feature}</div>
                       <div className="text-xs text-slate-500 mt-0.5 leading-relaxed">
                         {row.description}
                       </div>
                     </td>
                     <td className="py-4 px-6 align-top bg-slate-50/40 font-medium text-slate-900">
                       <div className="flex items-start gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0 mt-0.5" />
                         <span className="leading-relaxed">{row.ours}</span>
                       </div>
                     </td>
@@ -166,19 +166,19 @@ export default function ComparePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs mb-4">
-              <Zap className="h-5 w-5 text-emerald-400" />
+              <Zap className="h-5 w-5 text-slate-900" />
             </span>
-            <h2 className="font-display text-sm font-bold text-slate-950 mb-1">Audit Ready in &lt;60s</h2>
+            <h2 className="font-sans text-sm font-bold text-slate-950 mb-1">Audit Ready in &lt;60s</h2>
             <p className="text-xs text-slate-600 leading-relaxed">
               No complex server integrations, manual proxies, or tracking snippets. Enter your domain to run immediate multi-engine intelligence.
             </p>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-2xs mb-4">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-900 shadow-2xs mb-4">
               <ShieldCheck className="h-5 w-5" />
             </span>
-            <h2 className="font-display text-sm font-bold text-slate-950 mb-1">Enterprise Data Privacy</h2>
+            <h2 className="font-sans text-sm font-bold text-slate-950 mb-1">Enterprise Data Privacy</h2>
             <p className="text-xs text-slate-600 leading-relaxed">
               Your domain keywords and intelligence telemetry are never aggregated or resold. Isolated workspace architecture protects your market advantage.
             </p>
@@ -188,7 +188,7 @@ export default function ComparePage() {
             <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-700 shadow-2xs mb-4">
               <Layers className="h-5 w-5" />
             </span>
-            <h2 className="font-display text-sm font-bold text-slate-950 mb-1">Zero Lock-In Contracts</h2>
+            <h2 className="font-sans text-sm font-bold text-slate-950 mb-1">Zero Lock-In Contracts</h2>
             <p className="text-xs text-slate-600 leading-relaxed">
               Transparent month-to-month subscriptions with self-serve cancellation. No forced multi-year enterprise lock-ins.
             </p>
@@ -198,7 +198,7 @@ export default function ComparePage() {
         {/* Bottom CTA */}
         <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-8 sm:p-10 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div>
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-950">
+            <h2 className="font-sans text-xl sm:text-2xl font-bold text-slate-950">
               Outrank competitors in generative answers today
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
@@ -221,7 +221,7 @@ export default function ComparePage() {
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <Link href="/" className="flex items-center gap-2.5">
               <LogoMark className="h-7 w-7" />
-              <span className="font-display text-sm font-bold tracking-tight text-slate-900">
+              <span className="font-sans text-sm font-bold tracking-tight text-slate-900">
                 AEO Tracker
               </span>
             </Link>
@@ -247,7 +247,7 @@ export default function ComparePage() {
           <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row">
             <p>© 2026 AEO Tracker. All rights reserved.</p>
             <p className="flex items-center gap-1.5 font-mono text-[11px]">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-50" />
               All systems operational · Enterprise telemetry active
             </p>
           </div>

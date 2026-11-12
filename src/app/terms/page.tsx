@@ -20,7 +20,7 @@ export default function TermsPage() {
         <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+            <span className="font-sans font-bold text-base tracking-tight text-slate-900">
               AEO Tracker
             </span>
           </Link>
@@ -106,7 +106,7 @@ export default function TermsPage() {
 
           <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-400">
             Last Updated: January 2026. For legal inquiries, contact{' '}
-            <a href="mailto:contact@aeovisibility.com" className="font-bold text-slate-950 underline hover:text-emerald-600">
+            <a href="mailto:contact@aeovisibility.com" className="font-bold text-slate-950 underline hover:text-slate-900">
               contact@aeovisibility.com
             </a>.
           </div>

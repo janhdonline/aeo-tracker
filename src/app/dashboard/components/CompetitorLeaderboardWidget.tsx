@@ -104,7 +104,7 @@ export function CompetitorLeaderboardWidget({ currentDomain = 'notion.so', userS
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-200/60">
               <Award className="h-4 w-4" />
             </span>
-            <h3 className="font-display text-base font-bold text-slate-900">
+            <h3 className="font-sans text-base font-bold text-slate-900">
               Competitor Intelligence & Share of Voice Leaderboard
             </h3>
             <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200/60">
@@ -174,7 +174,7 @@ export function CompetitorLeaderboardWidget({ currentDomain = 'notion.so', userS
                 <tr
                   key={c.domain}
                   className={`hover:bg-slate-50/70 transition-colors ${
-                    isUser ? 'bg-emerald-50/40 border-l-4 border-l-emerald-500' : ''
+                    isUser ? 'bg-slate-50/40 border-l-4 border-l-slate-900' : ''
                   }`}
                 >
                   {/* Brand & Rank */}
@@ -189,7 +189,7 @@ export function CompetitorLeaderboardWidget({ currentDomain = 'notion.so', userS
                             {c.brand}
                           </span>
                           {isUser && (
-                            <span className="inline-flex items-center rounded-md bg-emerald-100/80 px-1.5 py-0.2 text-[10px] font-bold text-emerald-800">
+                            <span className="inline-flex items-center rounded-md bg-slate-50/80 px-1.5 py-0.2 text-[10px] font-bold text-slate-900">
                               Your Brand
                             </span>
                           )}
@@ -204,7 +204,7 @@ export function CompetitorLeaderboardWidget({ currentDomain = 'notion.so', userS
                     <span
                       className={`inline-flex items-center justify-center rounded-xl px-2.5 py-1 text-xs font-extrabold ${
                         c.score >= 90
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          ? 'bg-slate-50 text-slate-900 border border-slate-200'
                           : c.score >= 80
                           ? 'bg-blue-50 text-blue-700 border border-blue-200'
                           : 'bg-amber-50 text-amber-800 border border-amber-200'
@@ -224,7 +224,7 @@ export function CompetitorLeaderboardWidget({ currentDomain = 'notion.so', userS
                       <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
                         <div
                           className={`h-full rounded-full ${
-                            isUser ? 'bg-emerald-500' : 'bg-slate-700'
+                            isUser ? 'bg-slate-50' : 'bg-slate-700'
                           }`}
                           style={{ width: `${Math.min(100, c.sovPct * 2.5)}%` }}
                         />

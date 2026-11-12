@@ -54,7 +54,7 @@ export default async function BriefsPage({ params }: { params: { id: string } })
         <div className="w-full">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="font-display text-2xl font-bold text-slate-900">Optimization Tasks & Action Briefs</h2>
+              <h2 className="font-sans text-2xl font-bold text-slate-900">Optimization Tasks & Action Briefs</h2>
               <p className="text-xs text-slate-500 mt-1">Actions backed by evidence to increase AI visibility for {project.domain}</p>
             </div>
             <Link href={`/dashboard/projects/${params.id}`} className="border border-slate-200 px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs">Back to Overview</Link>

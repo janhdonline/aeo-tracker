@@ -101,7 +101,7 @@ export default async function IndustryIndexPage({ params }: IndustryPageProps) {
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-2 rounded-full bg-slate-200 overflow-hidden">
                           <div
-                            className="h-full bg-emerald-500"
+                            className="h-full bg-slate-50"
                             style={{ width: `${(count / sortedDomains[0][1]) * 100}%` }}
                           />
                         </div>

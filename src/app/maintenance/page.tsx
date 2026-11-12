@@ -30,7 +30,7 @@ export default function MaintenancePage() {
         <div className="mt-8 flex flex-col gap-3">
           <button
             onClick={() => window.location.reload()}
-            className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400"
+            className="w-full rounded-lg bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-slate-50"
           >
             Check Status Again
           </button>

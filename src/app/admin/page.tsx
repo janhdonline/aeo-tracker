@@ -1890,7 +1890,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
 
             {/* Middle Welcome Greeting */}
             <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-slate-600">
-              <Sparkles className="w-4 h-4 text-emerald-500" />
+              <Sparkles className="w-4 h-4 text-slate-900" />
               <span>Hi Admin, Welcome to AEO Control Systems</span>
             </div>
 
@@ -2591,7 +2591,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <span className="font-black text-sm text-slate-950 capitalize">{plan.display_name || plan.plan_name}</span>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${plan.is_active ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${plan.is_active ? 'bg-slate-50 text-slate-900' : 'bg-slate-100 text-slate-600'}`}>
                             {plan.is_active ? 'ACTIVE' : 'DISABLED'}
                           </span>
                         </div>
@@ -2703,7 +2703,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                   : u.plan === 'growth'
                                   ? 'bg-[#D4F63C] text-black'
                                   : u.plan === 'starter'
-                                  ? 'bg-emerald-100 text-emerald-800'
+                                  ? 'bg-slate-50 text-slate-900'
                                   : 'bg-slate-100 text-slate-600'
                               }`}
                             >
@@ -2716,7 +2716,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                 Suspended
                               </span>
                             ) : (
-                              <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded text-[10px]">
+                              <span className="text-slate-900 font-bold bg-slate-50 px-2 py-0.5 rounded text-[10px]">
                                 Active
                               </span>
                             )}
@@ -2750,7 +2750,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                 onClick={() => handleToggleBan(u.id, u.is_banned)}
                                 className={`px-2.5 py-1.5 rounded-full text-xs font-bold transition ${
                                   u.is_banned
-                                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                                    ? 'bg-slate-50 text-slate-900 hover:bg-slate-50'
                                     : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
                                 }`}
                               >
@@ -2886,7 +2886,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                 RUNNING
                               </span>
                             ) : r.status === 'done' ? (
-                              <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]">
+                              <span className="px-2.5 py-0.5 bg-slate-50 text-slate-900 rounded-full font-bold text-[10px]">
                                 DONE
                               </span>
                             ) : (
@@ -3006,7 +3006,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                   ? 'bg-amber-400 ring-4 ring-amber-100'
                                   : isDown
                                   ? 'bg-rose-500 ring-4 ring-rose-100 animate-pulse'
-                                  : 'bg-emerald-400 ring-4 ring-emerald-100'
+                                  : 'bg-slate-50 ring-4 ring-emerald-100'
                               }`}
                               title={data.status || 'healthy'}
                             />
@@ -3627,7 +3627,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                           <tr>
                             <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
                               <div className="flex flex-col items-center justify-center gap-2">
-                                <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                                <CheckCircle2 className="w-6 h-6 text-slate-900" />
                                 <span className="font-bold text-slate-700">All Engines Operating Normally</span>
                                 <span className="text-xs text-slate-400">
                                   Click &ldquo;Probe All Engines Now&rdquo; to trigger immediate synthetic ping ledger records.
@@ -3691,7 +3691,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                 </div>
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs">
                   <div className="text-[10px] uppercase font-bold text-slate-400">Active & Healthy</div>
-                  <div className="text-2xl font-black text-emerald-600 font-mono mt-0.5">
+                  <div className="text-2xl font-black text-slate-900 font-mono mt-0.5">
                     {apiKeys.filter((k) => k.is_active && k.error_count === 0).length}
                   </div>
                 </div>
@@ -3749,7 +3749,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                           <span className="font-bold text-xs">{p.label}</span>
                           <span
                             className={`w-2 h-2 rounded-full ${
-                              isConfigured ? 'bg-emerald-500' : 'bg-slate-300'
+                              isConfigured ? 'bg-slate-50' : 'bg-slate-300'
                             }`}
                           />
                         </div>
@@ -3971,7 +3971,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                 {k.error_count} Errors
                               </span>
                             ) : (
-                              <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full">
+                              <span className="text-[10px] bg-slate-50 text-slate-900 font-bold px-2 py-0.5 rounded-full">
                                 Active & Healthy
                               </span>
                             )}
@@ -4264,7 +4264,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                             </span>
                             <button
                               onClick={() => handleRemoveBlacklist(ip.ip_address)}
-                              className="text-emerald-700 hover:underline font-bold"
+                              className="text-slate-900 hover:underline font-bold"
                             >
                               Unblock
                             </button>
@@ -4381,7 +4381,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                 <div className="text-[11px]">
                                   <span className="text-rose-600 font-bold">Claim: {m.claimed_value || 'N/A'}</span>
                                   <span className="text-slate-400 mx-1">→</span>
-                                  <span className="text-emerald-600 font-bold">Truth: {m.expected_value || 'Verified'}</span>
+                                  <span className="text-slate-900 font-bold">Truth: {m.expected_value || 'Verified'}</span>
                                 </div>
                               </td>
                               <td className="px-5 py-4">
@@ -4430,14 +4430,14 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                         <div key={b.id} className="py-2.5 flex items-center justify-between">
                           <div>
                             <div className="font-bold text-slate-900 flex items-center gap-2">
-                              <span className="font-mono text-emerald-600">{b.project?.domain || 'Target'}</span>
+                              <span className="font-mono text-slate-900">{b.project?.domain || 'Target'}</span>
                               <span className="text-slate-500 font-normal">{b.gap_description}</span>
                             </div>
                             <span className="text-[10px] text-slate-400 uppercase font-bold">{b.gap_type}</span>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${b.status === 'resolved' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}`}>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${b.status === 'resolved' ? 'bg-slate-50 text-slate-900' : 'bg-amber-100 text-amber-900'}`}>
                               {b.status.toUpperCase()}
                             </span>
                             {b.status !== 'resolved' && (
@@ -4480,7 +4480,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                       <Download className="w-3.5 h-3.5 text-slate-700" />
                       <span>{copiedRobotsTxt ? '✓ Directives Copied!' : 'Copy Optimized robots.txt'}</span>
                     </button>
-                    <span className="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full">
+                    <span className="px-3 py-1 bg-slate-50 text-slate-900 font-bold text-xs rounded-full">
                       {crawlerStats.verifiedRatePct || 100}% Verified Crawlers
                     </span>
                     <span className="px-3 py-1 bg-slate-950 text-white font-bold text-xs rounded-full">
@@ -4493,12 +4493,12 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[10px] font-bold text-slate-500 uppercase">GPTBot / SearchGPT</p>
                     <p className="text-2xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.gptbot || 0}</p>
-                    <span className="text-[10px] text-emerald-600 font-bold">OpenAI Crawlers</span>
+                    <span className="text-[10px] text-slate-900 font-bold">OpenAI Crawlers</span>
                   </div>
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[10px] font-bold text-slate-500 uppercase">ClaudeBot</p>
                     <p className="text-2xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.claudebot || 0}</p>
-                    <span className="text-[10px] text-emerald-600 font-bold">Anthropic Search</span>
+                    <span className="text-[10px] text-slate-900 font-bold">Anthropic Search</span>
                   </div>
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[10px] font-bold text-slate-500 uppercase">PerplexityBot</p>
@@ -4508,7 +4508,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[10px] font-bold text-slate-500 uppercase">Google-Extended</p>
                     <p className="text-2xl font-black text-slate-950 mt-1">{crawlerStats.botDistribution?.googleExtended || 0}</p>
-                    <span className="text-[10px] text-emerald-600 font-bold">Gemini Grounding</span>
+                    <span className="text-[10px] text-slate-900 font-bold">Gemini Grounding</span>
                   </div>
                 </div>
 
@@ -4516,7 +4516,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs mt-3">
                     <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                       <span>Recent Crawler Ingestions</span>
-                      <span className="text-emerald-600 font-mono font-bold">Live Traffic</span>
+                      <span className="text-slate-900 font-mono font-bold">Live Traffic</span>
                     </div>
                     <div className="divide-y divide-slate-100 text-xs">
                       {crawlerVisits.slice(0, 6).map((v) => (
@@ -4525,7 +4525,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                             <span className="font-mono font-bold text-slate-900">{v.engine || v.user_agent?.split('/')[0] || 'Bot'}</span>
                             <span className="text-slate-400 font-mono text-[11px]">{v.path || '/'}</span>
                           </div>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${v.is_verified ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${v.is_verified ? 'bg-slate-50 text-slate-900' : 'bg-slate-100 text-slate-600'}`}>
                             {v.is_verified ? 'Verified DNS' : 'Unverified'}
                           </span>
                         </div>
@@ -4572,7 +4572,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
 
                 <div className="bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs divide-y divide-slate-100">
                   {webhookEvents.length === 0 ? (
-                    <p className="text-xs text-emerald-700 py-4 px-3 flex items-center gap-2 font-bold">
+                    <p className="text-xs text-slate-900 py-4 px-3 flex items-center gap-2 font-bold">
                       <CheckCircle2 className="w-4 h-4" /> Dead-letter queue is clear. No failed webhooks detected.
                     </p>
                   ) : (
@@ -4580,7 +4580,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                       <div key={w.id} className="py-3.5 px-3 flex items-center justify-between text-xs hover:bg-slate-50/70 transition">
                         <div>
                           <div className="font-bold text-slate-950 flex items-center gap-2">
-                            <span className="font-mono text-emerald-600">#{w.id}</span>
+                            <span className="font-mono text-slate-900">#{w.id}</span>
                             <span>{w.event_name}</span>
                             <span className="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-mono font-bold">
                               Attempts: {w.attempt_count}
@@ -4623,7 +4623,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700 shadow-xs">
-                      <Server className="w-3.5 h-3.5 text-emerald-500" />
+                      <Server className="w-3.5 h-3.5 text-slate-900" />
                       Cloudflare Workers (OpenNext)
                     </span>
                   </div>
@@ -4643,11 +4643,11 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                     <div key={srv.name} className="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs flex flex-col justify-between">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-[11px] font-black text-slate-900 truncate">{srv.name}</span>
-                        <span className={`w-2 h-2 rounded-full ${srv.status ? 'bg-emerald-500 shadow-xs shadow-emerald-400' : 'bg-amber-400'}`} />
+                        <span className={`w-2 h-2 rounded-full ${srv.status ? 'bg-slate-50 shadow-xs shadow-emerald-400' : 'bg-amber-400'}`} />
                       </div>
                       <span className="text-[10px] text-slate-400 font-mono">{srv.badge}</span>
                       <div className="mt-2 text-[10px] font-bold">
-                        <span className={srv.status ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full' : 'text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full'}>
+                        <span className={srv.status ? 'text-slate-900 bg-slate-50 px-2 py-0.5 rounded-full' : 'text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full'}>
                           {srv.status ? 'ONLINE' : 'FALLBACK'}
                         </span>
                       </div>
@@ -4699,7 +4699,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   </div>
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Delivered</p>
-                    <p className="text-2xl font-black text-emerald-600 mt-1">{emailStats.delivered}</p>
+                    <p className="text-2xl font-black text-slate-900 mt-1">{emailStats.delivered}</p>
                     <p className="text-[10px] text-slate-400 mt-0.5">Successfully sent</p>
                   </div>
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
@@ -4771,7 +4771,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                         </button>
                         <button
                           onClick={() => setEmailFilterMode('delivered')}
-                          className={`px-3 py-1 rounded-full transition ${emailFilterMode === 'delivered' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950'}`}
+                          className={`px-3 py-1 rounded-full transition ${emailFilterMode === 'delivered' ? 'bg-slate-50 text-white shadow-xs' : 'text-slate-600 hover:text-slate-950'}`}
                         >
                           Delivered ({emailLogs.filter((l) => l.status === 'sent' || l.status === 'delivered').length})
                         </button>
@@ -4854,7 +4854,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                                 </td>
                                 <td className="px-5 py-3.5">
                                   {log.status === 'sent' || log.status === 'delivered' ? (
-                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900">
                                       <CheckCircle2 className="w-3.5 h-3.5" /> Delivered
                                     </span>
                                   ) : (
@@ -4907,7 +4907,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="text-base font-black text-slate-950">Outbound Notification Details</h3>
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${inspectingEmail.status === 'sent' || inspectingEmail.status === 'delivered' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${inspectingEmail.status === 'sent' || inspectingEmail.status === 'delivered' ? 'bg-slate-50 text-slate-900' : 'bg-rose-100 text-rose-800'}`}>
                             {inspectingEmail.status.toUpperCase()}
                           </span>
                         </div>
@@ -5105,7 +5105,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                           <div className="flex items-center gap-2">
                             <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
                             <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-slate-50" />
                             <span className="text-[11px] font-bold text-slate-600 ml-2">Inbox Preview (Interpolated)</span>
                           </div>
                           <span className="text-[10px] text-slate-400 font-mono">Simulated client</span>
@@ -5431,7 +5431,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                     </button>
                     <button
                       onClick={() => setFlagFilterMode('enabled')}
-                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${flagFilterMode === 'enabled' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${flagFilterMode === 'enabled' ? 'bg-slate-50 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}
                     >
                       Enabled ({featureFlags.filter((f) => f.is_enabled).length})
                     </button>
@@ -5648,8 +5648,8 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
                   </div>
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
                     <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Snapshot Health</div>
-                    <div className="text-2xl font-black text-emerald-600 mt-1 flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                    <div className="text-2xl font-black text-slate-900 mt-1 flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-slate-900" />
                       Ready
                     </div>
                     <div className="text-[10px] text-slate-400 mt-0.5">

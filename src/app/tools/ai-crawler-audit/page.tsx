@@ -45,8 +45,8 @@ export default function AICrawlerAuditPage() {
     }
   };
 
-  const statusColor = result?.summary.status === 'pass' ? 'text-emerald-600' : result?.summary.status === 'warning' ? 'text-yellow-600' : 'text-red-600';
-  const statusBg = result?.summary.status === 'pass' ? 'bg-emerald-50 border-emerald-200' : result?.summary.status === 'warning' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
+  const statusColor = result?.summary.status === 'pass' ? 'text-slate-900' : result?.summary.status === 'warning' ? 'text-yellow-600' : 'text-red-600';
+  const statusBg = result?.summary.status === 'pass' ? 'bg-slate-50 border-slate-200' : result?.summary.status === 'warning' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans antialiased text-slate-900 selection:bg-slate-900 selection:text-white">
@@ -55,7 +55,7 @@ export default function AICrawlerAuditPage() {
         <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+            <span className="font-sans font-bold text-base tracking-tight text-slate-900">
               AEO Tracker
             </span>
           </Link>
@@ -85,9 +85,9 @@ export default function AICrawlerAuditPage() {
       <main className="flex-1 max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center p-3 rounded-xl bg-slate-900 text-white shadow-2xs mb-3">
-            <Shield className="h-7 w-7 text-emerald-400" />
+            <Shield className="h-7 w-7 text-slate-900" />
           </div>
-          <h1 className="font-display text-3xl font-bold text-slate-900 tracking-tight">AI Crawler Readiness Audit</h1>
+          <h1 className="font-sans text-3xl font-bold text-slate-900 tracking-tight">AI Crawler Readiness Audit</h1>
           <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
             Verify whether your robots.txt and server headers permit AI search engine indexers like GPTBot, ClaudeBot, and PerplexityBot.
           </p>
@@ -144,7 +144,7 @@ export default function AICrawlerAuditPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl border border-slate-200 p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    {result.robotsTxtFetched ? <CheckCircle className="h-5 w-5 text-emerald-500" /> : <XCircle className="h-5 w-5 text-red-500" />}
+                    {result.robotsTxtFetched ? <CheckCircle className="h-5 w-5 text-slate-900" /> : <XCircle className="h-5 w-5 text-red-500" />}
                     <span className="font-medium">robots.txt Found</span>
                   </div>
                   <p className="text-sm text-slate-600">{result.robotsTxtFetched ? 'Your robots.txt was fetched successfully.' : 'Could not fetch robots.txt.'}</p>
@@ -152,7 +152,7 @@ export default function AICrawlerAuditPage() {
 
                 <div className="bg-white rounded-xl border border-slate-200 p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    {result.llmsTxtFound ? <CheckCircle className="h-5 w-5 text-emerald-500" /> : <FileText className="h-5 w-5 text-yellow-500" />}
+                    {result.llmsTxtFound ? <CheckCircle className="h-5 w-5 text-slate-900" /> : <FileText className="h-5 w-5 text-yellow-500" />}
                     <span className="font-medium">llms.txt</span>
                   </div>
                   <p className="text-sm text-slate-600">{result.llmsTxtFound ? 'llms.txt found — good for AI agent discoverability.' : 'No llms.txt found.'}</p>
@@ -160,7 +160,7 @@ export default function AICrawlerAuditPage() {
 
                 <div className="bg-white rounded-xl border border-slate-200 p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    {result.jsShellDetected ? <XCircle className="h-5 w-5 text-red-500" /> : <CheckCircle className="h-5 w-5 text-emerald-500" />}
+                    {result.jsShellDetected ? <XCircle className="h-5 w-5 text-red-500" /> : <CheckCircle className="h-5 w-5 text-slate-900" />}
                     <span className="font-medium">JS Shell Check</span>
                   </div>
                   <p className="text-sm text-slate-600">{result.jsShellDetected ? 'Bot sees significantly less content than humans. Consider SSR.' : 'Content rendering looks consistent for bots.'}</p>

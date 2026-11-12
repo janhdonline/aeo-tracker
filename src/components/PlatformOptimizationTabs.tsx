@@ -180,7 +180,7 @@ export function PlatformOptimizationTabs({ domain }: PlatformOptimizationTabsPro
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white text-xs font-bold shadow-2xs">
             ⚡
           </span>
-          <h3 className="font-display text-base font-bold text-slate-950">
+          <h3 className="font-sans text-base font-bold text-slate-950">
             Platform Optimization
           </h3>
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">

@@ -60,7 +60,7 @@ export default function BlogPostPage({ params }: PageProps) {
       <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <Link href="/blog" className="text-xs font-semibold text-slate-500 hover:text-slate-900 mb-8 inline-block">← Back to Blog</Link>
         <div className="mb-8">
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">{post.category}</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-50 text-slate-900 border border-slate-200/60">{post.category}</span>
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-3 mb-2 tracking-tight">{post.title}</h1>
           <p className="text-xs text-slate-400">{post.date}</p>
         </div>
@@ -72,7 +72,7 @@ export default function BlogPostPage({ params }: PageProps) {
           })}
         </div>
         <div className="mt-12 pt-8 border-t border-slate-200">
-          <p className="text-slate-600">Want to track your AI visibility? <Link href="/dashboard" className="text-slate-900 font-semibold hover:text-emerald-700 underline underline-offset-2">Start your free trial →</Link></p>
+          <p className="text-slate-600">Want to track your AI visibility? <Link href="/dashboard" className="text-slate-900 font-semibold hover:text-slate-900 underline underline-offset-2">Start your free trial →</Link></p>
         </div>
       </div>
     </div>

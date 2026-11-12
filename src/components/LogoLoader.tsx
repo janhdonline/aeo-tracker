@@ -21,7 +21,7 @@ export function LogoLoader({
       <span className={`inline-flex items-center gap-2 ${className}`}>
         <span className="relative flex h-5 w-5 items-center justify-center">
           {/* Subtle spinning accent orbit */}
-          <span className="absolute inset-0 rounded-lg border border-emerald-400/50 border-t-emerald-500 animate-spin" />
+          <span className="absolute inset-0 rounded-lg border border-slate-200/50 border-t-emerald-500 animate-spin" />
           <LogoMark className="h-4 w-4" animated={false} />
         </span>
         {text && <span className="text-xs font-semibold">{text}</span>}
@@ -40,14 +40,14 @@ export function LogoLoader({
           {/* Multi-layered Radar Pulse & Orbital Ring */}
           <div className="relative flex items-center justify-center mb-6">
             {/* Outer radar ripples */}
-            <span className="absolute h-28 w-28 rounded-full bg-emerald-400/10 animate-radar-ripple" />
+            <span className="absolute h-28 w-28 rounded-full bg-slate-50/10 animate-radar-ripple" />
             <span
               className="absolute h-36 w-36 rounded-full bg-blue-500/5 animate-radar-ripple"
               style={{ animationDelay: '0.8s' }}
             />
 
             {/* Rotating dashed orbital tracker */}
-            <div className="absolute h-24 w-24 rounded-full border border-dashed border-emerald-400/40 animate-spin" style={{ animationDuration: '6s' }} />
+            <div className="absolute h-24 w-24 rounded-full border border-dashed border-slate-200/40 animate-spin" style={{ animationDuration: '6s' }} />
 
             {/* Glowing aura behind logo */}
             <div className="absolute h-16 w-16 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 blur-xl" />
@@ -60,11 +60,11 @@ export function LogoLoader({
 
           {/* Brand & Loading Label */}
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="font-display font-bold text-lg text-slate-900 tracking-tight">
+            <span className="font-sans font-bold text-lg text-slate-900 tracking-tight">
               AEO Tracker
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-900 border border-slate-200">
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-50 animate-ping" />
               Live Scanner
             </span>
           </div>
@@ -95,17 +95,17 @@ export function LogoLoader({
     >
       <div className="relative flex items-center justify-center mb-5">
         {/* Radar concentric pulse */}
-        <span className="absolute h-20 w-20 rounded-full bg-emerald-400/15 animate-radar-ripple" />
+        <span className="absolute h-20 w-20 rounded-full bg-slate-50/15 animate-radar-ripple" />
         <span
           className="absolute h-24 w-24 rounded-full bg-blue-500/10 animate-radar-ripple"
           style={{ animationDelay: '0.6s' }}
         />
 
         {/* Orbit tracker */}
-        <div className="absolute h-18 w-18 rounded-full border border-dashed border-emerald-400/30 animate-spin" style={{ animationDuration: '5s' }} />
+        <div className="absolute h-18 w-18 rounded-full border border-dashed border-slate-200/30 animate-spin" style={{ animationDuration: '5s' }} />
 
         {/* Glowing backdrop */}
-        <div className="absolute h-12 w-12 rounded-xl bg-emerald-500/20 blur-lg" />
+        <div className="absolute h-12 w-12 rounded-xl bg-slate-50/20 blur-lg" />
 
         {/* LogoMark */}
         <div className="relative shadow-md rounded-[13px] ring-2 ring-slate-100">

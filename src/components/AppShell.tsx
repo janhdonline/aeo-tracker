@@ -295,7 +295,7 @@ export function AppShell({
   const isPro = userProfile.plan === 'Pro Plan' || userProfile.plan === 'pro';
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-slate-900 flex antialiased selection:bg-slate-900 selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex antialiased selection:bg-slate-900 selection:text-white">
       {/* ============================================================== */}
       {/* 1. LEFT UNIFIED SIDEBAR (Matches ReportView & Competitor)     */}
       {/* ============================================================== */}
@@ -310,16 +310,16 @@ export function AppShell({
             {!sidebarCollapsed ? (
               <Link href="/dashboard" className="flex items-center gap-2.5">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
-                  <Globe className="h-4 w-4 text-emerald-400" />
+                  <Globe className="h-4 w-4 text-white" />
                 </span>
-                <span className="font-display text-base font-bold tracking-tight text-slate-900">
+                <span className="font-sans text-base font-bold tracking-tight text-slate-900">
                   AEO Tracker
                 </span>
               </Link>
             ) : (
               <Link href="/dashboard" className="mx-auto" title="AEO Tracker Dashboard">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
-                  <Globe className="h-4 w-4 text-emerald-400" />
+                  <Globe className="h-4 w-4 text-white" />
                 </span>
               </Link>
             )}
@@ -381,7 +381,7 @@ export function AppShell({
                           }`}
                         >
                           <span className="truncate">{p.domain}</span>
-                          {isSelected && <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
+                          {isSelected && <Check className="h-3.5 w-3.5 text-slate-600 shrink-0" />}
                         </button>
                       );
                     })}
@@ -497,7 +497,7 @@ export function AppShell({
                   <p className="text-xs font-bold text-slate-900 truncate mt-0.5">
                     {userProfile.email}
                   </p>
-                  <span className="inline-block mt-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                  <span className="inline-block mt-1 rounded-md bg-slate-50 border border-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-900">
                     {userProfile.plan}
                   </span>
                 </div>
@@ -552,7 +552,7 @@ export function AppShell({
       {/* ============================================================== */}
       {/* 2. MAIN FULL-WIDTH WORKSPACE CANVAS                            */}
       {/* ============================================================== */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA]">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         {/* Top Header Row with Breadcrumbs & Action Buttons */}
         <header className="h-16 bg-white border-b border-slate-200/90 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
           {/* Left: Mobile Drawer Button + Breadcrumbs */}
@@ -608,9 +608,9 @@ export function AppShell({
             ) : isPaid ? (
               <div className="flex items-center gap-2">
                 <span
-                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-extrabold tracking-wide uppercase shadow-2xs ${
+                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold tracking-wide uppercase shadow-2xs ${
                     isPro
-                      ? 'border-emerald-500/25 bg-emerald-50 text-emerald-700'
+                      ? 'border-slate-200 bg-slate-50 text-slate-800'
                       : 'border-blue-500/25 bg-blue-50 text-blue-700'
                   }`}
                 >
@@ -619,29 +619,29 @@ export function AppShell({
                       isPro ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'
                     }`}
                   />
-                  <span>{isPro ? 'PRO ACTIVE' : 'STARTER ACTIVE'}</span>
+                  <span>{isPro ? 'Pro Active' : 'Starter Active'}</span>
                 </span>
                 <Link
                   href="/dashboard/projects/new"
-                  className="hidden md:inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 text-xs font-bold shadow-2xs transition-all"
+                  className="hidden md:inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 text-xs font-bold shadow-2xs transition-all active:scale-95"
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  <span>+ Track Website</span>
+                  <span>Track Website</span>
                 </Link>
               </div>
             ) : (
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 px-4 sm:px-5 py-2 text-xs font-extrabold text-white shadow-xs hover:opacity-95 transition-all uppercase tracking-wide cursor-pointer"
+                className="inline-flex items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 px-4 sm:px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all active:scale-95 cursor-pointer"
               >
-                UPGRADE
+                Upgrade
               </Link>
             )}
           </div>
         </header>
 
         {/* Page Content Body (Fluid Edge-to-Edge) */}
-        <main className="w-full flex-1 min-w-0 bg-[#F8F9FA]">{children}</main>
+        <main className="w-full flex-1 min-w-0 bg-slate-50">{children}</main>
       </div>
 
       {/* ============================================================== */}
@@ -669,9 +669,9 @@ export function AppShell({
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5">
                     <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
-                      <Globe className="h-4 w-4 text-emerald-400" />
+                      <Globe className="h-4 w-4 text-white" />
                     </span>
-                    <span className="font-display text-base font-bold text-slate-900">
+                    <span className="font-sans text-base font-bold text-slate-900">
                       AEO Tracker
                     </span>
                   </div>

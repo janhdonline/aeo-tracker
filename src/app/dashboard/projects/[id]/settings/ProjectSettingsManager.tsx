@@ -203,8 +203,8 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
     <div className="space-y-6 max-w-5xl">
       {/* Top Notification Toasts */}
       {saveSuccess && (
-        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50 p-4 text-emerald-950 flex items-center gap-3 shadow-xs">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+        <div className="rounded-2xl border border-slate-200/20 bg-slate-50 p-4 text-slate-900 flex items-center gap-3 shadow-xs">
+          <CheckCircle2 className="h-5 w-5 text-slate-900 shrink-0" />
           <p className="text-xs font-bold">Settings saved successfully! All future scans will use updated brand aliases and intelligence targets.</p>
         </div>
       )}
@@ -220,10 +220,10 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
       <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xs">
-            <Building className="h-5 w-5 text-emerald-400" />
+            <Building className="h-5 w-5 text-slate-900" />
           </span>
           <div>
-            <h3 className="font-display text-base sm:text-lg font-black text-slate-950">Brand Identity &amp; Accuracy Tuning</h3>
+            <h3 className="font-sans text-base sm:text-lg font-black text-slate-950">Brand Identity &amp; Accuracy Tuning</h3>
             <p className="text-xs text-slate-500">Fine-tune brand aliases to guarantee 100% accurate entity detection across ChatGPT, Perplexity, and Gemini.</p>
           </div>
         </div>
@@ -289,7 +289,7 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
               <label className="block text-xs font-black text-slate-800 uppercase tracking-wider">
                 Brand Aliases &amp; Trade Names
               </label>
-              <span className="text-[10px] font-black text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span className="text-[10px] font-black text-slate-900 bg-slate-50/70 px-2 py-0.5 rounded-full border border-slate-200">
                 100% Mention Accuracy
               </span>
             </div>
@@ -405,11 +405,11 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
       {/* CARD 2: Automated Weekly Executive Digest & Email Delivery */}
       <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-2xs">
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-slate-900 border border-slate-200 shadow-2xs">
             <Mail className="h-5 w-5" />
           </span>
           <div>
-            <h3 className="font-display text-base sm:text-lg font-black text-slate-950">Automated Weekly Executive PDF Digest</h3>
+            <h3 className="font-sans text-base sm:text-lg font-black text-slate-950">Automated Weekly Executive PDF Digest</h3>
             <p className="text-xs text-slate-500">Scheduled delivery to keep your stakeholders updated on AI visibility gains, competitor gaps, and brand integrity.</p>
           </div>
         </div>
@@ -433,7 +433,7 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
                 disabled={isSendingEmail}
                 className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors shrink-0 disabled:opacity-50 cursor-pointer shadow-2xs"
               >
-                <Send className="h-3.5 w-3.5 text-emerald-600" />
+                <Send className="h-3.5 w-3.5 text-slate-900" />
                 {isSendingEmail ? 'Sending Test...' : 'Send Test Digest Now'}
               </button>
             </div>
@@ -441,11 +441,11 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
               <div
                 className={`mt-2.5 p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
                   emailStatus.success
-                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    ? 'bg-slate-50 text-slate-900 border border-slate-200'
                     : 'bg-rose-50 text-rose-800 border border-rose-200'
                 }`}
               >
-                {emailStatus.success ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" /> : <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600" />}
+                {emailStatus.success ? <CheckCircle2 className="h-4 w-4 shrink-0 text-slate-900" /> : <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600" />}
                 <span>{emailStatus.message}</span>
               </div>
             )}
@@ -485,16 +485,16 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
       <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 text-white shadow-card relative overflow-hidden">
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-800 text-emerald-400 border border-slate-700 shadow-2xs shrink-0">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-800 text-slate-900 border border-slate-700 shadow-2xs shrink-0">
               <FileCode2 className="h-5 w-5" />
             </span>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-display text-base font-bold text-white">llms.txt Knowledge Engine &amp; Validator</h3>
-                <span className="rounded-md border border-emerald-500/30 bg-emerald-950/60 px-2 py-0.5 text-[10px] font-mono font-semibold text-emerald-300">Active</span>
+                <h3 className="font-sans text-base font-bold text-white">llms.txt Knowledge Engine &amp; Validator</h3>
+                <span className="rounded-md border border-slate-200/30 bg-slate-50/60 px-2 py-0.5 text-[10px] font-mono font-semibold text-slate-900">Active</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                Validate your domain&apos;s live <code className="font-mono text-emerald-400">/llms.txt</code> endpoint and download authoritative knowledge snippets formatted for GPTBot, PerplexityBot, and ClaudeBot.
+                Validate your domain&apos;s live <code className="font-mono text-slate-900">/llms.txt</code> endpoint and download authoritative knowledge snippets formatted for GPTBot, PerplexityBot, and ClaudeBot.
               </p>
             </div>
           </div>
@@ -515,7 +515,7 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
             <Trash2 className="h-5 w-5" />
           </span>
           <div>
-            <h3 className="font-display text-base font-black text-rose-950">Danger Zone</h3>
+            <h3 className="font-sans text-base font-black text-rose-950">Danger Zone</h3>
             <p className="text-xs text-rose-700">Permanently delete this project and all historical scan records.</p>
           </div>
         </div>
@@ -539,7 +539,7 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
           <div className="max-w-md w-full rounded-3xl bg-white p-7 shadow-2xl border border-slate-200 space-y-4">
             <div className="flex items-center gap-3 text-rose-600">
               <ShieldAlert className="h-6 w-6" />
-              <h4 className="font-display text-lg font-black text-slate-950">Confirm Deletion</h4>
+              <h4 className="font-sans text-lg font-black text-slate-950">Confirm Deletion</h4>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">
               Please type <strong className="text-slate-900 font-mono select-all bg-slate-100 px-1 py-0.5 rounded">{project.domain}</strong> below to confirm permanent deletion of this project.

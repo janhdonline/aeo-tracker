@@ -33,7 +33,7 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+            <span className="font-sans font-bold text-base tracking-tight text-slate-900">
               AEO Tracker
             </span>
           </Link>
@@ -67,11 +67,11 @@ export default function ContactPage() {
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
           <div className="relative max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
-              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
               Technical Concierge &amp; Inquiries
             </div>
-            <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Connect with Our <span className="text-emerald-400">AEO Engineering</span> Team
+            <h1 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              Connect with Our <span className="text-slate-900">AEO Engineering</span> Team
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               Whether you need crawler whitelist verification, agency multi-workspace setups, or custom LLM diagnostic reports, our engineering team responds within one business day.
@@ -85,31 +85,31 @@ export default function ContactPage() {
           <div className="space-y-4">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs mb-4">
-                <Mail className="h-5 w-5 text-emerald-400" />
+                <Mail className="h-5 w-5 text-slate-900" />
               </span>
-              <h2 className="font-display text-sm font-bold text-slate-950">General Inquiries &amp; Support</h2>
+              <h2 className="font-sans text-sm font-bold text-slate-950">General Inquiries &amp; Support</h2>
               <p className="text-xs text-slate-600 mt-1 mb-4 leading-relaxed">
                 For account inquiries, prompt configuration, or public audit questions.
               </p>
               <a
                 href="mailto:contact@aeovisibility.com"
-                className="font-mono text-xs font-semibold text-slate-900 underline decoration-slate-300 hover:text-emerald-600 transition"
+                className="font-mono text-xs font-semibold text-slate-900 underline decoration-slate-300 hover:text-slate-900 transition"
               >
                 contact@aeovisibility.com
               </a>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-2xs mb-4">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-900 shadow-2xs mb-4">
                 <Building className="h-5 w-5" />
               </span>
-              <h2 className="font-display text-sm font-bold text-slate-950">Enterprise &amp; Agency Inquiries</h2>
+              <h2 className="font-sans text-sm font-bold text-slate-950">Enterprise &amp; Agency Inquiries</h2>
               <p className="text-xs text-slate-600 mt-1 mb-4 leading-relaxed">
                 For custom keyword capacity, dedicated IP endpoints, and service level agreements.
               </p>
               <a
                 href="mailto:enterprise@aeovisibility.com"
-                className="font-mono text-xs font-semibold text-slate-900 underline decoration-slate-300 hover:text-emerald-600 transition"
+                className="font-mono text-xs font-semibold text-slate-900 underline decoration-slate-300 hover:text-slate-900 transition"
               >
                 enterprise@aeovisibility.com
               </a>
@@ -117,7 +117,7 @@ export default function ContactPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 shadow-2xs">
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 mb-1">
-                <Clock className="h-4 w-4 text-emerald-600" />
+                <Clock className="h-4 w-4 text-slate-900" />
                 Response Commitment
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
@@ -128,7 +128,7 @@ export default function ContactPage() {
 
           {/* Direct Message Form Card */}
           <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-7 sm:p-9 shadow-card">
-            <h2 className="font-display text-lg font-bold text-slate-950 mb-1">Send a Direct Inquiry</h2>
+            <h2 className="font-sans text-lg font-bold text-slate-950 mb-1">Send a Direct Inquiry</h2>
             <p className="text-xs text-slate-600 mb-6">
               Please share your project details and an AEO specialist will reply directly.
             </p>
@@ -208,7 +208,7 @@ export default function ContactPage() {
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <Link href="/" className="flex items-center gap-2.5">
               <LogoMark className="h-7 w-7" />
-              <span className="font-display text-sm font-bold tracking-tight text-slate-900">
+              <span className="font-sans text-sm font-bold tracking-tight text-slate-900">
                 AEO Tracker
               </span>
             </Link>
@@ -234,7 +234,7 @@ export default function ContactPage() {
           <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row">
             <p>© 2026 AEO Tracker. All rights reserved.</p>
             <p className="flex items-center gap-1.5 font-mono text-[11px]">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-50" />
               All systems operational · Enterprise telemetry active
             </p>
           </div>

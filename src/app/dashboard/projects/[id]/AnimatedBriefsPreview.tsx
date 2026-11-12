@@ -55,6 +55,8 @@ export function AnimatedBriefsPreview({ projectId, briefs }: { projectId: string
     }
   }
 
+  const safeBriefs = Array.isArray(openBriefs) ? openBriefs : [];
+
   return (
     <motion.div
       initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
@@ -64,12 +66,9 @@ export function AnimatedBriefsPreview({ projectId, briefs }: { projectId: string
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500" />
-          </span>
-          <h3 className="font-display text-base font-bold text-slate-900">
-            Open Fix Briefs ({openBriefs.length})
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+          <h3 className="font-sans text-base font-bold text-slate-900">
+            Open Fix Briefs ({safeBriefs.length})
           </h3>
         </div>
         <Link
@@ -83,7 +82,7 @@ export function AnimatedBriefsPreview({ projectId, briefs }: { projectId: string
 
       <div className="space-y-2.5">
         <AnimatePresence mode="popLayout">
-          {openBriefs.slice(0, 5).map((brief) => {
+          {safeBriefs.slice(0, 5).map((brief) => {
             const config = getSeverityConfig(brief.gap_type);
 
             return (

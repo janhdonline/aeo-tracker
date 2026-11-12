@@ -95,7 +95,7 @@ const trafficMetrics = [
     value: "12,480",
     change: "+24.8%",
     icon: Globe2,
-    tone: "bg-emerald-50 text-emerald-600",
+    tone: "bg-slate-50 text-slate-900",
     values: [24, 28, 26, 34, 32, 41, 47],
     color: "#10B981",
     positive: true,
@@ -134,9 +134,9 @@ const trafficMetrics = [
 
 const sentimentTones = {
   Positive: {
-    badge: "bg-emerald-50 text-emerald-700 ring-emerald-100",
-    bar: "bg-emerald-500",
-    icon: "text-emerald-500",
+    badge: "bg-slate-50 text-slate-900 ring-emerald-100",
+    bar: "bg-slate-50",
+    icon: "text-slate-900",
   },
   Neutral: {
     badge: "bg-amber-50 text-amber-700 ring-amber-100",
@@ -176,16 +176,16 @@ function SidebarNavItem({
       aria-current={active ? "page" : undefined}
       className={`group flex cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2 text-[11px] font-medium transition-colors ${
         active
-          ? "bg-emerald-50 text-emerald-700"
+          ? "bg-slate-50 text-slate-900"
           : "text-gray-500 hover:bg-gray-100/80 hover:text-gray-900"
       }`}
     >
-      <Icon className={`h-4 w-4 shrink-0 ${active ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-600"}`} strokeWidth={1.9} />
+      <Icon className={`h-4 w-4 shrink-0 ${active ? "text-slate-900" : "text-gray-400 group-hover:text-gray-600"}`} strokeWidth={1.9} />
       <span className="hidden sm:inline">{label}</span>
       {badge && (
         <span
           className={`ml-auto hidden rounded-full px-1.5 py-0.5 text-[8px] font-semibold sm:inline ${
-            active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"
+            active ? "bg-slate-50 text-slate-900" : "bg-gray-100 text-gray-500"
           }`}
         >
           {badge}
@@ -205,7 +205,7 @@ function CardHeading({
   tone?: "emerald" | "blue" | "purple" | "gray";
 }) {
   const tones = {
-    emerald: "bg-emerald-50 text-emerald-600",
+    emerald: "bg-slate-50 text-slate-900",
     blue: "bg-blue-50 text-blue-600",
     purple: "bg-violet-50 text-violet-600",
     gray: "bg-gray-100 text-gray-500",
@@ -378,7 +378,7 @@ export default function DashboardPreview({
           </div>
 
           <div className="mx-auto flex min-w-0 max-w-[430px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[10px] font-medium text-gray-500 shadow-sm">
-            <Lock className="h-2.5 w-2.5 shrink-0 text-emerald-500" strokeWidth={2.4} />
+            <Lock className="h-2.5 w-2.5 shrink-0 text-slate-900" strokeWidth={2.4} />
             <span className="truncate">
               app.aeo-tracker.com/overview{isLive ? `/${dashboard.domain}` : ""}
             </span>
@@ -396,7 +396,7 @@ export default function DashboardPreview({
             <div className="flex h-16 items-center gap-2.5 border-b border-gray-100 px-3 sm:px-4">
               <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-[#111827]">
                 <Sparkles className="h-4 w-4 text-white" strokeWidth={2} />
-                <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#FCFCFD]" />
+                <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-slate-50 ring-2 ring-[#FCFCFD]" />
               </span>
               <span className="hidden text-[13px] font-semibold tracking-[-0.025em] text-gray-900 sm:inline">
                 AEO Tracker
@@ -405,7 +405,7 @@ export default function DashboardPreview({
 
             <div className="hidden px-3 pt-4 sm:block">
               <div className="flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white p-2 text-left shadow-sm">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-[10px] font-bold text-emerald-700">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-[10px] font-bold text-slate-900">
                   {workspaceInitial}
                 </span>
                 <span className="min-w-0 flex-1">
@@ -467,8 +467,8 @@ export default function DashboardPreview({
                   <ChevronRight className="h-2.5 w-2.5" />
                   <span className="text-gray-500">Overview</span>
                   {isLive && (
-                    <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[7px] font-semibold text-emerald-700">
-                      <span className="h-1 w-1 rounded-full bg-emerald-500" />
+                    <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-slate-50 px-1.5 py-0.5 text-[7px] font-semibold text-slate-900">
+                      <span className="h-1 w-1 rounded-full bg-slate-50" />
                       Live scan
                     </span>
                   )}
@@ -489,7 +489,7 @@ export default function DashboardPreview({
                   className="relative flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-colors hover:text-gray-900"
                 >
                   <Bell className="h-3.5 w-3.5" />
-                  <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                  <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-slate-50 ring-2 ring-white" />
                 </button>
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 text-[8px] font-bold text-white ring-2 ring-white">
                   JD
@@ -512,7 +512,7 @@ export default function DashboardPreview({
                   >
                     {/* Top cards */}
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                      <TopMetricCard className="border-emerald-100/80 bg-gradient-to-br from-emerald-50/80 via-white to-blue-50/50">
+                      <TopMetricCard className="border-slate-200/80 bg-gradient-to-br from-emerald-50/80 via-white to-blue-50/50">
                         <CardHeading label="Web presence" icon={Globe2} tone="emerald" />
                         <div className="mt-3 flex flex-1 items-center gap-3">
                           <CircularProgress
@@ -529,7 +529,7 @@ export default function DashboardPreview({
                             </span>
                           </CircularProgress>
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600">
+                            <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-900">
                               <ArrowUpRight className="h-3 w-3" />
                               {isLive ? `${dashboard.totalMentions} mentions` : "8.4%"}
                             </div>
@@ -539,7 +539,7 @@ export default function DashboardPreview({
                             <div className="mt-2.5 space-y-1.5">
                               <div className="flex items-center justify-between gap-2 text-[8px]">
                                 <span className="flex items-center gap-1 text-gray-500">
-                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                  <span className="h-1.5 w-1.5 rounded-full bg-slate-50" />
                                   Prompts analysed
                                 </span>
                                 <span className="font-semibold text-gray-700">{dashboard.totalQueries}</span>
@@ -587,7 +587,7 @@ export default function DashboardPreview({
                           {isLive ? (
                             <Sparkles className={`h-3 w-3 ${sentimentTone.icon}`} />
                           ) : (
-                            <TrendingUp className="h-3 w-3 text-emerald-500" />
+                            <TrendingUp className="h-3 w-3 text-slate-900" />
                           )}
                           <span className="font-semibold text-gray-700">
                             {isLive ? `${dashboard.totalQueries} answers` : "+12%"}
@@ -607,7 +607,7 @@ export default function DashboardPreview({
                               {dashboard.mentionedQueries} of {dashboard.totalQueries} tracked prompts
                             </p>
                           </div>
-                          <span className="flex items-center gap-0.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                          <span className="flex items-center gap-0.5 rounded-full bg-slate-50 px-2 py-0.5 text-[8px] font-semibold text-slate-900 ring-1 ring-emerald-100">
                             <ArrowUpRight className="h-2.5 w-2.5" />
                             {isLive ? `${dashboard.totalMentions} mentions` : "6.2%"}
                           </span>
@@ -618,9 +618,9 @@ export default function DashboardPreview({
                               key={index}
                               className={`flex-1 rounded-[2px] ${
                                 index === promptBars.length - 1
-                                  ? "bg-emerald-500"
+                                  ? "bg-slate-50"
                                   : index === promptBars.length - 2
-                                    ? "bg-emerald-300"
+                                    ? "bg-slate-50"
                                     : "bg-gray-100"
                               }`}
                               style={{ height: `${Math.max(6, clampPercent(height))}%` }}
@@ -671,15 +671,15 @@ export default function DashboardPreview({
                         <div className="mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-2.5 text-[8px]">
                           {isLive ? (
                             <span className="flex items-center gap-1 text-gray-500">
-                              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-50">
-                                <Sparkles className="h-2.5 w-2.5 text-emerald-600" />
+                              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-50">
+                                <Sparkles className="h-2.5 w-2.5 text-slate-900" />
                               </span>
                               Live analysis for <span className="font-semibold text-gray-700">{dashboard.domain}</span>
                             </span>
                           ) : (
                             <span className="flex items-center gap-1 text-gray-500">
-                              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-50">
-                                <ArrowUpRight className="h-2.5 w-2.5 text-emerald-600" />
+                              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-50">
+                                <ArrowUpRight className="h-2.5 w-2.5 text-slate-900" />
                               </span>
                               AEO score is up <span className="font-semibold text-gray-700">18.2%</span> this week
                             </span>
@@ -753,7 +753,7 @@ export default function DashboardPreview({
                                     ? "text-red-500"
                                     : brand.change === "New"
                                       ? "text-blue-600"
-                                      : "text-emerald-600"
+                                      : "text-slate-900"
                                 }`}
                               >
                                 {brand.change}
@@ -806,7 +806,7 @@ export default function DashboardPreview({
                               <div className="mt-1.5 flex items-end justify-between gap-1">
                                 <span
                                   className={`flex items-center gap-0.5 text-[7px] font-semibold ${
-                                    metric.positive ? "text-emerald-600" : "text-red-500"
+                                    metric.positive ? "text-slate-900" : "text-red-500"
                                   }`}
                                 >
                                   {metric.positive ? (

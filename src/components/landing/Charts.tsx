@@ -83,7 +83,7 @@ interface ProgressBarProps {
 export function ProgressBar({
   value,
   className = "",
-  barClassName = "bg-emerald-500",
+  barClassName = "bg-slate-50",
   heightClassName = "h-2",
 }: ProgressBarProps) {
   return (

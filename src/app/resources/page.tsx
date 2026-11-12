@@ -30,7 +30,7 @@ const resources = [
     href: '/tools/ai-crawler-audit',
     badge: 'Diagnostic Tool',
     icon: Bot,
-    color: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    color: 'bg-slate-50 text-slate-900 border-slate-200',
   },
   {
     title: 'llms.txt Knowledge Generator',
@@ -82,7 +82,7 @@ export default function ResourcesPage() {
         <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+            <span className="font-sans font-bold text-base tracking-tight text-slate-900">
               AEO Tracker
             </span>
           </Link>
@@ -116,11 +116,11 @@ export default function ResourcesPage() {
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
           <div className="relative max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
-              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
               Developer Tools &amp; Knowledge Hub
             </div>
-            <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              AEO Diagnostic Tools &amp; <span className="text-emerald-400">Knowledge Hub</span>
+            <h1 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              AEO Diagnostic Tools &amp; <span className="text-slate-900">Knowledge Hub</span>
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               Utility tools, crawler validators, and foundational documentation to optimize your domain for ChatGPT Search, Perplexity, Google AI Overviews, and Claude citations.
@@ -148,7 +148,7 @@ export default function ResourcesPage() {
                     </span>
                   </div>
 
-                  <h2 className="font-display text-base font-bold text-slate-950 group-hover:text-emerald-700 transition-colors mb-2">
+                  <h2 className="font-sans text-base font-bold text-slate-950 group-hover:text-slate-900 transition-colors mb-2">
                     {item.title}
                   </h2>
                   <p className="text-xs text-slate-600 leading-relaxed">
@@ -156,7 +156,7 @@ export default function ResourcesPage() {
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-900 group-hover:text-slate-900 transition-colors">
                   <span>Explore Tool</span>
                   <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 transition-transform" />
                 </div>
@@ -168,7 +168,7 @@ export default function ResourcesPage() {
         {/* Bottom CTA Card */}
         <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-8 sm:p-10 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div>
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-950">
+            <h2 className="font-sans text-xl sm:text-2xl font-bold text-slate-950">
               Want a comprehensive audit for your domain?
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
@@ -191,7 +191,7 @@ export default function ResourcesPage() {
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <Link href="/" className="flex items-center gap-2.5">
               <LogoMark className="h-7 w-7" />
-              <span className="font-display text-sm font-bold tracking-tight text-slate-900">
+              <span className="font-sans text-sm font-bold tracking-tight text-slate-900">
                 AEO Tracker
               </span>
             </Link>
@@ -217,7 +217,7 @@ export default function ResourcesPage() {
           <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row">
             <p>© 2026 AEO Tracker. All rights reserved.</p>
             <p className="flex items-center gap-1.5 font-mono text-[11px]">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-50" />
               All systems operational · Enterprise telemetry active
             </p>
           </div>

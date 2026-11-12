@@ -19,8 +19,8 @@ const reportMetrics = [
     score: 88,
     description: "Mentioned in high-intent AI answers",
     icon: Globe2,
-    tone: "bg-emerald-50 text-emerald-600",
-    bar: "bg-emerald-500",
+    tone: "bg-slate-50 text-slate-900",
+    bar: "bg-slate-50",
   },
   {
     label: "Key Prompts",
@@ -55,10 +55,10 @@ export default function ReportPreview() {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-medium text-slate-600 shadow-2xs">
-              <Gauge className="h-3.5 w-3.5 text-emerald-600" />
+              <Gauge className="h-3.5 w-3.5 text-slate-900" />
               Executive PDF Documentation
             </span>
-            <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className="mt-4 font-sans text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
               One-Time Audits & Reports
             </h2>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-600">
@@ -81,7 +81,7 @@ export default function ReportPreview() {
                 <div className="flex items-center gap-2.5">
                   <LogoMark className="h-7 w-7" />
                   <div>
-                    <p className="font-display text-xs font-bold tracking-tight text-slate-900">
+                    <p className="font-sans text-xs font-bold tracking-tight text-slate-900">
                       AEO Visibility Report
                     </p>
                     <p className="font-mono text-[10px] text-slate-500">Prepared for acme.com</p>
@@ -107,7 +107,7 @@ export default function ReportPreview() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                         Overall AEO score
                       </span>
-                      <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-emerald-800">
+                      <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-slate-900">
                         Top 8th Percentile
                       </span>
                     </div>
@@ -119,19 +119,19 @@ export default function ReportPreview() {
                         className="h-[188px] w-[188px] sm:h-[210px] sm:w-[210px]"
                         strokeWidth={7}
                       >
-                        <span className="font-display text-[46px] font-bold leading-none tracking-tight text-slate-900 sm:text-[52px]">
+                        <span className="font-sans text-[46px] font-bold leading-none tracking-tight text-slate-900 sm:text-[52px]">
                           90
                         </span>
                         <span className="mt-1 font-mono text-xs font-medium text-slate-400">/ 100</span>
-                        <span className="mt-2 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-800">
+                        <span className="mt-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-semibold text-slate-900">
                           High Authority
                         </span>
                       </CircularProgress>
                     </div>
 
                     <div className="mt-5 flex items-center justify-center gap-1.5 text-xs font-medium text-slate-600">
-                      <ArrowUpRight className="h-3.5 w-3.5 text-emerald-600" />
-                      <span className="font-semibold text-emerald-700">+14 points</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 text-slate-900" />
+                      <span className="font-semibold text-slate-900">+14 points</span>
                       vs. baseline benchmark
                     </div>
 
@@ -142,7 +142,7 @@ export default function ReportPreview() {
                         { value: "12", label: "Competitors" },
                       ].map((item) => (
                         <div key={item.label} className="px-2 text-center">
-                          <p className="font-display text-base font-bold text-slate-900">{item.value}</p>
+                          <p className="font-sans text-base font-bold text-slate-900">{item.value}</p>
                           <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
                             {item.label}
                           </p>
@@ -155,7 +155,7 @@ export default function ReportPreview() {
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <h3 className="font-display text-sm font-bold text-slate-900">Score Breakdown</h3>
+                      <h3 className="font-sans text-sm font-bold text-slate-900">Score Breakdown</h3>
                       <p className="mt-0.5 text-xs text-slate-500">Key dimensions of your AI search footprint</p>
                     </div>
                     <span className="hidden rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-slate-600 sm:inline">
@@ -192,8 +192,8 @@ export default function ReportPreview() {
                     })}
                   </div>
 
-                  <div className="mt-3.5 flex items-start gap-2.5 rounded-xl border border-emerald-200/80 bg-emerald-50/60 p-3">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  <div className="mt-3.5 flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-slate-900" />
                     <div>
                       <p className="text-xs font-semibold text-slate-900">Domain Strategy Verified</p>
                       <p className="mt-0.5 text-[11px] leading-relaxed text-slate-600">

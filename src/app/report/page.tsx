@@ -106,11 +106,11 @@ export default async function ReportsDirectoryPage() {
       <div className="max-w-6xl mx-auto space-y-10">
         {/* Header */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-50 text-slate-900 ring-1 ring-emerald-200">
             <Sparkles className="w-3.5 h-3.5" />
             Live AI Visibility Benchmark Directory
           </div>
-          <h1 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-display">
+          <h1 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-sans">
             AEO Reports & AI Search Leaderboard
           </h1>
           <p className="text-slate-600 text-lg">
@@ -149,7 +149,7 @@ export default async function ReportsDirectoryPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
+              <TrendingUp className="w-5 h-5 text-slate-900" />
               Audited Brands ({reports.length})
             </h2>
             <span className="text-xs text-slate-500">Updated Daily</span>
@@ -160,7 +160,7 @@ export default async function ReportsDirectoryPage() {
               const score = item.visibility_score || 0;
               const badgeClass =
                 score >= 75
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  ? 'bg-slate-50 text-slate-900 border-slate-200'
                   : score >= 50
                   ? 'bg-amber-50 text-amber-700 border-amber-200'
                   : 'bg-rose-50 text-rose-700 border-rose-200';
@@ -177,7 +177,7 @@ export default async function ReportsDirectoryPage() {
                         #{idx + 1}
                       </div>
                       <div>
-                        <h3 className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                        <h3 className="font-bold text-slate-900 group-hover:text-slate-900 transition-colors">
                           {item.brand_name || item.domain}
                         </h3>
                         <p className="text-xs text-slate-500 font-mono">{item.domain}</p>
@@ -194,7 +194,7 @@ export default async function ReportsDirectoryPage() {
                     <span>
                       Share of Voice: <strong className="text-slate-700">{item.share_of_voice_pct || 0}%</strong>
                     </span>
-                    <span className="text-emerald-600 font-medium inline-flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                    <span className="text-slate-900 font-medium inline-flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
                       View Audit <ArrowUpRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
@@ -214,7 +214,7 @@ export default async function ReportsDirectoryPage() {
             <Link href="/tools/llms-generator" className="hover:text-slate-900">llms.txt Generator</Link>
           </div>
           <div className="flex items-center gap-1">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <ShieldCheck className="w-4 h-4 text-slate-900" />
             <span>Deterministic multi-LLM verified data</span>
           </div>
         </div>
