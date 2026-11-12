@@ -1673,7 +1673,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
   // =========================================================================
   if (isAuthenticated === false) {
     return (
-      <div className="min-h-screen bg-[#edf0f5] flex flex-col justify-center items-center px-4 py-12 selection:bg-[#D4F63C] selection:text-black font-sans text-slate-800">
+      <div className="min-h-screen bg-[#edf0f5] flex flex-col justify-center items-center px-4 py-12 selection:bg-slate-900 selection:text-white font-sans text-slate-800">
         <div className="w-full max-w-md bg-white border border-slate-200/80 rounded-[36px] p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06)] relative overflow-hidden">
           {/* Top Asterisk Accent */}
           <div className="flex flex-col items-center text-center mb-8">
@@ -1807,7 +1807,7 @@ Sitemap: https://aeo-tracker.com/sitemap.xml`;
   // VIEW 3: FULL ADMIN PORTAL COMMAND CENTER (IMAGE DESIGN SCHEMA)
   // =========================================================================
   return (
-    <div className="min-h-screen w-full bg-white text-slate-800 font-sans selection:bg-[#D4F63C] selection:text-black p-4 sm:p-6 lg:p-8 flex gap-6">
+    <div className="min-h-screen w-full bg-white text-slate-800 font-sans selection:bg-slate-900 selection:text-white p-4 sm:p-6 lg:p-8 flex gap-6">
       {/* ================================================================ */}
       {/* LEFT SLIM ICON DOCK / SIDEBAR (Matching Image Left Rail)        */}
       {/* ================================================================ */}

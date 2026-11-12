@@ -107,12 +107,12 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
               <p className="mt-1 text-xs text-slate-500 font-medium">AI prompt evaluations</p>
             </div>
 
-            {/* Obsidian Bento Card */}
-            <div className="p-5 rounded-bento bg-[#0B0F17] border border-slate-800 shadow-bento text-white">
+            {/* Executive Metrics Card */}
+            <div className="p-5 rounded-bento bg-slate-900 border border-slate-800 shadow-bento text-white">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1">
                 API Operating Cost
               </span>
-              <p className="font-display text-3xl font-black text-[#D4F63C]">${totalCost.toFixed(4)}</p>
+              <p className="font-display text-3xl font-black text-emerald-400">${totalCost.toFixed(4)}</p>
               <p className="mt-1 text-xs text-slate-300 font-medium">Frontier inference compute</p>
             </div>
           </div>

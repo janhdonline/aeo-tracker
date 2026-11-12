@@ -17,24 +17,25 @@ const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ||
   "https://aeo-checker.com"
 ).replace(/\/$/, "");
-const title = "AEO Checker — SEO & AEO Visibility Platform";
+const title = "AEO Tracker — AI Search & Answer Engine Optimization Platform";
 const description =
-  "Analyze your website's SEO and AEO visibility. See how your brand appears in AI answers from ChatGPT, Gemini, DeepSeek, and Perplexity—with actionable fixes.";
+  "Measure and scale your brand's visibility in AI answers. Benchmark citations across ChatGPT, Google Gemini, Claude, and Perplexity with verified diagnostic intelligence.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: title,
-    template: "%s | AEO Checker",
+    template: "%s | AEO Tracker",
   },
   description,
-  applicationName: "AEO Checker",
-  authors: [{ name: "AEO Checker" }],
-  creator: "AEO Checker",
-  publisher: "AEO Checker",
+  applicationName: "AEO Tracker",
+  authors: [{ name: "AEO Tracker" }],
+  creator: "AEO Tracker",
+  publisher: "AEO Tracker",
   category: "technology",
   classification: "SEO & Answer Engine Optimization",
   keywords: [
+    "AEO tracker",
     "AEO checker",
     "AEO visibility",
     "Answer Engine Optimization",
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "AEO Checker",
+    siteName: "AEO Tracker",
     title,
     description,
     images: [
@@ -67,7 +68,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "AEO Checker — SEO and AEO visibility dashboard",
+        alt: "AEO Tracker — SEO and AEO visibility dashboard",
       },
     ],
   },
@@ -105,8 +106,8 @@ const softwareApplicationSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "@id": `${siteUrl}/#software-application`,
-  name: "AEO Checker",
-  alternateName: "AEO Visibility Tracker",
+  name: "AEO Tracker",
+  alternateName: "AEO Visibility Platform",
   url: siteUrl,
   description,
   applicationCategory: "BusinessApplication",
@@ -137,7 +138,7 @@ const softwareApplicationSchema = {
   },
   publisher: {
     "@type": "Organization",
-    name: "AEO Checker",
+    name: "AEO Tracker",
     url: siteUrl,
   },
   mainEntityOfPage: siteUrl,
@@ -148,7 +149,7 @@ const websiteSchema = {
   "@type": "WebSite",
   "@id": `${siteUrl}/#website`,
   url: siteUrl,
-  name: "AEO Checker",
+  name: "AEO Tracker",
   description,
   potentialAction: {
     "@type": "SearchAction",

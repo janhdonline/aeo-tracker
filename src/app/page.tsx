@@ -76,80 +76,80 @@ const features: Feature[] = [
   {
     title: "Prompt Opportunity Map",
     description:
-      "Discover high-intent prompts where your brand is missing from AI answers, ranked by revenue opportunity.",
+      "Discover high-intent prompts where your brand is missing from AI answers, ranked by commercial opportunity.",
     icon: Map,
-    tone: "bg-emerald-50 text-emerald-600 ring-emerald-100",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
     visual: "prompts",
   },
   {
     title: "AI Share of Voice",
     description:
-      "Benchmark how often you are mentioned against competitors across ChatGPT, Gemini, DeepSeek, and more.",
+      "Benchmark how frequently you are cited against competitors across ChatGPT, Gemini, Perplexity, and Claude.",
     icon: Share2,
-    tone: "bg-blue-50 text-blue-600 ring-blue-100",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
     visual: "voice",
   },
   {
     title: "Competitor Mention Gap",
     description:
-      "See exactly which competitors win the mentions you are missing—and the prompts driving their advantage.",
+      "Identify the exact prompts where competitors win recommendations and the citations powering their ranking.",
     icon: Crosshair,
-    tone: "bg-violet-50 text-violet-600 ring-violet-100",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
     visual: "gap",
   },
   {
-    title: "Citation Sources",
+    title: "Citation Source Intelligence",
     description:
-      "Track the forums, directories, and publications AI engines trust when they recommend brands in your category.",
+      "Track the directories, Reddit discussions, reviews, and authority publications LLMs rely on for answers.",
     icon: Link2,
-    tone: "bg-emerald-50 text-emerald-600 ring-emerald-100",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
     visual: "citations",
   },
   {
-    title: "AI Answer Accuracy",
+    title: "Answer Accuracy Audit",
     description:
-      "Audit whether AI describes your product, pricing, and positioning correctly—and catch outdated claims early.",
+      "Verify that AI engines represent your pricing, specifications, and positioning with 100% precision.",
     icon: ShieldCheck,
-    tone: "bg-blue-50 text-blue-600 ring-blue-100",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
     visual: "accuracy",
   },
   {
-    title: "AEO Action Plan",
+    title: "Actionable Fix Roadmap",
     description:
-      "Turn every visibility gap into a prioritised, step-by-step roadmap your team can execute this week.",
+      "Transform every visibility gap into a structured, step-by-step roadmap your team can execute immediately.",
     icon: ListChecks,
-    tone: "bg-violet-50 text-violet-600 ring-violet-100",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
     visual: "plan",
   },
 ];
 
 const insights = [
   {
-    title: "Increase your Reddit Presence",
-    description: "Join 4 high-intent threads where your brand is already being discussed.",
+    title: "Increase Reddit Discussion Presence",
+    description: "Participate in 4 high-intent buyer discussions where your category is actively evaluated.",
     impact: "+12 pts",
-    priority: "High impact",
+    priority: "High priority",
     time: "2 weeks",
     icon: MessageCircle,
-    tone: "bg-emerald-50 text-emerald-600",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
   },
   {
-    title: "Improve Bing Rankings",
-    description: "Your brand appears in only 3 of 9 Bing Copilot answers for core prompts.",
+    title: "Strengthen Copilot & Bing Citations",
+    description: "Your brand is cited in only 3 of 9 Bing Copilot answers for core commercial queries.",
     impact: "+8 pts",
-    priority: "Medium impact",
+    priority: "Medium priority",
     time: "3 weeks",
     icon: Search,
-    tone: "bg-blue-50 text-blue-600",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
   },
   {
-    title: "Publish a comparison page",
-    description: "Capture high-intent “vs” prompts currently owned by two competitors.",
+    title: "Deploy Structured Comparison Hub",
+    description: "Capture high-intent alternative and comparison prompts currently led by competitors.",
     impact: "+6 pts",
     priority: "Quick win",
     time: "1 week",
     icon: FileText,
-    tone: "bg-violet-50 text-violet-600",
+    tone: "bg-slate-50 text-slate-800 border border-slate-200",
   },
 ];
 
@@ -248,9 +248,9 @@ function SectionBadge({
   children: React.ReactNode;
 }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-semibold text-gray-600 shadow-sm">
-      <Icon className="h-3.5 w-3.5 text-emerald-500" />
-      {children}
+    <span className="inline-flex items-center gap-1.5 rounded-md border border-slate-200/90 bg-slate-50/90 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-slate-700 shadow-2xs">
+      <Icon className="h-3.5 w-3.5 text-slate-600" />
+      <span>{children}</span>
     </span>
   );
 }
@@ -545,25 +545,31 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <a href="#" className="flex items-center gap-2.5" aria-label="AEO Checker home">
+          <a href="#" className="flex items-center gap-2.5" aria-label="AEO Tracker home">
             <LogoMark />
-            <span className="text-[17px] font-semibold tracking-[-0.035em] text-[#111827]">
-              AEO Checker
+            <span className="font-display text-[16px] font-bold tracking-tight text-slate-950">
+              AEO Tracker
             </span>
           </a>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
+          <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary navigation">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[13px] font-medium text-gray-500 transition-colors hover:text-gray-900"
+                className="text-xs font-medium text-slate-600 transition-colors hover:text-slate-950"
               >
                 {link.label}
               </a>
             ))}
+            <Link
+              href="/pricing"
+              className="text-xs font-medium text-slate-600 transition-colors hover:text-slate-950"
+            >
+              Pricing
+            </Link>
           </nav>
 
           <div className="hidden items-center gap-3 sm:flex">
@@ -571,32 +577,32 @@ export default function Home() {
               <>
                 <Link
                   href="/dashboard"
-                  className="rounded-lg px-3 py-2 text-[13px] font-medium text-gray-700 transition-colors hover:text-gray-900"
+                  className="rounded-lg px-3 py-2 text-xs font-medium text-slate-600 transition-colors hover:text-slate-950"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800 hover:shadow-md"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-slate-800 active:scale-[0.99]"
                 >
                   Go to Dashboard
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <ArrowRight className="h-3 w-3" />
                 </Link>
               </>
             ) : (
               <>
                 <Link
                   href="/login"
-                  className="rounded-lg px-3 py-2 text-[13px] font-medium text-gray-500 transition-colors hover:text-gray-900"
+                  className="rounded-lg px-3 py-2 text-xs font-medium text-slate-600 transition-colors hover:text-slate-950"
                 >
-                  Log in
+                  Sign in
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#111827] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-gray-800 hover:shadow-md"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-slate-800 active:scale-[0.99]"
                 >
-                  Try for free
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  Get Started
+                  <ArrowRight className="h-3 w-3" />
                 </Link>
               </>
             )}
@@ -604,7 +610,7 @@ export default function Home() {
 
           <button
             type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition-colors hover:text-gray-900 lg:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-2xs transition-colors hover:text-slate-900 lg:hidden"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen((open) => !open)}
@@ -614,36 +620,43 @@ export default function Home() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="border-t border-gray-100 bg-white px-4 pb-4 pt-3 shadow-lg lg:hidden">
+          <div className="border-t border-slate-200 bg-white px-4 pb-4 pt-3 shadow-lg lg:hidden">
             <nav className="flex flex-col" aria-label="Mobile navigation">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  className="rounded-lg px-3 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-950"
                 >
                   {link.label}
                 </a>
               ))}
+              <Link
+                href="/pricing"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-950"
+              >
+                Pricing
+              </Link>
             </nav>
-            <div className="mt-3 flex flex-col gap-2 border-t border-gray-100 pt-3">
+            <div className="mt-3 flex flex-col gap-2 border-t border-slate-100 pt-3">
               {user ? (
                 <>
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="rounded-lg px-3 py-2 text-center text-xs font-medium text-slate-700 hover:bg-slate-50"
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-4 py-3 text-sm font-semibold text-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white"
                   >
                     Go to Dashboard
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </>
               ) : (
@@ -651,17 +664,17 @@ export default function Home() {
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-gray-600 hover:bg-gray-50"
+                    className="rounded-lg px-3 py-2 text-center text-xs font-medium text-slate-700 hover:bg-slate-50"
                   >
-                    Log in
+                    Sign in
                   </Link>
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111827] px-4 py-3 text-sm font-semibold text-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white"
                   >
-                    Try for free
-                    <ArrowRight className="h-4 w-4" />
+                    Get Started Free
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </>
               )}
@@ -673,69 +686,51 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden bg-white">
-          <div className="hero-grid pointer-events-none absolute inset-0 opacity-80" aria-hidden="true" />
-          <div
-            className="pointer-events-none absolute left-1/2 top-[-140px] h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-emerald-100/50 blur-3xl"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute left-[8%] top-52 h-56 w-56 rounded-full bg-blue-100/40 blur-3xl"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute right-[7%] top-64 h-56 w-56 rounded-full bg-violet-100/40 blur-3xl"
-            aria-hidden="true"
-          />
+          <div className="hero-grid pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
 
           <div className="relative mx-auto max-w-5xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pb-20 sm:pt-24 lg:pt-28">
             <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-700 shadow-xs sm:text-xs"
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-slate-50/90 px-3.5 py-1 text-xs font-medium text-slate-700 shadow-2xs"
             >
-              <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
-              <span>63,100+ brands &amp; websites analyzed across AI engines</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              <span>Enterprise Answer Engine Optimization (AEO) Platform</span>
             </motion.div>
 
             <motion.h1
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.13 }}
-              className="mx-auto mt-6 max-w-4xl text-[38px] font-black leading-[1.03] tracking-[-0.055em] text-[#0B0F17] sm:text-6xl lg:text-[76px]"
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
+              className="mx-auto mt-6 max-w-4xl font-display text-[40px] font-bold leading-[1.08] tracking-tight text-slate-950 sm:text-6xl lg:text-[70px]"
             >
-              Check your website{' '}
-              <span className="line-through decoration-slate-300 decoration-4 text-slate-300 font-normal">
-                SEO
-              </span>{' '}
-              <span className="font-black text-[#0B0F17] underline decoration-[#D4F63C] decoration-wavy decoration-3">
-                AEO
-              </span>
+              Measure &amp; scale your brand&apos;s visibility in AI answers.
             </motion.h1>
 
             <motion.p
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.21 }}
-              className="mx-auto mt-6 max-w-2xl text-balance text-[15px] font-medium leading-7 text-slate-600 sm:text-lg sm:leading-8"
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              className="mx-auto mt-6 max-w-2xl text-balance text-[15px] font-normal leading-relaxed text-slate-600 sm:text-lg sm:leading-8"
             >
-              Answer Engine Optimization measures and scales your brand&apos;s commercial visibility across AIs like
+              The authoritative platform to audit citations, benchmark competitor share of voice, and scale commercial recommendations across
               <AiModelRotator />
             </motion.p>
 
             <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.29 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.22 }}
               className="mx-auto mt-9 max-w-2xl"
             >
               <form id="analyze" onSubmit={handleAnalyze}>
-                <div className="rounded-2xl sm:rounded-full border border-slate-200/90 bg-white/95 p-2 shadow-bento transition-all focus-within:border-slate-950 focus-within:ring-2 focus-within:ring-[#D4F63C] sm:flex sm:items-center">
+                <div className="rounded-xl border border-slate-300 bg-white p-1.5 shadow-xs transition-all focus-within:border-slate-800 focus-within:ring-2 focus-within:ring-slate-900/10 sm:flex sm:items-center">
                   <label htmlFor="website-url" className="sr-only">
                     Website URL
                   </label>
-                  <div className="flex flex-1 items-center gap-3 px-4 py-2">
-                    <Globe2 className="h-5 w-5 shrink-0 text-slate-400" strokeWidth={2} />
+                  <div className="flex flex-1 items-center gap-3 px-3 py-2">
+                    <Globe2 className="h-4 w-4 shrink-0 text-slate-400" strokeWidth={2} />
                     <input
                       ref={inputRef}
                       id="website-url"
@@ -747,53 +742,53 @@ export default function Home() {
                       value={domain}
                       onChange={(event) => setDomain(event.target.value)}
                       placeholder="Enter website domain (e.g. stripe.com)"
-                      className="min-w-0 flex-1 bg-transparent text-[15px] font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
+                      className="min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl sm:rounded-full bg-slate-950 px-7 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70 sm:mt-0 sm:w-auto"
+                    className="group mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-2.5 text-xs font-semibold text-white shadow-2xs transition-all hover:bg-slate-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:mt-0 sm:w-auto cursor-pointer"
                   >
                     {loading ? (
                       <LogoLoader variant="mini" text="Scanning Engines..." />
                     ) : (
                       <>
-                        <Search className="h-3.5 w-3.5 text-[#D4F63C]" />
-                        <span>Run Free Scan</span>
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                        <Search className="h-3.5 w-3.5 text-slate-400" />
+                        <span>Run Audit</span>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-300 transition-transform group-hover:translate-x-0.5" />
                       </>
                     )}
                   </button>
                 </div>
 
-                {/* AI Engine Live Pulse Matrix */}
+                {/* AI Engine Live Operational Status */}
                 <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { name: 'Google Gemini', model: '2.5 Flash', status: 'Live' },
-                    { name: 'OpenAI', model: 'ChatGPT-4o', status: 'Live' },
-                    { name: 'Perplexity', model: 'Sonar Pro', status: 'Live' },
-                    { name: 'xAI Grok', model: 'Grok 3', status: 'Live' },
+                    { name: 'Google Gemini', model: '2.5 Flash' },
+                    { name: 'OpenAI', model: 'ChatGPT-4o' },
+                    { name: 'Perplexity', model: 'Sonar Pro' },
+                    { name: 'Claude', model: 'Claude 3.7' },
                   ].map((engine) => (
                     <div
                       key={engine.name}
-                      className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-50/80 border border-slate-200/70 rounded-full text-[11px] font-semibold text-slate-700"
+                      className="flex items-center justify-center gap-2 px-3 py-1.5 bg-slate-50/90 border border-slate-200/90 rounded-md text-xs font-medium text-slate-700 shadow-2xs"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-                      <span className="font-bold">{engine.name}</span>
-                      <span className="text-[10px] text-slate-400 hidden sm:inline">{engine.model}</span>
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      <span className="font-semibold text-slate-800">{engine.name}</span>
+                      <span className="text-[11px] text-slate-400 hidden sm:inline">{engine.model}</span>
                     </div>
                   ))}
                 </div>
 
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-                  <span className="mr-1 text-xs font-medium text-gray-400">Examples:</span>
+                  <span className="mr-1 text-xs font-medium text-slate-500">Quick audits:</span>
                   {heroExamples.map((example) => (
                     <button
                       key={example.name}
                       type="button"
                       onClick={() => pickExample(example.domain)}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm transition-all hover:-translate-y-0.5 hover:scale-[1.02] hover:border-gray-300 hover:text-gray-900 hover:shadow"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 shadow-2xs transition-all hover:border-slate-300 hover:text-slate-900 cursor-pointer"
                     >
                       <BrandIcon brand={example.name} />
                       {example.name}
@@ -803,7 +798,7 @@ export default function Home() {
 
                 <div aria-live="polite">
                   {loading && (
-                    <div className="mx-auto mt-5 max-w-xl overflow-hidden rounded-2xl border border-emerald-200/80 bg-white/95 p-6 shadow-md backdrop-blur-sm">
+                    <div className="mx-auto mt-5 max-w-xl overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                       <LogoLoader
                         variant="section"
                         text={`Scanning AI visibility for ${domain || "website"}...`}
@@ -813,46 +808,46 @@ export default function Home() {
                   )}
 
                   {error && (
-                    <p className="mt-4 text-xs font-medium text-red-500" role="alert">
+                    <p className="mt-4 text-xs font-medium text-red-600" role="alert">
                       {error}
                     </p>
                   )}
 
                   {result && (
-                    <div className="mx-auto mt-5 max-w-xl overflow-hidden rounded-2xl border border-emerald-200 bg-white text-left shadow-md">
+                    <div className="mx-auto mt-5 max-w-xl overflow-hidden rounded-xl border border-slate-200 bg-white text-left shadow-xs">
                       <div className="flex items-center gap-3 p-4">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
-                          <CheckCircle2 className="h-5 w-5" />
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200">
+                          <CheckCircle2 className="h-4 w-4" />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-semibold text-gray-900">Analysis complete</p>
-                          <p className="truncate text-xs text-gray-500">
-                            {result.domain} · Score{" "}
-                            <span className="font-semibold text-gray-700">{result.visibilityScore}/100</span>{" "}
+                          <p className="text-sm font-semibold text-slate-900">Analysis complete</p>
+                          <p className="truncate text-xs text-slate-500">
+                            {result.domain} · Visibility Score{" "}
+                            <span className="font-semibold text-slate-800">{result.visibilityScore}/100</span>{" "}
                             · {result.totalMentions} mentions across {result.totalQueries} prompts
                           </p>
                         </div>
                         <Link
                           href={user ? "/dashboard" : "/login"}
-                          className="hidden shrink-0 items-center gap-1 rounded-lg bg-[#111827] px-3 py-2 text-[11px] font-semibold text-white hover:bg-gray-800 sm:inline-flex"
+                          className="hidden shrink-0 items-center gap-1 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800 sm:inline-flex"
                         >
                           {user ? "View in Dashboard" : "Unlock report"}
                           <ArrowRight className="h-3 w-3" />
                         </Link>
                       </div>
-                      <div className="h-1 w-full bg-gray-100">
+                      <div className="h-1 w-full bg-slate-100">
                         <div
-                          className="h-full bg-emerald-500 transition-[width] duration-700"
+                          className="h-full bg-emerald-500 transition-[width] duration-500"
                           style={{ width: `${Math.min(result.visibilityScore, 100)}%` }}
                         />
                       </div>
                       <a
                         href="#product"
-                        className="flex items-center justify-between gap-2 border-t border-emerald-100 bg-emerald-50/40 px-4 py-2 text-[10px] font-semibold text-emerald-800 transition-colors hover:bg-emerald-50"
+                        className="flex items-center justify-between gap-2 border-t border-slate-100 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100"
                       >
-                        Your live dashboard is ready
-                        <span className="inline-flex items-center gap-1">
-                          View dashboard
+                        Live dashboard telemetry ready
+                        <span className="inline-flex items-center gap-1 font-semibold text-slate-900">
+                          View details
                           <ArrowRight className="h-3 w-3" />
                         </span>
                       </a>
@@ -860,8 +855,8 @@ export default function Home() {
                   )}
                 </div>
 
-                <p className="mt-4 text-[11px] text-gray-400">
-                  Free instant scan · No credit card required
+                <p className="mt-4 text-xs text-slate-500">
+                  Instant scan · 100% free · No credit card required
                 </p>
               </form>
             </motion.div>
@@ -869,12 +864,12 @@ export default function Home() {
         </section>
 
         {/* Social proof */}
-        <section className="border-y border-gray-200/70 bg-white py-9 sm:py-10">
+        <section className="border-y border-slate-200/80 bg-slate-50/50 py-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-[12px] font-medium text-gray-500">
-              Trusted by marketers that also use
+            <p className="text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Benchmarking generative visibility across 63,000+ commercial domains
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-9 gap-y-5 opacity-75 grayscale sm:gap-x-12">
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 opacity-70 grayscale transition-all duration-300 hover:opacity-90 hover:grayscale-0 sm:gap-x-14">
               <MailchimpLogo />
               <GoogleAnalyticsLogo />
               <HubSpotLogo />
@@ -885,14 +880,14 @@ export default function Home() {
         </section>
 
         {/* Product dashboard preview */}
-        <section id="product" className="relative border-b border-gray-200/70 bg-[#F9FAFB] py-16 sm:py-20 lg:py-24">
+        <section id="product" className="relative border-b border-slate-200/80 bg-slate-50/40 py-20 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto mb-9 max-w-2xl text-center sm:mb-12">
-              <SectionBadge icon={Sparkles}>Live dashboard preview</SectionBadge>
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[#111827] sm:text-4xl lg:text-[42px]">
+            <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-14">
+              <SectionBadge icon={Sparkles}>Live dashboard telemetry</SectionBadge>
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-4xl">
                 Every AI signal. One clear view.
               </h2>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] leading-7 text-gray-500 sm:text-base">
+              <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-600">
                 Track visibility, sentiment, prompts, and competitors across the engines your
                 customers actually use.
               </p>
@@ -905,12 +900,12 @@ export default function Home() {
         <section id="features" className="bg-white py-20 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
-              <SectionBadge icon={Sparkles}>Features</SectionBadge>
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[#111827] sm:text-4xl lg:text-[42px]">
-                Daily Analytics
+              <SectionBadge icon={Sparkles}>Diagnostic Capabilities</SectionBadge>
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-4xl">
+                Daily Enterprise Analytics
               </h2>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] leading-7 text-gray-500 sm:text-base">
-                Daily tracking of the most important metrics in AI search
+              <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-600">
+                Continuous tracking of core visibility, prompt attribution, and sentiment across generative search models.
               </p>
             </div>
 
@@ -919,7 +914,7 @@ export default function Home() {
               whileInView="show"
               viewport={{ once: true, amount: 0.15 }}
               variants={staggerContainer}
-              className="mt-10 grid gap-4 sm:mt-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-5"
+              className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
             >
               {features.map((feature) => {
                 const Icon = feature.icon;
@@ -930,22 +925,22 @@ export default function Home() {
                     whileHover={
                       prefersReducedMotion
                         ? undefined
-                        : { y: -4, transition: { duration: 0.2, ease: "easeOut" } }
+                        : { y: -2, transition: { duration: 0.15, ease: "easeOut" } }
                     }
-                    className="group flex h-full flex-col rounded-[28px] border border-slate-200/90 bg-white p-6 shadow-bento transition-[border-color,box-shadow,transform] duration-300 hover:border-slate-400/80 hover:shadow-bento-hover"
+                    className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-card transition-all duration-200 hover:border-slate-300 hover:shadow-card-hover"
                   >
                     <div className="flex items-start justify-between">
                       <span
-                        className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${feature.tone}`}
+                        className={`flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200/90 ${feature.tone}`}
                       >
                         <Icon className="h-5 w-5" strokeWidth={2} />
                       </span>
-                      <ArrowUpRight className="h-4 w-4 text-slate-300 opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-slate-600 group-hover:opacity-100" />
+                      <ArrowUpRight className="h-4 w-4 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
                     </div>
-                    <h3 className="mt-5 text-[17px] font-black tracking-[-0.025em] text-slate-950">
+                    <h3 className="mt-5 font-display text-base font-bold tracking-tight text-slate-900">
                       {feature.title}
                     </h3>
-                    <p className="mt-2 text-xs leading-6 text-slate-500">{feature.description}</p>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-600">{feature.description}</p>
                     <div className="mt-auto pt-5">
                       <FeatureVisual kind={feature.visual} />
                     </div>
@@ -957,43 +952,41 @@ export default function Home() {
         </section>
 
         {/* How it works + personalised insights */}
-        <section id="how-it-works" className="relative overflow-hidden border-y border-slate-200/80 bg-slate-50/60 py-20 sm:py-24">
-          <div className="pointer-events-none absolute right-[-8%] top-10 h-72 w-72 rounded-full bg-emerald-100/30 blur-3xl" aria-hidden="true" />
+        <section id="how-it-works" className="relative overflow-hidden border-y border-slate-200/80 bg-slate-50/50 py-20 sm:py-24">
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-start gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
               <div>
-                <SectionBadge icon={Globe2}>AEO / GEO explained</SectionBadge>
-                <h2 className="mt-4 max-w-lg text-3xl font-black tracking-[-0.045em] text-[#0B0F17] sm:text-4xl lg:text-[42px]">
-                  How does AEO/GEO Work?
+                <SectionBadge icon={Globe2}>Methodology</SectionBadge>
+                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                  How Generative Engine Optimization Works
                 </h2>
-                <p className="mt-4 max-w-xl text-[15px] font-medium leading-7 text-slate-600 sm:text-base">
-                  AI engines don&apos;t just rank links—they synthesise answers from the sources they
-                  trust. AEO/GEO aligns your content, citations, and reputation so your brand becomes
-                  part of those answers.
+                <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600">
+                  AI engines do not just rank links—they synthesize answers from verified authorities they trust.
+                  AEO Tracker aligns your content, citations, and digital footprint so your brand becomes the primary cited source.
                 </p>
 
-                <div className="mt-6 space-y-3">
+                <div className="mt-8 space-y-4">
                   {[
                     {
-                      title: "AI engines gather sources",
-                      description: "They read reviews, forums, docs, and your website.",
+                      title: "AI engines aggregate verified sources",
+                      description: "They analyze reviews, technical docs, forums, and your digital footprint.",
                     },
                     {
-                      title: "They compare and cite brands",
-                      description: "Your reputation across the web shapes what gets mentioned.",
+                      title: "They synthesize and cite authoritative brands",
+                      description: "Your domain authority and citation frequency determine which brands get recommended.",
                     },
                     {
-                      title: "You close the gaps",
-                      description: "Fix citations and content, then track the lift daily.",
+                      title: "You systematically close citation gaps",
+                      description: "Resolve missing entity references and track measurable score improvements daily.",
                     },
                   ].map((step, index) => (
-                    <div key={step.title} className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-white text-[11px] font-bold text-emerald-700 shadow-xs">
+                    <div key={step.title} className="flex items-start gap-3.5">
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white font-mono text-xs font-semibold text-slate-700 shadow-2xs">
                         {index + 1}
                       </span>
                       <div>
-                        <p className="text-[13px] font-bold text-slate-900">{step.title}</p>
-                        <p className="mt-0.5 text-xs leading-5 text-slate-500">{step.description}</p>
+                        <p className="text-sm font-semibold text-slate-900">{step.title}</p>
+                        <p className="mt-0.5 text-xs leading-relaxed text-slate-600">{step.description}</p>
                       </div>
                     </div>
                   ))}
@@ -1003,12 +996,12 @@ export default function Home() {
               </div>
 
               <div>
-                <SectionBadge icon={Sparkles}>Personalised for you</SectionBadge>
-                <h2 className="mt-4 text-3xl font-black tracking-[-0.045em] text-[#0B0F17] sm:text-[34px]">
-                  Get personalised insights
+                <SectionBadge icon={Sparkles}>Actionable Intelligence</SectionBadge>
+                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                  Personalized Diagnostic Insights
                 </h2>
-                <p className="mt-3 max-w-lg text-[15px] font-medium leading-7 text-slate-600">
-                  Prioritised actions based on your actual gaps—not generic SEO advice.
+                <p className="mt-3 max-w-lg text-sm text-slate-600">
+                  Prioritized actions generated directly from your live gap analysis—engineered for measurable impact.
                 </p>
 
                 <div className="mt-6 space-y-3">
@@ -1018,33 +1011,33 @@ export default function Home() {
                       <a
                         key={insight.title}
                         href="#analyze"
-                        className="group flex w-full items-start gap-3 rounded-2xl border border-slate-200/90 bg-white p-4.5 text-left shadow-bento transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-bento-hover"
+                        className="group flex w-full items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-card transition-all duration-150 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-card-hover"
                       >
                         <span
-                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${insight.tone}`}
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200/80 ${insight.tone}`}
                         >
                           <Icon className="h-4 w-4" strokeWidth={2} />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-[13px] font-bold tracking-[-0.01em] text-slate-900">
+                            <p className="text-xs font-bold tracking-tight text-slate-900">
                               {insight.title}
                             </p>
-                            <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-200">
+                            <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[10px] font-semibold text-slate-700">
                               {insight.impact}
                             </span>
                           </div>
-                          <p className="mt-1 text-xs leading-5 text-slate-500">{insight.description}</p>
-                          <div className="mt-2 flex items-center gap-2 text-[10px] font-medium text-slate-400">
+                          <p className="mt-1 text-xs leading-relaxed text-slate-600">{insight.description}</p>
+                          <div className="mt-2 flex items-center gap-2 text-[10px] font-medium text-slate-500">
                             <span className="flex items-center gap-1">
-                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
                               {insight.priority}
                             </span>
                             <span>·</span>
                             <span>{insight.time}</span>
                           </div>
                         </div>
-                        <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-slate-600" />
+                        <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-slate-700" />
                       </a>
                     );
                   })}
@@ -1052,32 +1045,32 @@ export default function Home() {
 
                 <a
                   href="#features"
-                  className="group mt-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-[12px] font-bold text-slate-700 shadow-bento transition-all hover:border-slate-400 hover:shadow-bento-hover"
+                  className="group mt-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-semibold text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 hover:text-slate-900"
                 >
-                  <span>View all 12 personalised insights</span>
-                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-0.5" />
+                  <span>View all 12 prioritized recommendations</span>
+                  <ArrowRight className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:translate-x-0.5" />
                 </a>
 
-                {/* Obsidian Accent Card for Projected Impact */}
-                <div className="mt-4 rounded-bento border border-slate-800 bg-[#0B0F17] p-6 text-white shadow-bento">
+                {/* Executive Projected Impact Card */}
+                <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900 p-5 text-white shadow-card">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                         Projected Impact
                       </p>
-                      <p className="mt-2 text-3xl font-black tracking-[-0.05em] text-[#D4F63C]">
-                        +26 <span className="text-base font-semibold text-slate-300">pts</span>
+                      <p className="mt-1 font-display text-3xl font-bold tracking-tight text-white">
+                        +26 <span className="text-sm font-normal text-slate-400">pts</span>
                       </p>
                     </div>
-                    <span className="rounded-full bg-[#10b981]/20 px-3 py-1 text-[10px] font-bold text-[#10b981] ring-1 ring-[#10b981]/30">
-                      Next 30 days
+                    <span className="rounded-md border border-emerald-500/30 bg-emerald-950/60 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
+                      30-Day Window
                     </span>
                   </div>
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-800">
-                    <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-[#D4F63C] to-[#10b981]" />
+                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-slate-800">
+                    <div className="h-full w-[68%] rounded-full bg-emerald-500" />
                   </div>
-                  <p className="mt-2.5 text-[11px] text-slate-400">
-                    Calculated lift when completing the top 3 recommended priority actions.
+                  <p className="mt-2.5 text-xs text-slate-400">
+                    Estimated visibility lift upon completing the top 3 high-priority citation actions.
                   </p>
                 </div>
               </div>
@@ -1093,17 +1086,16 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl">
-                <SectionBadge icon={Sparkles}>Real brands, real data</SectionBadge>
-                <h2 className="mt-4 text-3xl font-black tracking-[-0.045em] text-[#0B0F17] sm:text-4xl lg:text-[42px]">
-                  View Examples
+                <SectionBadge icon={Sparkles}>Empirical Benchmarks</SectionBadge>
+                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                  Industry Audit Examples
                 </h2>
-                <p className="mt-3 max-w-xl text-[15px] font-medium leading-7 text-slate-600 sm:text-base">
-                  See how leading brands show up across AI answers—and where their biggest
-                  opportunities live.
+                <p className="mt-3 max-w-xl text-base text-slate-600">
+                  See how leading brands perform across commercial AI answer engines—and identify immediate market opportunities.
                 </p>
               </div>
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-[11px] font-bold text-slate-600">
-                <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-xs font-medium text-slate-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
                 Updated weekly
               </span>
             </div>
@@ -1121,23 +1113,23 @@ export default function Home() {
                   whileHover={
                     prefersReducedMotion
                       ? undefined
-                      : { scale: 1.02, y: -4, transition: { type: "spring", stiffness: 360, damping: 24 } }
+                      : { y: -2, transition: { duration: 0.15 } }
                   }
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.995 }}
-                  className="group rounded-bento border border-slate-200/90 bg-white p-5 text-left shadow-bento transition-[border-color,box-shadow] duration-300 hover:border-slate-400 hover:shadow-bento-hover"
+                  className="group rounded-xl border border-slate-200 bg-white p-5 text-left shadow-card transition-all duration-150 hover:border-slate-300 hover:shadow-card-hover"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-2.5">
-                      <BrandIcon brand={example.brand} className="h-8 w-8 rounded-xl text-[10px]" />
+                      <BrandIcon brand={example.brand} className="h-8 w-8 rounded-lg text-xs" />
                       <div className="min-w-0">
                         <h3 className="truncate">
                           <BrandWordmark brand={example.brand} />
                         </h3>
-                        <p className="mt-0.5 truncate text-[11px] font-medium text-slate-400">{example.domain}</p>
+                        <p className="mt-0.5 truncate font-mono text-[11px] text-slate-500">{example.domain}</p>
                       </div>
                     </div>
                     <span
-                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold ${scoreTone(
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-xs font-semibold ${scoreTone(
                         example.score
                       )}`}
                     >
@@ -1150,8 +1142,8 @@ export default function Home() {
                   <ExamplePreview score={example.score} trend={example.trend} />
 
                   <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                    <span className="text-[11px] font-bold text-slate-600 group-hover:text-slate-900">Run live audit</span>
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-400 transition-all group-hover:border-slate-900 group-hover:bg-[#0B0F17] group-hover:text-[#D4F63C]">
+                    <span className="text-xs font-semibold text-slate-600 group-hover:text-slate-900">Run audit</span>
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-all group-hover:border-slate-900 group-hover:bg-slate-900 group-hover:text-white">
                       <ArrowUpRight className="h-3 w-3" />
                     </span>
                   </div>
@@ -1161,54 +1153,49 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Final CTA - Obsidian Bento Showpiece */}
-        <section className="bg-white pb-20 pt-2 sm:pb-24">
+        {/* Final CTA - Executive Slate Container */}
+        <section className="bg-white pb-20 pt-4 sm:pb-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="relative overflow-hidden rounded-[32px] border border-slate-800 bg-[#0B0F17] px-6 py-16 text-center shadow-bento sm:px-12 sm:py-20">
-              <div className="hero-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden="true" />
-              <div
-                className="pointer-events-none absolute left-1/2 top-[-100px] h-72 w-[540px] -translate-x-1/2 rounded-full bg-[#D4F63C]/10 blur-[100px]"
-                aria-hidden="true"
-              />
+            <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 px-6 py-16 text-center shadow-card-hover sm:px-12 sm:py-20">
+              <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
               <div className="relative mx-auto max-w-2xl">
-                <span className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-3.5 py-1 text-[11px] font-bold text-[#D4F63C] shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#D4F63C] animate-ping" />
-                  Start your free scan today
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Enterprise Answer Engine Telemetry
                 </span>
-                <h2 className="mt-6 text-balance text-4xl font-black tracking-[-0.055em] text-white sm:text-5xl">
+                <h2 className="mt-6 text-balance font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
                   Be the answer your customers find.
                 </h2>
-                <p className="mx-auto mt-4 max-w-lg text-[15px] font-medium leading-7 text-slate-300 sm:text-base">
-                  Join 63,100+ marketers and brands using AEO Tracker to measure, audit, and dominate
-                  visibility across AI search engines.
+                <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-slate-300">
+                  Join thousands of forward-looking marketing and growth teams using AEO Tracker to measure, audit, and expand visibility across generative search engines.
                 </p>
                 <div className="mt-8 flex flex-col items-stretch justify-center gap-3.5 sm:flex-row sm:items-center">
                   <Link
                     href={user ? "/dashboard" : "/login"}
-                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#D4F63C] px-8 py-4 text-xs font-black uppercase tracking-wider text-slate-950 shadow-glow-neon transition-all hover:bg-[#c2e42b] hover:scale-102"
+                    className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm transition-all hover:bg-slate-100 hover:shadow-md"
                   >
                     <span>{user ? "Go to Dashboard" : "Start Free Audit"}</span>
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                   <Link
                     href="/pricing"
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-8 py-4 text-xs font-black uppercase tracking-wider text-white shadow-sm transition-all hover:bg-slate-800 hover:border-slate-500"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition-all hover:bg-slate-800 hover:border-slate-600"
                   >
                     View Pricing Plans
                   </Link>
                 </div>
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] font-medium text-slate-400">
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-400">
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[#10b981]" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                     No credit card required
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[#10b981]" />
-                    Instant live engine results
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    Instant multi-model audit
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[#10b981]" />
-                    Cancel anytime
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    SOC-2 compliant data handling
                   </span>
                 </div>
               </div>
@@ -1218,11 +1205,11 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <a href="#" className="flex items-center gap-2.5" aria-label="AEO Tracker home">
-              <LogoMark className="h-8 w-8" />
-              <span className="text-[15px] font-black tracking-[-0.03em] text-[#0B0F17]">
+              <LogoMark className="h-7 w-7" />
+              <span className="font-display text-sm font-bold tracking-tight text-slate-900">
                 AEO Tracker
               </span>
             </a>
@@ -1230,6 +1217,8 @@ export default function Home() {
               {[
                 { label: "Pricing", href: "/pricing" },
                 { label: "About", href: "/about" },
+                { label: "Compare", href: "/compare" },
+                { label: "Blog", href: "/blog" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy", href: "/privacy" },
                 { label: "Terms", href: "/terms" },
@@ -1237,18 +1226,18 @@ export default function Home() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
+                  className="text-xs font-medium text-slate-600 transition-colors hover:text-slate-900"
                 >
                   {link.label}
                 </a>
               ))}
             </nav>
           </div>
-          <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-[11px] font-medium text-slate-400 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row">
             <p>© 2026 AEO Tracker. All rights reserved.</p>
-            <p className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-              Built for the AI Answer Engine era.
+            <p className="flex items-center gap-1.5 font-mono text-[11px]">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              All systems operational · Enterprise telemetry active
             </p>
           </div>
         </div>

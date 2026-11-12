@@ -6,24 +6,21 @@ import {
   Bot,
   ShieldCheck,
   Zap,
-  Target,
   ArrowRight,
-  Search,
-  Layers,
   CheckCircle2,
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About AEO Checker — AI Search & Answer Engine Optimization',
+  title: 'About AEO Tracker — Generative Search Visibility Platform',
   description:
-    'Learn about AEO Checker, our mission to make AI search visibility transparent, and how we help brands track citations across ChatGPT, Gemini, Claude, and Perplexity.',
+    'Learn about AEO Tracker, our enterprise mission to make AI search attribution transparent, and how we empower brands to measure citations across ChatGPT, Gemini, Claude, and Perplexity.',
   alternates: {
     canonical: '/about',
   },
   openGraph: {
-    title: 'About AEO Checker — AI Search Visibility Platform',
+    title: 'About AEO Tracker — Generative Engine Visibility',
     description:
-      'We help brands monitor and optimize their presence in AI-generated answers across major LLMs.',
+      'We help brands monitor and systematically optimize their authority in AI-generated answers across major LLMs.',
     url: '/about',
     type: 'website',
   },
@@ -31,146 +28,145 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#fafbfc] flex flex-col font-sans antialiased text-slate-900 selection:bg-[#D4F63C] selection:text-black">
+    <div className="min-h-screen bg-white flex flex-col font-sans antialiased text-slate-900 selection:bg-slate-900 selection:text-white">
       {/* Top Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/80">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
+        <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
-            <LogoMark className="h-8 w-8" />
-            <span className="font-black text-lg tracking-tight group-hover:text-slate-800 transition-colors">
-              AEO Checker
+            <LogoMark className="h-7 w-7" />
+            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+              AEO Tracker
             </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/pricing"
-              className="text-xs font-bold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-xl transition"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-lg transition"
             >
               Pricing
             </Link>
             <Link
               href="/login"
-              className="text-xs font-bold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-xl transition"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-lg transition"
             >
               Sign In
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white shadow-xs hover:bg-slate-800 transition"
+              className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-2xs hover:bg-slate-800 transition"
             >
-              Start Free
+              Get Started
             </Link>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 w-full space-y-12">
-        {/* Obsidian Bento Hero */}
-        <div className="relative overflow-hidden rounded-3xl bg-[#0B0F17] p-8 sm:p-14 text-white border border-slate-800 shadow-2xl">
-          <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-lime-500/15 blur-3xl" />
-          <div className="pointer-events-none absolute -left-20 -bottom-20 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full space-y-12">
+        {/* Executive Slate Hero */}
+        <div className="relative overflow-hidden rounded-2xl bg-slate-950 p-8 sm:p-12 text-white border border-slate-800 shadow-card">
+          <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
 
           <div className="relative max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full bg-lime-400/10 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#D4F63C] ring-1 ring-lime-400/20">
-              <Sparkles className="h-3.5 w-3.5 text-[#D4F63C]" />
-              The Answer Engine Revolution
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
+              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+              The Answer Engine Era
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white">
-              We make your brand the authoritative citation in <span className="text-[#D4F63C]">AI search answers</span>.
+            <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight leading-tight text-white">
+              We make your brand the authoritative citation in <span className="text-emerald-400">AI search answers</span>.
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
-              Traditional SEO measured page-1 rankings on 10 blue links. Today, millions of buyers make purchasing decisions from synthesised answers generated by ChatGPT, Perplexity, Gemini, Claude, and DeepSeek.
+              Traditional SEO measured page-1 rankings across 10 blue links. Today, millions of high-intent enterprise buyers make purchasing decisions from synthesized answers generated by ChatGPT, Perplexity, Gemini, Claude, and DeepSeek.
             </p>
           </div>
 
-          <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10 pt-10 border-t border-slate-800/80">
+          <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10 pt-8 border-t border-slate-800/80">
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-[#D4F63C]">10+</div>
+              <div className="font-display text-2xl sm:text-3xl font-bold text-white">10+</div>
               <div className="text-xs text-slate-400 mt-0.5">Frontier LLM Engines</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-white">100%</div>
-              <div className="text-xs text-slate-400 mt-0.5">Ground Truth Precision</div>
+              <div className="font-display text-2xl sm:text-3xl font-bold text-emerald-400">100%</div>
+              <div className="text-xs text-slate-400 mt-0.5">Ground-Truth Verification</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-[#D4F63C]">14-Day</div>
-              <div className="text-xs text-slate-400 mt-0.5">Verification Loop</div>
+              <div className="font-display text-2xl sm:text-3xl font-bold text-white">24/7</div>
+              <div className="text-xs text-slate-400 mt-0.5">Automated Surveillance</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-white">&lt;60s</div>
-              <div className="text-xs text-slate-400 mt-0.5">Instant Telemetry</div>
+              <div className="font-display text-2xl sm:text-3xl font-bold text-emerald-400">&lt;60s</div>
+              <div className="text-xs text-slate-400 mt-0.5">Live Diagnostic Audit</div>
             </div>
           </div>
         </div>
 
-        {/* Bento Mission & Pillars Grid */}
+        {/* Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="rounded-3xl border border-slate-200/90 bg-white p-7 shadow-card flex flex-col justify-between">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card flex flex-col justify-between">
             <div>
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xs mb-5">
-                <Bot className="h-6 w-6 text-[#D4F63C]" />
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs mb-5">
+                <Bot className="h-5 w-5 text-emerald-400" />
               </span>
-              <h2 className="text-lg font-black text-slate-950 mb-2">Surveillance Beyond Blue Links</h2>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                When buyers ask &ldquo;What are the best alternatives to HubSpot?&rdquo;, AI search engines synthesize an opinion. We monitor whether your company is named, ignored, or hallucinated with false specs.
+              <h2 className="font-display text-base font-bold text-slate-950 mb-2">Visibility Beyond Links</h2>
+              <p className="text-xs leading-relaxed text-slate-600">
+                When enterprise buyers ask questions like &ldquo;What are the best alternatives to HubSpot?&rdquo;, answer engines synthesize an authoritative recommendation. We track whether your brand is highlighted, dismissed, or omitted.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-bold text-slate-800">
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-slate-700">
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              Full multi-model parity
+              Multi-engine parity benchmarking
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200/90 bg-white p-7 shadow-card flex flex-col justify-between">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card flex flex-col justify-between">
             <div>
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-xs mb-5">
-                <ShieldCheck className="h-6 w-6" />
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-2xs mb-5">
+                <ShieldCheck className="h-5 w-5" />
               </span>
-              <h2 className="text-lg font-black text-slate-950 mb-2">Ground Truth Defense</h2>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                LLMs frequently hallucinate outdated pricing, defunct features, and discontinued tiers. Our automated watchdog cross-references live answers against your official facts sheet to protect your pipeline.
+              <h2 className="font-display text-base font-bold text-slate-950 mb-2">Accuracy & Sentiment Defense</h2>
+              <p className="text-xs leading-relaxed text-slate-600">
+                LLMs frequently hallucinate outdated pricing, legacy specs, or discontinued feature tiers. Our automated watchdog monitors answers against your verified canonical documentation to protect your conversion pipeline.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-bold text-slate-800">
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-slate-700">
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              Real-time hallucination alerts
+              Continuous hallucination detection
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200/90 bg-white p-7 shadow-card flex flex-col justify-between">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card flex flex-col justify-between">
             <div>
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-xs mb-5">
-                <Zap className="h-6 w-6" />
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-700 shadow-2xs mb-5">
+                <Zap className="h-5 w-5" />
               </span>
-              <h2 className="text-lg font-black text-slate-950 mb-2">Actionable Fix Briefs</h2>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                We don&apos;t just show charts. Every missing citation generates a concrete blueprint showing exact citation sources (Reddit, G2, Wikipedia, documentation) needed to capture the recommendation.
+              <h2 className="font-display text-base font-bold text-slate-950 mb-2">Actionable Citation Fixes</h2>
+              <p className="text-xs leading-relaxed text-slate-600">
+                We go beyond metrics. Each citation gap produces a prioritized action plan detailing exactly which source directories, reviews, documentation, and schema references are needed to secure the mention.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-bold text-slate-800">
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-slate-700">
               <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              One-click Kanban workflow
+              Prioritized action briefs
             </div>
           </div>
         </div>
 
         {/* CTA Strip */}
-        <div className="rounded-3xl border border-slate-200/90 bg-white p-8 sm:p-10 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-8 sm:p-10 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-950">
-              Ready to see where your brand ranks in AI answers?
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-950">
+              Ready to benchmark your brand across answer engines?
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Start free today — zero credit card required.
+              Start with a free real-time diagnostic audit. No credit card required.
             </p>
           </div>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-6 py-3.5 text-xs font-black text-white shadow-xs hover:bg-slate-800 transition cursor-pointer shrink-0"
+            className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs hover:bg-slate-800 transition cursor-pointer shrink-0"
           >
             <span>Launch Free Audit</span>
-            <ArrowRight className="h-4 w-4 text-[#D4F63C]" />
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </main>
@@ -180,8 +176,8 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <Link href="/" className="flex items-center gap-2.5">
-              <LogoMark className="h-8 w-8" />
-              <span className="text-[15px] font-black tracking-[-0.03em] text-[#0B0F17]">
+              <LogoMark className="h-7 w-7" />
+              <span className="font-display text-sm font-bold tracking-tight text-slate-900">
                 AEO Tracker
               </span>
             </Link>
@@ -197,18 +193,18 @@ export default function AboutPage() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
+                  className="text-xs font-medium text-slate-600 transition-colors hover:text-slate-900"
                 >
                   {link.label}
                 </Link>
               ))}
             </nav>
           </div>
-          <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-[11px] font-medium text-slate-400 sm:flex-row">
+          <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row">
             <p>© 2026 AEO Tracker. All rights reserved.</p>
-            <p className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-              Built for the AI Answer Engine era.
+            <p className="flex items-center gap-1.5 font-mono text-[11px]">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              All systems operational · Enterprise telemetry active
             </p>
           </div>
         </div>

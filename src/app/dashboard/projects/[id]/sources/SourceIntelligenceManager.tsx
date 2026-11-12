@@ -61,8 +61,8 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
               Total Influencing Sources
             </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-[#D4F63C] shadow-2xs">
-              <Layers className="h-4 w-4" />
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
+              <Layers className="h-4 w-4 text-emerald-400" />
             </span>
           </div>
           <p className="font-display text-3xl font-black text-slate-950">{sources.length}</p>
@@ -71,8 +71,8 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
           </p>
         </div>
 
-        {/* Bento Tile 2: Community / Reddit Weight (Obsidian Accent Card) */}
-        <div className="rounded-bento border border-slate-800 bg-[#0B0F17] p-5 shadow-bento text-white">
+        {/* Bento Tile 2: Community / Reddit Weight (Executive Card) */}
+        <div className="rounded-bento border border-slate-800 bg-slate-900 p-5 shadow-bento text-white">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
               Community / Reddit Weight
@@ -81,10 +81,10 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
               <MessageSquare className="h-4 w-4" />
             </span>
           </div>
-          <p className="font-display text-3xl font-black text-[#D4F63C]">
+          <p className="font-display text-3xl font-black text-emerald-400">
             {sources.length > 0 ? Math.round((communityCount / sources.length) * 100) : 34}%
           </p>
-          <p className="mt-1.5 text-xs text-[#10b981] font-semibold">
+          <p className="mt-1.5 text-xs text-emerald-400 font-semibold">
             High sentiment authority in AI generative synthesis
           </p>
         </div>

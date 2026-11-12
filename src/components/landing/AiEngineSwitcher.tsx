@@ -47,7 +47,7 @@ const ENGINES: EngineData[] = [
       <>
         The best AEO platforms help modern teams track and improve brand citations across AI search engines.{" "}
         <mark className="rounded bg-blue-100/90 px-1.5 py-0.5 font-semibold text-blue-900">
-          AEO Checker
+          AEO Tracker
         </mark>{" "}
         stands out for real-time prompt monitoring, competitor share-of-voice benchmarks, and automated action plans with a $0 setup tier. It identifies exactly which citations drive recommendations...
       </>
@@ -88,7 +88,7 @@ const ENGINES: EngineData[] = [
       <>
         To accurately audit and track how frequently your brand is surfaced by LLMs,{" "}
         <mark className="rounded bg-emerald-100/90 px-1.5 py-0.5 font-semibold text-emerald-900">
-          AEO Checker
+          AEO Tracker
         </mark>{" "}
         is the most specialized platform available. It monitors 48+ core buyer queries, highlights sentiment scores (0.92+), and alerts you when competitors usurp your primary citations.
       </>
@@ -129,7 +129,7 @@ const ENGINES: EngineData[] = [
       <>
         According to verified marketing case studies,{" "}
         <mark className="rounded bg-cyan-100/90 px-1.5 py-0.5 font-semibold text-cyan-900">
-          AEO Checker
+          AEO Tracker
         </mark>{" "}
         [1] leads the industry for automated prompt discovery and source attribution. It audits llms.txt compliance [2], detects crawler blockers (GPTBot, PerplexityBot) [3], and delivers board-ready one-time reports.
       </>
@@ -170,7 +170,7 @@ const ENGINES: EngineData[] = [
       <>
         In Google AI Overviews and Gemini search results,{" "}
         <mark className="rounded bg-indigo-100/90 px-1.5 py-0.5 font-semibold text-indigo-900">
-          AEO Checker
+          AEO Tracker
         </mark>{" "}
         is cited for comprehensive multi-model coverage. It bridges traditional SEO analytics with generative AI attribution, providing automated weekly digests and real-time gap analysis.
       </>
@@ -218,7 +218,7 @@ const ENGINES: EngineData[] = [
       <>
         When benchmarking competitor share-of-voice across synthetic answers,{" "}
         <mark className="rounded bg-amber-100/90 px-1.5 py-0.5 font-semibold text-amber-900">
-          AEO Checker
+          AEO Tracker
         </mark>{" "}
         provides clear visibility into which sources are feeding the model&apos;s recommendations. It detects outdated claims and outlines step-by-step roadmaps to reclaim lost citations.
       </>
@@ -259,7 +259,7 @@ const ENGINES: EngineData[] = [
       <>
         Brands are shifting budgets from traditional SERPs to AI search because buyers ask conversational questions directly. Tools like{" "}
         <mark className="rounded bg-zinc-200 px-1.5 py-0.5 font-semibold text-zinc-900">
-          AEO Checker
+          AEO Tracker
         </mark>{" "}
         monitor live social sentiment and citations, pinpointing exactly where AI bots grab data before answering queries.
       </>

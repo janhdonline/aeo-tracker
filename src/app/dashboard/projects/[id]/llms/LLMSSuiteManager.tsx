@@ -199,8 +199,8 @@ location = /llms.txt {
       {/* SECTION 1: Live Host Validator (Bento Card) */}
       <div className="rounded-bento border border-slate-200/90 bg-white p-6 sm:p-8 shadow-bento">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-[#D4F63C] shadow-2xs">
-            <Zap className="h-5 w-5" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-2xs">
+            <Zap className="h-5 w-5 text-emerald-400" />
           </span>
           <div>
             <h3 className="font-display text-lg font-black text-slate-950">Live llms.txt Host Validator</h3>
@@ -217,7 +217,7 @@ location = /llms.txt {
               value={testUrl}
               onChange={(e) => setTestUrl(e.target.value)}
               placeholder={`https://${project.domain}/llms.txt`}
-              className="w-full rounded-full border border-slate-200/90 bg-slate-50/60 px-5 py-3 text-xs sm:text-sm font-mono text-slate-900 focus:bg-white focus:border-slate-950 focus:outline-none focus:ring-2 focus:ring-[#D4F63C] transition-all"
+              className="w-full rounded-full border border-slate-200/90 bg-slate-50/60 px-5 py-3 text-xs sm:text-sm font-mono text-slate-900 focus:bg-white focus:border-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
             />
           </div>
           <button
@@ -225,7 +225,7 @@ location = /llms.txt {
             disabled={isValidating}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-7 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs hover:bg-slate-800 disabled:opacity-50 transition-all shrink-0 cursor-pointer"
           >
-            <RefreshCw className={`h-3.5 w-3.5 text-[#D4F63C] ${isValidating ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 ${isValidating ? 'animate-spin' : ''}`} />
             <span>{isValidating ? 'Auditing Host...' : 'Validate Live URL'}</span>
           </button>
         </form>
@@ -336,16 +336,16 @@ location = /llms.txt {
           </div>
         </div>
 
-        {/* Code View Card (Obsidian Bento Dark Card) */}
-        <div className="relative rounded-2xl border border-slate-800 bg-[#0B0F17] p-5 sm:p-6 text-slate-100 shadow-bento">
+        {/* Code View Card (Executive Dark Card) */}
+        <div className="relative rounded-2xl border border-slate-800 bg-slate-950 p-5 sm:p-6 text-slate-100 shadow-bento">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-xs text-slate-400">
-            <span className="font-mono font-bold text-[#D4F63C]">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
+            <span className="font-mono font-bold text-emerald-400">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleCopy(currentContent)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
               >
-                {copiedCode ? <Check className="h-3.5 w-3.5 text-[#D4F63C]" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiedCode ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                 {copiedCode ? 'Copied!' : 'Copy'}
               </button>
               <button
@@ -410,13 +410,13 @@ location = /llms.txt {
           </button>
         </div>
 
-        <div className="relative rounded-2xl bg-[#0B0F17] border border-slate-800 p-5 text-slate-100 font-mono text-xs overflow-x-auto shadow-bento">
+        <div className="relative rounded-2xl bg-slate-950 border border-slate-800 p-5 text-slate-100 font-mono text-xs overflow-x-auto shadow-bento">
           <div className="flex justify-end mb-2">
             <button
               onClick={() => handleCopy(blueprints[activeBlueprint])}
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
             >
-              {copiedCode ? <Check className="h-3 w-3 text-[#D4F63C]" /> : <Copy className="h-3 w-3" />}
+              {copiedCode ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
               {copiedCode ? 'Copied!' : 'Copy Blueprint'}
             </button>
           </div>

@@ -343,8 +343,8 @@ export default function DashboardPreview({
   const sentimentPercent = clampPercent(dashboard.brandSentiment * 100);
   const promptCoverage = clampPercent(dashboard.promptCoverage);
   const sentimentTone = sentimentTones[dashboard.sentimentLabel] ?? sentimentTones.Positive;
-  const displayBrandName = isLive ? formatBrandName(dashboard.domain) : "AEO Checker";
-  const displayDomain = isLive ? dashboard.domain : "aeo-checker.com";
+  const displayBrandName = isLive ? formatBrandName(dashboard.domain) : "AEO Tracker";
+  const displayDomain = isLive ? dashboard.domain : "aeo-tracker.com";
   const workspaceInitial = displayBrandName.charAt(0).toUpperCase();
   const chartSeries = dashboard.trends.length >= 2 ? dashboard.trends : fallbackDashboard.trends;
   const chartLabels = isLive ? dashboard.trendLabels : undefined;
@@ -380,7 +380,7 @@ export default function DashboardPreview({
           <div className="mx-auto flex min-w-0 max-w-[430px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[10px] font-medium text-gray-500 shadow-sm">
             <Lock className="h-2.5 w-2.5 shrink-0 text-emerald-500" strokeWidth={2.4} />
             <span className="truncate">
-              app.aeo-checker.com/overview{isLive ? `/${dashboard.domain}` : ""}
+              app.aeo-tracker.com/overview{isLive ? `/${dashboard.domain}` : ""}
             </span>
           </div>
 
@@ -399,7 +399,7 @@ export default function DashboardPreview({
                 <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#FCFCFD]" />
               </span>
               <span className="hidden text-[13px] font-semibold tracking-[-0.025em] text-gray-900 sm:inline">
-                AEO Checker
+                AEO Tracker
               </span>
             </div>
 

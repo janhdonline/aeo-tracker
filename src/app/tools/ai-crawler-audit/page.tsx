@@ -49,32 +49,32 @@ export default function AICrawlerAuditPage() {
   const statusBg = result?.summary.status === 'pass' ? 'bg-emerald-50 border-emerald-200' : result?.summary.status === 'warning' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
 
   return (
-    <div className="min-h-screen bg-[#fafbfc] flex flex-col font-sans antialiased text-slate-900 selection:bg-[#D4F63C] selection:text-black">
+    <div className="min-h-screen bg-white flex flex-col font-sans antialiased text-slate-900 selection:bg-slate-900 selection:text-white">
       {/* Top Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/80">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
+        <div className="max-w-7xl mx-auto py-3.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2.5 group">
-            <LogoMark className="h-8 w-8" />
-            <span className="font-black text-lg tracking-tight group-hover:text-slate-800 transition-colors">
-              AEO Checker
+            <LogoMark className="h-7 w-7" />
+            <span className="font-display font-bold text-base tracking-tight text-slate-900">
+              AEO Tracker
             </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/pricing"
-              className="text-xs font-bold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-xl transition"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-lg transition"
             >
               Pricing
             </Link>
             <Link
               href="/login"
-              className="text-xs font-bold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-xl transition"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-950 px-3 py-2 rounded-lg transition"
             >
               Sign In
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white shadow-xs hover:bg-slate-800 transition"
+              className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-2xs hover:bg-slate-800 transition"
             >
               Start Free
             </Link>
@@ -84,12 +84,12 @@ export default function AICrawlerAuditPage() {
 
       <main className="flex-1 max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-slate-950 text-white shadow-xs mb-3">
-            <Shield className="h-8 w-8 text-[#D4F63C]" />
+          <div className="inline-flex items-center justify-center p-3 rounded-xl bg-slate-900 text-white shadow-2xs mb-3">
+            <Shield className="h-7 w-7 text-emerald-400" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">AI Crawler Readiness Audit</h1>
-          <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-lg mx-auto">
-            Check if your website is properly configured for AI indexers like GPTBot, ClaudeBot, and PerplexityBot.
+          <h1 className="font-display text-3xl font-bold text-slate-900 tracking-tight">AI Crawler Readiness Audit</h1>
+          <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
+            Verify whether your robots.txt and server headers permit AI search engine indexers like GPTBot, ClaudeBot, and PerplexityBot.
           </p>
         </div>
 

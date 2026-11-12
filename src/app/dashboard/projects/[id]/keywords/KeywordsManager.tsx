@@ -157,8 +157,8 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Active Prompts
             </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-[#D4F63C] shadow-2xs">
-              <Target className="h-4 w-4" />
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
+              <Target className="h-4 w-4 text-emerald-400" />
             </span>
           </div>
           <div className="flex items-baseline gap-2">
@@ -168,7 +168,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
           <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                usagePct > 90 ? 'bg-rose-500' : 'bg-gradient-to-r from-[#D4F63C] to-emerald-500'
+                usagePct > 90 ? 'bg-rose-500' : 'bg-gradient-to-r from-emerald-500 to-emerald-600'
               }`}
               style={{ width: `${usagePct}%` }}
             />
@@ -223,7 +223,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             </span>
             <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
           </div>
-          <span className="font-display text-3xl font-black text-[#D4F63C]">
+          <span className="font-display text-3xl font-black text-white">
             {planConfig.engines.length}{' '}
             <span className="text-base font-normal text-slate-300">Frontier Models</span>
           </span>
@@ -254,7 +254,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
                 onChange={(e) => setNewKeyword(e.target.value)}
                 placeholder="Enter commercial prompt (e.g. 'Best enterprise expense automation software')"
                 disabled={!canAdd}
-                className="w-full rounded-full border border-slate-200/90 bg-slate-50/50 py-3 pl-11 pr-4 text-xs font-semibold text-slate-900 placeholder:text-slate-400 transition-all focus:border-slate-950 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#D4F63C]"
+                className="w-full rounded-full border border-slate-200/90 bg-slate-50/50 py-3 pl-11 pr-4 text-xs font-semibold text-slate-900 placeholder:text-slate-400 transition-all focus:border-slate-950 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10"
               />
             </div>
 
@@ -262,7 +262,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
               <select
                 value={newIntent}
                 onChange={(e: any) => setNewIntent(e.target.value)}
-                className="rounded-full border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#D4F63C]"
+                className="rounded-full border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
               >
                 <option value="commercial">Commercial Intent</option>
                 <option value="informational">Informational Intent</option>
@@ -274,7 +274,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
                 disabled={isAdding || !newKeyword.trim() || !canAdd}
                 className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-6 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all hover:bg-slate-800 disabled:opacity-50 cursor-pointer"
               >
-                <Plus className="h-4 w-4 text-[#D4F63C]" />
+                <Plus className="h-4 w-4" />
                 <span>{isAdding ? 'Adding...' : 'Add Prompt'}</span>
               </button>
 

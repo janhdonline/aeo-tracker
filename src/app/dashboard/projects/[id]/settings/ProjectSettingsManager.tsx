@@ -220,7 +220,7 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
       <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xs">
-            <Building className="h-5 w-5 text-[#D4F63C]" />
+            <Building className="h-5 w-5 text-emerald-400" />
           </span>
           <div>
             <h3 className="font-display text-base sm:text-lg font-black text-slate-950">Brand Identity &amp; Accuracy Tuning</h3>
@@ -395,7 +395,7 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
               disabled={isSaving}
               className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-6 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 disabled:opacity-50 transition-all cursor-pointer"
             >
-              <Save className="h-4 w-4 text-[#D4F63C]" />
+              <Save className="h-4 w-4" />
               {isSaving ? 'Saving Changes...' : 'Save Brand Settings'}
             </button>
           </div>
@@ -481,30 +481,29 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
         </div>
       </div>
 
-      {/* CARD 3: llms.txt Suite Quick Access (Bento Feature Card) */}
-      <div className="rounded-3xl border border-slate-800 bg-[#0B0F17] p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-lime-500/10 blur-2xl" />
+      {/* CARD 3: llms.txt Suite Quick Access (Executive Feature Card) */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 text-white shadow-card relative overflow-hidden">
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-[#D4F63C] border border-white/10 shadow-xs shrink-0">
-              <FileCode2 className="h-6 w-6" />
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-800 text-emerald-400 border border-slate-700 shadow-2xs shrink-0">
+              <FileCode2 className="h-5 w-5" />
             </span>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-display text-base font-black text-white">llms.txt Knowledge Engine &amp; Validator</h3>
-                <span className="rounded-full bg-lime-400/20 px-2 py-0.5 text-[10px] font-bold text-[#D4F63C]">Active</span>
+                <h3 className="font-display text-base font-bold text-white">llms.txt Knowledge Engine &amp; Validator</h3>
+                <span className="rounded-md border border-emerald-500/30 bg-emerald-950/60 px-2 py-0.5 text-[10px] font-mono font-semibold text-emerald-300">Active</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                Validate your client&apos;s live <code className="text-[#D4F63C]">/llms.txt</code> endpoint and download authoritative knowledge snippets formatted for GPTBot, PerplexityBot, and ClaudeBot.
+                Validate your domain&apos;s live <code className="font-mono text-emerald-400">/llms.txt</code> endpoint and download authoritative knowledge snippets formatted for GPTBot, PerplexityBot, and ClaudeBot.
               </p>
             </div>
           </div>
           <Link
             href={`/dashboard/projects/${project.id}/llms`}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#D4F63C] px-5 py-2.5 text-xs font-bold text-slate-950 hover:bg-[#bce02b] transition-all shrink-0 cursor-pointer shadow-xs"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-semibold text-slate-950 hover:bg-slate-100 transition-all shrink-0 cursor-pointer shadow-xs"
           >
             Launch llms.txt Suite
-            <ArrowRight className="h-3.5 w-3.5 text-slate-950" />
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </div>

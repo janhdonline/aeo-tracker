@@ -154,11 +154,11 @@ export function CompetitorsManager({
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black text-[#D4F63C]">{yourSoVPct}%</span>
+            <span className="font-display text-3xl font-black text-emerald-400">{yourSoVPct}%</span>
             <span className="text-xs text-slate-300 font-semibold">{yourMentions} brand citations</span>
           </div>
           <div className="mt-3 h-2 w-full rounded-full bg-slate-800 overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-[#D4F63C] to-emerald-400" style={{ width: `${Math.max(8, yourSoVPct)}%` }} />
+            <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.max(8, yourSoVPct)}%` }} />
           </div>
         </div>
 
@@ -218,7 +218,7 @@ export function CompetitorsManager({
               value={newCompetitor}
               onChange={(e) => setNewCompetitor(e.target.value)}
               placeholder="e.g. coda.io, clickup.com, linear.app"
-              className="w-full rounded-full border border-slate-200/90 bg-slate-50/50 py-3 pl-11 pr-4 text-xs font-semibold text-slate-900 placeholder:text-slate-400 shadow-2xs focus:border-slate-950 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#D4F63C] transition-all"
+              className="w-full rounded-full border border-slate-200/90 bg-slate-50/50 py-3 pl-11 pr-4 text-xs font-semibold text-slate-900 placeholder:text-slate-400 shadow-2xs focus:border-slate-950 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
             />
           </div>
 
@@ -227,7 +227,7 @@ export function CompetitorsManager({
             disabled={isSubmitting || !newCompetitor.trim()}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-6 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs hover:bg-slate-800 transition-all disabled:opacity-50 cursor-pointer shrink-0"
           >
-            <Plus className="h-4 w-4 text-[#D4F63C]" />
+            <Plus className="h-4 w-4" />
             <span>{isSubmitting ? 'Saving...' : 'Add Competitor'}</span>
           </button>
         </form>

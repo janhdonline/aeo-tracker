@@ -313,11 +313,11 @@ export function AppShell({
                   <Globe className="h-4 w-4 text-emerald-400" />
                 </span>
                 <span className="font-display text-base font-bold tracking-tight text-slate-900">
-                  AEO Checker
+                  AEO Tracker
                 </span>
               </Link>
             ) : (
-              <Link href="/dashboard" className="mx-auto" title="AEO Checker Dashboard">
+              <Link href="/dashboard" className="mx-auto" title="AEO Tracker Dashboard">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
                   <Globe className="h-4 w-4 text-emerald-400" />
                 </span>
@@ -672,7 +672,7 @@ export function AppShell({
                       <Globe className="h-4 w-4 text-emerald-400" />
                     </span>
                     <span className="font-display text-base font-bold text-slate-900">
-                      AEO Checker
+                      AEO Tracker
                     </span>
                   </div>
                   <button

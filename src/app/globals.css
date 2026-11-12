@@ -1,23 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     --background: #ffffff;
-    --foreground: #111827;
-    --surface: #f9fafb;
-    --accent: #10b981;
+    --foreground: #0f172a;
+    --surface: #f8fafc;
+    --border: #e2e8f0;
+    --accent: #2563eb;
+    --signal-green: #059669;
   }
 
   html {
     scroll-padding-top: 5rem;
+    color-scheme: light;
   }
 
   body {
-    @apply bg-[#fafafa] text-slate-900 antialiased selection:bg-emerald-500/20 selection:text-slate-900;
-    font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    @apply bg-white text-slate-900 antialiased selection:bg-slate-900 selection:text-white;
+    font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -28,17 +35,17 @@
   h2,
   h3,
   h4 {
-    font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    letter-spacing: -0.035em;
+    font-family: var(--font-display);
+    letter-spacing: -0.028em;
   }
 
   ::selection {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: #0f172a;
+    background-color: #0f172a;
+    color: #ffffff;
   }
 
   :focus-visible {
-    outline: 2px solid #10b981;
+    outline: 2px solid #0f172a;
     outline-offset: 2px;
   }
 }
@@ -48,176 +55,124 @@
     text-wrap: balance;
   }
 
-  /* Minimalist Glass & Card Utilities */
+  /* Formal Enterprise Header Glass */
   .glass-header {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   }
 
-  /* Bento Grid & Modern Card System */
+  /* Formal Enterprise Card Architecture */
+  .enterprise-card {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  .enterprise-card:hover {
+    border-color: rgba(203, 213, 225, 1);
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
+    transform: translateY(-1px);
+  }
+
   .bento-card {
     background: #ffffff;
-    border: 1px solid rgba(226, 232, 240, 0.85);
-    border-radius: 24px;
-    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+    transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .bento-card:hover {
     border-color: rgba(203, 213, 225, 1);
-    box-shadow: 0 14px 32px -6px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 10px 28px -4px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
     transform: translateY(-2px);
   }
 
   .bento-card-dark {
-    background: #0B0F17;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 14px 34px -10px rgba(15, 23, 42, 0.35);
     color: #ffffff;
+  }
+
+  /* Human-crafted Crisp Badges */
+  .corporate-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
   .bento-pill {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
     font-size: 0.6875rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #334155;
   }
 
   .minimal-card {
     background: #ffffff;
     border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03);
+    transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .minimal-card:hover {
     border-color: rgba(203, 213, 225, 1);
-    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
   }
 
   .smooth-transition {
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .dashboard-ambient {
-    background-image:
-      radial-gradient(1200px circle at 50% -80px, rgba(16, 185, 129, 0.08), transparent 65%),
-      radial-gradient(900px circle at 95% 150px, rgba(59, 130, 246, 0.05), transparent 55%),
-      radial-gradient(800px circle at 5% 300px, rgba(139, 92, 246, 0.03), transparent 50%);
-  }
-
+  /* Architectural Gridlines (Subtle Swiss/Linear aesthetic) */
   .hero-grid {
     background-image:
-      linear-gradient(to right, rgba(17, 24, 39, 0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(17, 24, 39, 0.045) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 80% 62% at 50% 36%, black 35%, transparent 78%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 62% at 50% 36%, black 35%, transparent 78%);
+      linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 80%);
   }
 
   .dot-grid {
-    background-image: radial-gradient(rgba(17, 24, 39, 0.12) 1px, transparent 1px);
-    background-size: 18px 18px;
-  }
-
-  .marquee {
-    animation: marquee 30s linear infinite;
-  }
-
-  .marquee-reverse {
-    animation: marquee 30s linear infinite reverse;
-  }
-
-  @keyframes marquee {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-
-  @keyframes soft-pulse {
-    0%,
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.55;
-      transform: scale(0.9);
-    }
-  }
-
-  .soft-pulse {
-    animation: soft-pulse 2.4s ease-in-out infinite;
-  }
-
-  .shimmer {
-    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s ease-in-out infinite;
-  }
-
-  @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-
-  @keyframes logo-scan {
-    0% {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-    20% {
-      opacity: 0.75;
-    }
-    80% {
-      opacity: 0.75;
-    }
-    100% {
-      transform: translateY(220%);
-      opacity: 0;
-    }
-  }
-
-  .animate-logo-scan {
-    animation: logo-scan 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-
-  @keyframes radar-ripple {
-    0% {
-      transform: scale(0.85);
-      opacity: 0.75;
-    }
-    100% {
-      transform: scale(1.6);
-      opacity: 0;
-    }
-  }
-
-  .animate-radar-ripple {
-    animation: radar-ripple 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+    background-size: 16px 16px;
   }
 
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
     }
-
-    .marquee,
-    .marquee-reverse,
-    .soft-pulse,
-    .shimmer {
-      animation: none;
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 

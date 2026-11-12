@@ -61,7 +61,7 @@ export function LogoLoader({
           {/* Brand & Loading Label */}
           <div className="flex items-center gap-2 mb-1.5">
             <span className="font-display font-bold text-lg text-slate-900 tracking-tight">
-              AEO Checker
+              AEO Tracker
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
