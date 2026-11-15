@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
+import { isPaidPlan, isProOrHigherPlan, getPlanBadgeLabel } from '@/lib/plan';
 import {
   Globe,
   ArrowRight,
@@ -194,8 +195,9 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
   const [strategyOpen, setStrategyOpen] = useState(true);
 
   const isLoggedIn = Boolean(userEmail);
-  const isPaid = currentPlan === 'pro' || currentPlan === 'starter';
-  const isPro = currentPlan === 'pro';
+  const isPaid = isPaidPlan(currentPlan);
+  const isPro = isProOrHigherPlan(currentPlan);
+  const planBadgeText = getPlanBadgeLabel(currentPlan);
 
   const handleLockedClick = (featureName: string) => {
     if (isPaid || isLoggedIn) {
@@ -482,7 +484,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
                       isPro ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'
                     }`}
                   />
-                  <span>{isPro ? 'PRO ACTIVE' : 'STARTER ACTIVE'}</span>
+                  <span>{planBadgeText}</span>
                 </span>
                 <Link
                   href="/dashboard"

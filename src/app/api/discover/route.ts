@@ -39,8 +39,8 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    const plan = (profile?.plan || 'free') as 'free' | 'starter' | 'pro';
-    const limits = PLAN_LIMITS[plan];
+    const plan = (profile?.plan || 'free').toLowerCase();
+    const limits = PLAN_LIMITS[plan] || PLAN_LIMITS.pro;
 
     // Check keyword limit
     const { count: currentKeywords } = await supabase
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Free plan: discovery allowed once per project
-    if (plan === 'free') {
+    if (plan === 'free' || plan === 'free tier') {
       const { count: existingDiscovery } = await supabase
         .from('keywords')
         .select('*', { count: 'exact', head: true })

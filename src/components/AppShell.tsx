@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
+import { isPaidPlan, isProOrHigherPlan, formatPlanName, getPlanBadgeLabel } from '@/lib/plan';
 import {
   Globe,
   BarChart3,
@@ -80,13 +81,7 @@ export function AppShell({
   const [projectsList, setProjectsList] = useState<AppShellProject[]>(initialProjects || []);
   const [userProfile, setUserProfile] = useState<{ email?: string; plan?: string }>({
     email: user?.email,
-    plan: userPlan
-      ? userPlan === 'pro'
-        ? 'Pro Plan'
-        : userPlan === 'starter'
-        ? 'Starter Plan'
-        : userPlan
-      : undefined,
+    plan: userPlan ? formatPlanName(userPlan) : undefined,
   });
 
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -111,12 +106,7 @@ export function AppShell({
     if (userPlan) {
       setUserProfile((prev) => ({
         ...prev,
-        plan:
-          userPlan === 'pro'
-            ? 'Pro Plan'
-            : userPlan === 'starter'
-            ? 'Starter Plan'
-            : userPlan,
+        plan: formatPlanName(userPlan),
       }));
     }
   }, [userPlan]);
@@ -141,21 +131,21 @@ export function AppShell({
           // Load profile for plan
           const { data: prof } = await supabase
             .from('profiles')
-            .select('plan')
+            .select('plan, subscription_status')
             .eq('id', currentUserId)
             .maybeSingle();
 
           if (prof?.plan) {
             setUserProfile((prev) => ({
               ...prev,
-              plan:
-                prof.plan === 'pro'
-                  ? 'Pro Plan'
-                  : prof.plan === 'starter'
-                  ? 'Starter Plan'
-                  : 'Free Tier',
+              plan: formatPlanName(prof.plan),
             }));
-          } else if (!userPlan) {
+          } else if (userPlan) {
+            setUserProfile((prev) => ({
+              ...prev,
+              plan: formatPlanName(userPlan),
+            }));
+          } else {
             setUserProfile((prev) => ({
               ...prev,
               plan: 'Free Tier',
@@ -287,12 +277,10 @@ export function AppShell({
   ];
 
   const userInitial = userProfile.email ? userProfile.email.charAt(0).toUpperCase() : 'U';
-  const isPaid =
-    userProfile.plan === 'Pro Plan' ||
-    userProfile.plan === 'Starter Plan' ||
-    userProfile.plan === 'pro' ||
-    userProfile.plan === 'starter';
-  const isPro = userProfile.plan === 'Pro Plan' || userProfile.plan === 'pro';
+  const effectivePlanRaw = userProfile.plan || userPlan || '';
+  const isPaid = isPaidPlan(effectivePlanRaw);
+  const isPro = isProOrHigherPlan(effectivePlanRaw);
+  const planBadgeText = getPlanBadgeLabel(effectivePlanRaw);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex antialiased selection:bg-slate-900 selection:text-white">
@@ -603,7 +591,7 @@ export function AppShell({
               <span>Public Report</span>
             </Link>
 
-            {userProfile.plan === undefined ? (
+            {userProfile.plan === undefined && userPlan === undefined ? (
               <div className="h-8 w-24 rounded-xl bg-slate-100 animate-pulse" />
             ) : isPaid ? (
               <div className="flex items-center gap-2">
@@ -619,7 +607,7 @@ export function AppShell({
                       isPro ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'
                     }`}
                   />
-                  <span>{isPro ? 'Pro Active' : 'Starter Active'}</span>
+                  <span>{planBadgeText}</span>
                 </span>
                 <Link
                   href="/dashboard/projects/new"

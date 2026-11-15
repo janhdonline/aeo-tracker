@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { isPaidPlan } from '@/lib/plan';
 import {
   Search,
   Plus,
@@ -35,7 +36,11 @@ interface KeywordsManagerProps {
 const PLAN_LIMITS: Record<string, { keywords: number; engines: string[] }> = {
   free: { keywords: 10, engines: ['Google Gemini'] },
   starter: { keywords: 50, engines: ['Google Gemini', 'Perplexity', 'ChatGPT-4o'] },
+  growth: { keywords: 150, engines: ['Google Gemini', 'Perplexity', 'ChatGPT-4o', 'xAI Grok'] },
   pro: { keywords: 150, engines: ['Google Gemini', 'Perplexity', 'ChatGPT-4o', 'xAI Grok'] },
+  premium: { keywords: 150, engines: ['Google Gemini', 'Perplexity', 'ChatGPT-4o', 'xAI Grok'] },
+  agency: { keywords: 500, engines: ['Google Gemini', 'Perplexity', 'ChatGPT-4o', 'xAI Grok'] },
+  enterprise: { keywords: 1000, engines: ['Google Gemini', 'Perplexity', 'ChatGPT-4o', 'xAI Grok'] },
 };
 
 export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsManagerProps) {
@@ -51,8 +56,8 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
 
   const supabase = createClient();
 
-  const currentPlan = (plan?.toLowerCase() || 'free') as 'free' | 'starter' | 'pro';
-  const planConfig = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.free;
+  const currentPlan = (plan?.toLowerCase().replace(/ plan$/, '') || 'free');
+  const planConfig = PLAN_LIMITS[currentPlan] || (isPaidPlan(currentPlan) ? PLAN_LIMITS.pro : PLAN_LIMITS.free);
   const planLimit = planConfig.keywords;
   const canAdd = keywords.length < planLimit;
   const usagePct = Math.min(100, Math.round((keywords.length / planLimit) * 100));

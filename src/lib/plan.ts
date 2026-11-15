@@ -1,7 +1,7 @@
 import { getPlanConfig } from '@/lib/config';
 import { createAdminClient } from '@/lib/supabase/admin';
 
-export type PlanName = 'free' | 'starter' | 'pro' | 'enterprise';
+export type PlanName = 'free' | 'starter' | 'growth' | 'pro' | 'premium' | 'agency' | 'enterprise';
 
 export interface PlanLimits {
   keywords: number;
@@ -13,12 +13,48 @@ export interface PlanLimits {
 export const PLAN_LIMITS: Record<string, PlanLimits> = {
   free: { keywords: 10, engines: ['gemini'], frequency: 'monthly', projects: 1 },
   starter: { keywords: 50, engines: ['gemini', 'perplexity', 'openai'], frequency: 'weekly', projects: 3 },
+  growth: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'weekly', projects: 10 },
   pro: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'weekly', projects: 10 },
+  premium: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'weekly', projects: 10 },
+  agency: { keywords: 500, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'daily', projects: 50 },
   enterprise: { keywords: 1000, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'daily', projects: 100 },
 };
 
+export function isPaidPlan(plan?: string | null): boolean {
+  if (!plan) return false;
+  const p = plan.trim().toLowerCase().replace(/ plan$/, '');
+  return p !== 'free' && p !== 'free tier' && p !== 'none' && p !== 'trial_expired' && p !== 'unpaid';
+}
+
+export function isProOrHigherPlan(plan?: string | null): boolean {
+  if (!isPaidPlan(plan)) return false;
+  const p = plan!.trim().toLowerCase().replace(/ plan$/, '');
+  return p !== 'starter';
+}
+
+export function formatPlanName(plan?: string | null): string {
+  if (!plan) return 'Free Tier';
+  const p = plan.trim().toLowerCase().replace(/ plan$/, '');
+  if (p === 'free' || p === 'free tier') return 'Free Tier';
+  if (p === 'starter') return 'Starter Plan';
+  if (p === 'growth') return 'Growth Plan';
+  if (p === 'pro') return 'Pro Plan';
+  if (p === 'premium') return 'Premium Plan';
+  if (p === 'agency') return 'Agency Plan';
+  if (p === 'enterprise') return 'Enterprise Plan';
+  return p.charAt(0).toUpperCase() + p.slice(1) + ' Plan';
+}
+
+export function getPlanBadgeLabel(plan?: string | null): string {
+  if (!plan) return 'FREE';
+  const p = plan.trim().toLowerCase().replace(/ plan$/, '');
+  return `${p.toUpperCase()} ACTIVE`;
+}
+
 export function getPlanLimits(plan: string): PlanLimits {
-  return PLAN_LIMITS[plan] || PLAN_LIMITS.free;
+  if (!plan) return PLAN_LIMITS.free;
+  const normalized = plan.trim().toLowerCase();
+  return PLAN_LIMITS[normalized] || (isPaidPlan(normalized) ? PLAN_LIMITS.pro : PLAN_LIMITS.free);
 }
 
 export async function getDynamicPlanLimits(plan: string): Promise<PlanLimits> {

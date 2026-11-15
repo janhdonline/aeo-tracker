@@ -133,12 +133,16 @@ export interface Profile {
   created_at: string;
 }
 
-export type PlanName = 'free' | 'starter' | 'pro';
+export type PlanName = 'free' | 'starter' | 'growth' | 'pro' | 'premium' | 'agency' | 'enterprise';
 
-export const PLAN_LIMITS: Record<PlanName, { keywords: number; engines: string[]; frequency: 'monthly' | 'weekly' }> = {
+export const PLAN_LIMITS: Record<string, { keywords: number; engines: string[]; frequency: 'monthly' | 'weekly' | 'daily' }> = {
   free: { keywords: 10, engines: ['gemini'], frequency: 'monthly' },
   starter: { keywords: 50, engines: ['gemini', 'perplexity', 'openai'], frequency: 'weekly' },
+  growth: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'weekly' },
   pro: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'weekly' },
+  premium: { keywords: 150, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'weekly' },
+  agency: { keywords: 500, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'daily' },
+  enterprise: { keywords: 1000, engines: ['gemini', 'perplexity', 'openai', 'grok'], frequency: 'daily' },
 };
 
 export interface DashboardTrendSeries {
