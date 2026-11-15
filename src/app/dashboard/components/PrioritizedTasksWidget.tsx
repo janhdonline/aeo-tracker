@@ -367,7 +367,7 @@ export function PrioritizedTasksWidget() {
                     >
                       <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
                         <div className="flex items-center gap-2">
-                          <Code2 className="h-4 w-4 text-slate-900" />
+                          <Code2 className="h-4 w-4 text-cyan-400" />
                           <span className="text-xs font-mono text-slate-300">
                             Implementation Snippet ({t.snippetType.toUpperCase()})
                           </span>
@@ -378,8 +378,8 @@ export function PrioritizedTasksWidget() {
                         >
                           {isCopied ? (
                             <>
-                              <Check className="h-3.5 w-3.5 text-slate-900" />
-                              <span className="text-slate-900">Copied to Clipboard!</span>
+                              <Check className="h-3.5 w-3.5 text-emerald-400" />
+                              <span className="text-emerald-300">Copied to Clipboard!</span>
                             </>
                           ) : (
                             <>
@@ -390,7 +390,7 @@ export function PrioritizedTasksWidget() {
                         </button>
                       </div>
 
-                      <pre className="text-xs font-mono text-slate-900 overflow-x-auto p-3 rounded-lg bg-black/50 border border-slate-800 leading-relaxed whitespace-pre-wrap">
+                      <pre className="text-xs font-mono text-slate-200 overflow-x-auto p-3 rounded-lg bg-black/50 border border-slate-800 leading-relaxed whitespace-pre-wrap">
                         {t.snippet}
                       </pre>
                       <p className="text-[11px] text-slate-400 mt-2">

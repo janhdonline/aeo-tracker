@@ -226,7 +226,7 @@ export function ProductSKUManager({ projectId, domain, brandName }: ProductSKUMa
           onClick={() => setShowAddModal(true)}
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 text-xs font-bold shadow-xs transition-colors cursor-pointer self-start sm:self-auto shrink-0"
         >
-          <Plus className="h-3.5 w-3.5 text-slate-900" />
+          <Plus className="h-3.5 w-3.5 text-white" />
           <span>Add Product SKU</span>
         </button>
       </div>

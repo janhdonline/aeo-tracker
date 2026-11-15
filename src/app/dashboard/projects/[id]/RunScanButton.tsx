@@ -74,7 +74,7 @@ export function RunScanButton({ projectId }: { projectId: string }) {
           <LogoLoader variant="mini" text={statusText} />
         ) : (
           <>
-            <Play className="h-3.5 w-3.5 fill-current text-slate-900" />
+            <Play className="h-3.5 w-3.5 fill-current text-white" />
             <span>Run Scan</span>
           </>
         )}

@@ -465,7 +465,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                     <div className="space-y-1 text-[11px]">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Total Visits:</span>
-                        <strong className="text-slate-900">{pts[hoveredIdx].d.total}</strong>
+                        <strong className="text-white font-bold">{pts[hoveredIdx].d.total}</strong>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Perplexity:</span>
@@ -636,8 +636,8 @@ Sitemap: https://${domain}/sitemap.xml`;
           {/* Recommended robots.txt Directive */}
           <div className="rounded-3xl border border-slate-900 bg-slate-950 p-6 text-white shadow-xs space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                <FileCode className="h-4 w-4" />
+              <h3 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
+                <FileCode className="h-4 w-4 text-cyan-400" />
                 Optimized robots.txt for AI Indexing
               </h3>
               <button
@@ -645,7 +645,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                 onClick={() => copyToClipboard(recommendedRobotsTxt, setCopiedRobots)}
                 className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-300 hover:text-white bg-slate-800 px-3 py-1 rounded-full cursor-pointer transition-colors"
               >
-                {copiedRobots ? <Check className="h-3 w-3 text-slate-900" /> : <Copy className="h-3 w-3" />}
+                {copiedRobots ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
                 <span>{copiedRobots ? 'Copied' : 'Copy Directive'}</span>
               </button>
             </div>
@@ -705,7 +705,7 @@ Sitemap: https://${domain}/sitemap.xml`;
                   </button>
                 </div>
               </div>
-              {ga4SuccessMsg && <p className="text-xs text-slate-900 font-bold">{ga4SuccessMsg}</p>}
+              {ga4SuccessMsg && <p className="text-xs text-emerald-600 font-bold">{ga4SuccessMsg}</p>}
               {ga4ErrorMsg && <p className="text-xs text-rose-600 font-bold">{ga4ErrorMsg}</p>}
               <p className="text-[11px] text-slate-400">
                 Found in Google Analytics: Admin → Data Streams → Web Stream Details → Measurement ID
@@ -732,12 +732,12 @@ Sitemap: https://${domain}/sitemap.xml`;
                 onClick={() => copyToClipboard(embedScript, setCopiedScript)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 text-xs font-bold transition-colors cursor-pointer"
               >
-                {copiedScript ? <Check className="h-3.5 w-3.5 text-slate-900" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiedScript ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
                 <span>{copiedScript ? 'Copied' : 'Copy Script Tag'}</span>
               </button>
             </div>
 
-            <pre className="p-4 bg-slate-950 text-slate-900 rounded-2xl text-xs font-mono overflow-x-auto whitespace-pre-wrap border border-slate-800">
+            <pre className="p-4 bg-slate-950 text-slate-200 rounded-2xl text-xs font-mono overflow-x-auto whitespace-pre-wrap border border-slate-800">
               {embedScript}
             </pre>
           </div>

@@ -62,7 +62,7 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
               Total Influencing Sources
             </span>
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
-              <Layers className="h-4 w-4 text-slate-900" />
+              <Layers className="h-4 w-4 text-white" />
             </span>
           </div>
           <p className="font-sans text-3xl font-black text-slate-950">{sources.length}</p>
@@ -81,10 +81,10 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
               <MessageSquare className="h-4 w-4" />
             </span>
           </div>
-          <p className="font-sans text-3xl font-black text-slate-900">
+          <p className="font-sans text-3xl font-black text-white">
             {sources.length > 0 ? Math.round((communityCount / sources.length) * 100) : 34}%
           </p>
-          <p className="mt-1.5 text-xs text-slate-900 font-semibold">
+          <p className="mt-1.5 text-xs text-slate-300 font-medium">
             High sentiment authority in AI generative synthesis
           </p>
         </div>
@@ -174,7 +174,7 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
                     onClick={() => handleToggleInjected(source.id)}
                     className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
                       isInjected
-                        ? "border-slate-200 bg-slate-50 text-white"
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                         : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                     }`}
                   >

@@ -55,8 +55,8 @@ export function ExecutivePulseCard({
         {/* Left: Humanized Editorial Narrative */}
         <div className="space-y-3 max-w-3xl">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50/20 border border-slate-200/30 px-3 py-1 text-xs font-bold text-slate-900">
-              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-xs font-bold text-white">
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" />
               Executive AI Pulse
             </span>
             <span className="text-xs text-slate-400 font-medium">
@@ -68,7 +68,7 @@ export function ExecutivePulseCard({
           </div>
 
           <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-snug">
-            <span className="text-slate-900">{domain}</span> gained{' '}
+            <span className="text-white font-extrabold">{domain}</span> gained{' '}
             <span className="text-cyan-300 font-mono">{deltaText} visibility</span> in Perplexity & SearchGPT, but{' '}
             <span className="text-amber-300 underline decoration-amber-400/60 underline-offset-4">
               2 buyer prompts
@@ -77,7 +77,7 @@ export function ExecutivePulseCard({
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-            AI search models cite your pricing in 48 commercial queries, but mention the brand without a direct link on 14 buyer queries. Deploying an official <code className="bg-slate-800 text-slate-900 px-1.5 py-0.5 rounded-md text-xs font-mono">/llms.txt</code> and Product Schema will convert these mentions into direct referral traffic.
+            AI search models cite your pricing in 48 commercial queries, but mention the brand without a direct link on 14 buyer queries. Deploying an official <code className="bg-slate-800 text-cyan-300 border border-slate-700/60 px-1.5 py-0.5 rounded-md text-xs font-mono">/llms.txt</code> and Product Schema will convert these mentions into direct referral traffic.
           </p>
 
           {/* Micro Traffic Leak Bar */}
@@ -87,7 +87,7 @@ export function ExecutivePulseCard({
               <div className="w-28 sm:w-36 h-2 rounded-full bg-slate-800 overflow-hidden ring-1 ring-slate-700">
                 <div className="h-full bg-blue-600 w-[68%]" />
               </div>
-              <span className="font-bold font-mono text-slate-900">68%</span>
+              <span className="font-bold font-mono text-white">68%</span>
             </div>
             <div className="flex items-center gap-1.5 text-amber-300 font-medium">
               <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />

@@ -146,8 +146,8 @@ Please provide:
         >
           {copied ? (
             <>
-              <Check className="h-3.5 w-3.5 text-slate-900" />
-              <span className="text-slate-900">Copied Prompt!</span>
+              <Check className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="text-emerald-300">Copied Prompt!</span>
             </>
           ) : (
             <>
@@ -196,8 +196,8 @@ Please provide:
                   {issue.solutionSnippet && (
                     <div className="rounded-lg bg-slate-900 text-slate-100 p-3 font-mono text-[11px] overflow-x-auto relative">
                       <div className="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-800 pb-1.5 mb-2">
-                        <span className="flex items-center gap-1">
-                          <Code2 className="h-3 w-3 text-slate-900" /> Solution Blueprint
+                        <span className="flex items-center gap-1 text-slate-300">
+                          <Code2 className="h-3 w-3 text-cyan-400" /> Solution Blueprint
                         </span>
                       </div>
                       <pre className="whitespace-pre-wrap">{issue.solutionSnippet}</pre>

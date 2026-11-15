@@ -98,7 +98,7 @@ export function FrontierModelRadar({
           disabled={isProbingFleet}
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 text-xs font-bold shadow-xs transition-all cursor-pointer self-start sm:self-auto disabled:opacity-50"
         >
-          <RefreshCw className={`h-3.5 w-3.5 text-slate-900 ${isProbingFleet ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`h-3.5 w-3.5 text-white ${isProbingFleet ? 'animate-spin' : ''}`} />
           <span>{isProbingFleet ? 'Probing 10 Engines...' : 'Probe All 10 Models'}</span>
         </button>
       </div>
@@ -243,13 +243,13 @@ export function FrontierModelRadar({
                   <button
                     type="button"
                     onClick={() => copyBotDirective(activeModel.botDirective)}
-                    className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-900 hover:text-slate-900 transition-colors"
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-300 hover:text-white transition-colors"
                   >
-                    {copiedBot ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                    {copiedBot ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
                     <span>{copiedBot ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
-                <pre className="font-mono text-slate-900 text-xs">
+                <pre className="font-mono text-slate-200 text-xs">
                   {activeModel.botDirective}
                 </pre>
               </div>

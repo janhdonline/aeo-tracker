@@ -163,7 +163,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
               Active Prompts
             </span>
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
-              <Target className="h-4 w-4 text-slate-900" />
+              <Target className="h-4 w-4 text-white" />
             </span>
           </div>
           <div className="flex items-baseline gap-2">
@@ -287,9 +287,9 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
                 type="button"
                 onClick={handleDiscover}
                 disabled={discoverLoading}
-                className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-6 py-3 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all hover:bg-slate-50 disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-800 px-6 py-3 text-xs font-bold uppercase tracking-wider shadow-xs transition-all disabled:opacity-50 cursor-pointer"
               >
-                <Sparkles className={`h-4 w-4 ${discoverLoading ? 'animate-spin' : ''}`} />
+                <Sparkles className={`h-4 w-4 text-indigo-600 ${discoverLoading ? 'animate-spin' : ''}`} />
                 <span>{discoverLoading ? 'Scanning...' : 'AI Discover'}</span>
               </button>
             </div>
@@ -299,12 +299,12 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
             <div
               className={`flex items-center gap-2 rounded-xl p-3 text-xs font-semibold ${
                 feedbackMsg.type === 'success'
-                  ? 'bg-slate-50 text-slate-900 border border-slate-200'
+                  ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
                   : 'bg-rose-50 text-rose-800 border border-rose-200'
               }`}
             >
               {feedbackMsg.type === 'success' ? (
-                <CheckCircle2 className="h-4 w-4 text-slate-900 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
               ) : (
                 <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
               )}

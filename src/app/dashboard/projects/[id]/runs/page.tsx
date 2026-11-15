@@ -112,7 +112,7 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1">
                 API Operating Cost
               </span>
-              <p className="font-sans text-3xl font-black text-slate-900">${totalCost.toFixed(4)}</p>
+              <p className="font-sans text-3xl font-black text-white">${totalCost.toFixed(4)}</p>
               <p className="mt-1 text-xs text-slate-300 font-medium">Frontier inference compute</p>
             </div>
           </div>

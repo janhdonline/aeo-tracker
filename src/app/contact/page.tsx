@@ -67,11 +67,11 @@ export default function ContactPage() {
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
           <div className="relative max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
-              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" />
               Technical Concierge &amp; Inquiries
             </div>
             <h1 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Connect with Our <span className="text-slate-900">AEO Engineering</span> Team
+              Connect with Our <span className="text-cyan-300">AEO Engineering</span> Team
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               Whether you need crawler whitelist verification, agency multi-workspace setups, or custom LLM diagnostic reports, our engineering team responds within one business day.
@@ -85,7 +85,7 @@ export default function ContactPage() {
           <div className="space-y-4">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs mb-4">
-                <Mail className="h-5 w-5 text-slate-900" />
+                <Mail className="h-5 w-5 text-cyan-400" />
               </span>
               <h2 className="font-sans text-sm font-bold text-slate-950">General Inquiries &amp; Support</h2>
               <p className="text-xs text-slate-600 mt-1 mb-4 leading-relaxed">

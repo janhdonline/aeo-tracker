@@ -258,7 +258,7 @@ export function BriefsManager({
             disabled={generating}
             className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 text-xs font-bold shadow-xs transition-colors disabled:opacity-50 cursor-pointer shrink-0"
           >
-            <Sparkles className={`h-3.5 w-3.5 text-slate-900 ${generating ? 'animate-spin' : ''}`} />
+            <Sparkles className={`h-3.5 w-3.5 text-amber-300 ${generating ? 'animate-spin' : ''}`} />
             <span>{generating ? 'Scanning...' : 'Scan & Generate Briefs'}</span>
           </button>
         </div>
@@ -473,7 +473,7 @@ export function BriefsManager({
                       </button>
                       <button
                         onClick={() => handleUpdateStatus(brief.id, 'resolved')}
-                        className="inline-flex items-center gap-1 rounded-lg bg-slate-50 hover:bg-slate-50 text-white px-2.5 py-1 text-[10px] font-bold shadow-2xs transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 text-[10px] font-bold shadow-2xs transition-colors cursor-pointer"
                       >
                         <Check className="h-3 w-3" />
                         <span>Resolved</span>
@@ -579,7 +579,7 @@ export function BriefsManager({
                   {brief.status !== 'applied' && brief.status !== 'resolved' && (
                     <button
                       onClick={() => handleUpdateStatus(brief.id, 'applied')}
-                      className="inline-flex items-center gap-1 rounded-lg bg-slate-50 hover:bg-slate-50 text-white px-3 py-1.5 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
                     >
                       <Check className="h-3.5 w-3.5" />
                       <span>Apply</span>
@@ -635,12 +635,12 @@ export function BriefsManager({
                           )
                       )
                     }
-                    className="inline-flex items-center gap-1 font-bold text-slate-900 hover:text-slate-900 cursor-pointer"
+                    className="inline-flex items-center gap-1 font-bold text-slate-700 hover:text-slate-900 cursor-pointer"
                   >
                     {copiedSnippet ? (
                       <>
-                        <Check className="h-3.5 w-3.5 text-slate-900" />
-                        <span>Copied to Clipboard!</span>
+                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                        <span className="text-emerald-700">Copied to Clipboard!</span>
                       </>
                     ) : (
                       <>
@@ -685,7 +685,7 @@ export function BriefsManager({
                     handleUpdateStatus(activeSnippetBrief.id, 'applied');
                     setActiveSnippetBrief(null);
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-50 text-white text-xs font-bold shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs cursor-pointer"
                 >
                   <Check className="h-3.5 w-3.5" />
                   <span>Mark Applied to Website</span>

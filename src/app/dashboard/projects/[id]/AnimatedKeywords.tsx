@@ -143,7 +143,7 @@ export function AnimatedKeywords({ projectId, keywords: initialKeywords }: Props
             disabled={isAdding || !newKeyword.trim()}
             className="inline-flex items-center gap-1 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-colors disabled:opacity-50 cursor-pointer shrink-0"
           >
-            <Plus className="h-3 w-3 text-slate-900" />
+            <Plus className="h-3 w-3 text-white" />
             <span>{isAdding ? 'Adding...' : 'Add'}</span>
           </button>
           <button

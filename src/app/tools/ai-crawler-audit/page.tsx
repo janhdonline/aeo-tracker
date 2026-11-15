@@ -85,7 +85,7 @@ export default function AICrawlerAuditPage() {
       <main className="flex-1 max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center p-3 rounded-xl bg-slate-900 text-white shadow-2xs mb-3">
-            <Shield className="h-7 w-7 text-slate-900" />
+            <Shield className="h-7 w-7 text-cyan-400" />
           </div>
           <h1 className="font-sans text-3xl font-bold text-slate-900 tracking-tight">AI Crawler Readiness Audit</h1>
           <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">

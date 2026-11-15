@@ -339,20 +339,20 @@ location = /llms.txt {
         {/* Code View Card (Executive Dark Card) */}
         <div className="relative rounded-2xl border border-slate-800 bg-slate-950 p-5 sm:p-6 text-slate-100 shadow-bento">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-xs text-slate-400">
-            <span className="font-mono font-bold text-slate-900">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
+            <span className="font-mono font-bold text-white">{activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt'}</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleCopy(currentContent)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
               >
-                {copiedCode ? <Check className="h-3.5 w-3.5 text-slate-900" /> : <Copy className="h-3.5 w-3.5" />}
+                {copiedCode ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                 {copiedCode ? 'Copied' : 'Copy'}
               </button>
               <button
                 onClick={() => handleDownload(activeTab === 'standard' ? 'llms.txt' : 'llms-full.txt', currentContent)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-50 text-white text-xs font-bold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition-colors cursor-pointer"
               >
-                <Download className="h-3.5 w-3.5" />
+                <Download className="h-3.5 w-3.5 text-cyan-400" />
                 Download
               </button>
             </div>
@@ -416,7 +416,7 @@ location = /llms.txt {
               onClick={() => handleCopy(blueprints[activeBlueprint])}
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer"
             >
-              {copiedCode ? <Check className="h-3 w-3 text-slate-900" /> : <Copy className="h-3 w-3" />}
+              {copiedCode ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
               {copiedCode ? 'Copied' : 'Copy Blueprint'}
             </button>
           </div>

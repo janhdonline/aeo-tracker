@@ -154,7 +154,7 @@ export function AttributionLeakMeter({
               4. Recoverable Pipeline
             </span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="font-sans text-2xl font-black text-slate-900 tabular-nums">
+              <span className="font-sans text-2xl font-black text-white tabular-nums">
                 +${estimatedLostValue.toLocaleString()}
               </span>
               <span className="text-[10px] text-slate-400">/mo est.</span>
@@ -165,10 +165,10 @@ export function AttributionLeakMeter({
           </div>
           <Link
             href="/tools/answerability-audit"
-            className="mt-3 inline-flex items-center justify-between text-xs font-bold text-slate-900 hover:text-slate-900 transition-colors pt-2 border-t border-slate-800"
+            className="mt-3 inline-flex items-center justify-between text-xs font-bold text-slate-300 hover:text-white transition-colors pt-2 border-t border-slate-800"
           >
             <span>Run 45-Word Chunk Fix</span>
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-3.5 w-3.5 text-slate-400" />
           </Link>
         </div>
       </div>

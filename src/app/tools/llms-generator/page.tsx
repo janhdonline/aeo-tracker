@@ -71,7 +71,7 @@ export default function LlmsGeneratorPage() {
       <main className="flex-1 max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 w-full space-y-8">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center p-3 rounded-xl bg-slate-900 text-white shadow-2xs mb-3">
-            <FileText className="h-7 w-7 text-slate-900" />
+            <FileText className="h-7 w-7 text-cyan-400" />
           </div>
           <h1 className="font-sans text-3xl font-bold text-slate-900 tracking-tight">Standardized llms.txt Generator</h1>
           <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
@@ -121,7 +121,7 @@ export default function LlmsGeneratorPage() {
               disabled={!brandName || !domain}
               className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50 transition-all shadow-2xs cursor-pointer flex items-center justify-center gap-2"
             >
-              <Sparkles className="h-4 w-4 text-slate-900" />
+              <Sparkles className="h-4 w-4 text-amber-300" />
               <span>Generate llms.txt Manifest</span>
             </button>
           </div>
@@ -132,14 +132,14 @@ export default function LlmsGeneratorPage() {
             <div className="bg-slate-950 rounded-2xl p-6 sm:p-7 border border-slate-800 shadow-card">
               <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-slate-50" />
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
                   <h2 className="text-white text-xs font-mono font-bold">/llms.txt output</h2>
                 </div>
                 <button
                   onClick={handleCopy}
                   className="flex items-center gap-1.5 text-xs font-semibold bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-all cursor-pointer"
                 >
-                  {copied ? <Check className="h-3.5 w-3.5 text-slate-900" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                   {copied ? 'Copied to Clipboard!' : 'Copy Manifest'}
                 </button>
               </div>

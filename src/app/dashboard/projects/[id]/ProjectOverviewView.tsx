@@ -459,7 +459,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">ChatGPT-4o</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.chatgpt.score}</span>
                 </div>
               </div>
@@ -472,7 +472,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">Google Gemini</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.gemini.score}</span>
                 </div>
               </div>
@@ -485,7 +485,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">Anthropic Claude</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.claude.score}</span>
                 </div>
               </div>
@@ -498,7 +498,7 @@ export function ProjectOverviewView({
                   <span className="font-semibold text-slate-800">Perplexity Pro</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-slate-900" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                   <span className="font-bold text-slate-900">{reportData.aiModels.perplexity.score}</span>
                 </div>
               </div>

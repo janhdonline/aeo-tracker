@@ -100,11 +100,11 @@ export default function ComparePage() {
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
           <div className="relative max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
-              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" />
               Competitive Architecture Benchmark
             </div>
             <h1 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Why High-Growth Teams Choose <span className="text-slate-900">AEO Tracker</span>
+              Why High-Growth Teams Choose <span className="text-cyan-300">AEO Tracker</span>
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               Legacy SEO suites were built for traditional search engines and 10 blue links. AEO Tracker is purpose-engineered from the ground up for the generative answer engine era.
@@ -123,7 +123,7 @@ export default function ComparePage() {
                   </th>
                   <th className="py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-900 bg-slate-50/80 rounded-t-xl w-2/5">
                     <div className="flex items-center gap-2">
-                      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-slate-900 text-[10px]">
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-amber-300 text-[10px]">
                         ★
                       </span>
                       <span>AEO Tracker</span>
@@ -166,7 +166,7 @@ export default function ComparePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs mb-4">
-              <Zap className="h-5 w-5 text-slate-900" />
+              <Zap className="h-5 w-5 text-amber-300" />
             </span>
             <h2 className="font-sans text-sm font-bold text-slate-950 mb-1">Audit Ready in &lt;60s</h2>
             <p className="text-xs text-slate-600 leading-relaxed">

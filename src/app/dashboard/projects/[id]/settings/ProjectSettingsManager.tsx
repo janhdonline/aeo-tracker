@@ -220,7 +220,7 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
       <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xs">
-            <Building className="h-5 w-5 text-slate-900" />
+            <Building className="h-5 w-5 text-white" />
           </span>
           <div>
             <h3 className="font-sans text-base sm:text-lg font-black text-slate-950">Brand Identity &amp; Accuracy Tuning</h3>
@@ -485,16 +485,16 @@ export function ProjectSettingsManager({ project, userEmail }: ProjectSettingsMa
       <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 text-white shadow-card relative overflow-hidden">
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-800 text-slate-900 border border-slate-700 shadow-2xs shrink-0">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-800 text-cyan-400 border border-slate-700 shadow-2xs shrink-0">
               <FileCode2 className="h-5 w-5" />
             </span>
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-sans text-base font-bold text-white">llms.txt Knowledge Engine &amp; Validator</h3>
-                <span className="rounded-md border border-slate-200/30 bg-slate-50/60 px-2 py-0.5 text-[10px] font-mono font-semibold text-slate-900">Active</span>
+                <span className="rounded-md border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-slate-200">Active</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                Validate your domain&apos;s live <code className="font-mono text-slate-900">/llms.txt</code> endpoint and download authoritative knowledge snippets formatted for GPTBot, PerplexityBot, and ClaudeBot.
+                Validate your domain&apos;s live <code className="font-mono text-cyan-300 bg-slate-800/80 px-1 py-0.5 rounded">/llms.txt</code> endpoint and download authoritative knowledge snippets formatted for GPTBot, PerplexityBot, and ClaudeBot.
               </p>
             </div>
           </div>

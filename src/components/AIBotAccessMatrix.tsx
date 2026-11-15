@@ -60,7 +60,7 @@ export function AIBotAccessMatrix({ domain, initialCrawlers }: AIBotAccessMatrix
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-white text-xs font-bold shadow-2xs">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold shadow-2xs">
               <Bot className="h-4 w-4" />
             </span>
             <h3 className="font-sans text-base font-bold text-slate-950">

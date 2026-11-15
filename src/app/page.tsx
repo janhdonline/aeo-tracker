@@ -1062,12 +1062,12 @@ export default function Home() {
                         +26 <span className="text-sm font-normal text-slate-400">pts</span>
                       </p>
                     </div>
-                    <span className="rounded-md border border-slate-200/30 bg-slate-50/60 px-2.5 py-1 text-[11px] font-medium text-slate-900">
+                    <span className="rounded-md border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-slate-200">
                       30-Day Window
                     </span>
                   </div>
                   <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-slate-800">
-                    <div className="h-full w-[68%] rounded-full bg-slate-50" />
+                    <div className="h-full w-[68%] rounded-full bg-cyan-400" />
                   </div>
                   <p className="mt-2.5 text-xs text-slate-400">
                     Estimated visibility lift upon completing the top 3 high-priority citation actions.
@@ -1184,17 +1184,17 @@ export default function Home() {
                     View Pricing Plans
                   </Link>
                 </div>
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-400">
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-300">
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                     No credit card required
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                     Instant multi-model audit
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-slate-900" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                     SOC-2 compliant data handling
                   </span>
                 </div>

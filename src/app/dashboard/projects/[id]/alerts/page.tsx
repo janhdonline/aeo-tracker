@@ -228,15 +228,15 @@ export default function AlertsPage({ params }: { params: { id: string } }) {
                           <div className="flex sm:flex-col items-center justify-end gap-2 shrink-0 pt-2 lg:pt-0">
                             <button
                               onClick={() => handleReview(alert.id, true)}
-                              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-50 hover:bg-slate-50 text-white px-4 py-2.5 text-xs font-bold transition-all shadow-xs cursor-pointer"
+                              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 text-xs font-bold transition-all shadow-xs cursor-pointer"
                             >
                               <CheckCircle className="h-4 w-4" />
                               Resolve Discrepancy
                             </button>
                           </div>
                         ) : (
-                          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 self-start">
-                            <CheckCircle className="h-4 w-4 text-slate-900" />
+                          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 self-start">
+                            <CheckCircle className="h-4 w-4 text-emerald-600" />
                             Resolved &amp; Logged
                           </div>
                         )}

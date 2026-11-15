@@ -108,11 +108,11 @@ export default function BlogPage() {
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden="true" />
           <div className="relative max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3.5 py-1 text-xs font-medium text-slate-300">
-              <Sparkles className="h-3.5 w-3.5 text-slate-900" />
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" />
               Engineering &amp; Empirical Research
             </div>
             <h1 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              The Answer Engine <span className="text-slate-900">Optimization Journal</span>
+              The Answer Engine <span className="text-cyan-300">Optimization Journal</span>
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               Algorithmic reverse-engineering, empirical citation data studies, and architectural blueprints for capturing AI answer recommendations.

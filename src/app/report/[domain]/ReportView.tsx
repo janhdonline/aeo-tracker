@@ -262,7 +262,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             {!sidebarCollapsed ? (
               <Link href="/" className="flex items-center gap-2.5">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
-                  <Globe className="h-4 w-4 text-slate-900" />
+                  <Globe className="h-4 w-4 text-white" />
                 </span>
                 <span className="font-sans text-base font-bold tracking-tight text-slate-900">
                   AEO Tracker
@@ -271,7 +271,7 @@ export function ReportView({ data, userEmail, userPlan }: Props) {
             ) : (
               <Link href="/" className="mx-auto" title="AEO Tracker Home">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-white shadow-2xs">
-                  <Globe className="h-4 w-4 text-slate-900" />
+                  <Globe className="h-4 w-4 text-white" />
                 </span>
               </Link>
             )}
