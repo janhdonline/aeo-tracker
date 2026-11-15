@@ -74,7 +74,7 @@ export function SourceIntelligenceManager({ projectId, domain, brandName, source
         {/* Bento Tile 2: Community / Reddit Weight (Executive Card) */}
         <div className="rounded-bento border border-slate-800 bg-slate-900 p-5 shadow-bento text-white">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">
               Community / Reddit Weight
             </span>
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/30">

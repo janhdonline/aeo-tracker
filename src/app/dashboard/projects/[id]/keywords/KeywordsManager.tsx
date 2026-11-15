@@ -223,7 +223,7 @@ export function KeywordsManager({ projectId, initialKeywords, plan }: KeywordsMa
         {/* Metric 4: AI Engine Radar Coverage */}
         <div className="rounded-bento border border-slate-800 bg-[#0B0F17] p-5 shadow-bento text-white">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
               Audited AI Engines
             </span>
             <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />

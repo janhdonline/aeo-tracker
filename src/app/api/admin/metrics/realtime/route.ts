@@ -82,11 +82,11 @@ export async function GET(request: NextRequest) {
       console.warn('Realtime metrics usage query error:', usageErr.message);
     }
 
-    const rows = usageData || [];
+    const rows: any[] = usageData || [];
 
     // Filter today's rows
-    const todayRows = rows.filter((r) => r.created_at >= startOfToday);
-    const recent15mRows = rows.filter((r) => r.created_at >= fifteenMinsAgo);
+    const todayRows = rows.filter((r: any) => r.created_at >= startOfToday);
+    const recent15mRows = rows.filter((r: any) => r.created_at >= fifteenMinsAgo);
 
     // 3. Aggregate Tokens & Spend
     let totalTokensInToday = 0;

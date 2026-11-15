@@ -150,25 +150,25 @@ export function AttributionLeakMeter({
         {/* Step 4: Estimated Pipeline Opportunity */}
         <div className="p-4 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-xs flex flex-col justify-between">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300 block">
               4. Recoverable Pipeline
             </span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="font-sans text-2xl font-black text-white tabular-nums">
                 +${estimatedLostValue.toLocaleString()}
               </span>
-              <span className="text-[10px] text-slate-400">/mo est.</span>
+              <span className="text-[10px] text-slate-300">/mo est.</span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-[11px] text-slate-300 mt-1">
               From converting top 15% leaked mentions
             </p>
           </div>
           <Link
             href="/tools/answerability-audit"
-            className="mt-3 inline-flex items-center justify-between text-xs font-bold text-slate-300 hover:text-white transition-colors pt-2 border-t border-slate-800"
+            className="mt-3 inline-flex items-center justify-between text-xs font-bold text-slate-200 hover:text-white transition-colors pt-2 border-t border-slate-800"
           >
             <span>Run 45-Word Chunk Fix</span>
-            <ArrowRight className="h-3.5 w-3.5 text-slate-400" />
+            <ArrowRight className="h-3.5 w-3.5 text-slate-300" />
           </Link>
         </div>
       </div>

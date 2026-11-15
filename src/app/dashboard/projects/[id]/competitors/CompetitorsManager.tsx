@@ -148,17 +148,17 @@ export function CompetitorsManager({
         {/* Card 2: Your Share of Voice (Obsidian Accent Card) */}
         <div className="p-5 rounded-bento bg-[#0B0F17] border border-slate-800 shadow-bento text-white">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">Your Share of Voice</span>
-            <span className="inline-flex items-center text-[10px] font-bold text-[#10b981] bg-[#10b981]/20 px-2 py-0.5 rounded-full ring-1 ring-[#10b981]/30">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-300">Your Share of Voice</span>
+            <span className="inline-flex items-center text-[10px] font-bold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full ring-1 ring-emerald-500/30">
               Live Index
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-sans text-3xl font-black text-slate-900">{yourSoVPct}%</span>
+            <span className="font-sans text-3xl font-black text-white">{yourSoVPct}%</span>
             <span className="text-xs text-slate-300 font-semibold">{yourMentions} brand citations</span>
           </div>
           <div className="mt-3 h-2 w-full rounded-full bg-slate-800 overflow-hidden">
-            <div className="h-full rounded-full bg-slate-50" style={{ width: `${Math.max(8, yourSoVPct)}%` }} />
+            <div className="h-full rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]" style={{ width: `${Math.max(8, yourSoVPct)}%` }} />
           </div>
         </div>
 
@@ -296,13 +296,13 @@ export function CompetitorsManager({
               <tr className="bg-slate-50/50 border-l-4 border-l-slate-900">
                 <td className="py-3.5 pl-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-900 font-bold text-xs">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-900 font-bold text-xs border border-slate-200">
                       YOU
                     </span>
                     <div>
                       <div className="flex items-center gap-1.5">
                         <span className="font-bold text-slate-900 text-xs sm:text-sm">{brandName || domain}</span>
-                        <span className="inline-flex items-center rounded-md bg-slate-50 px-1.5 py-0.2 text-[10px] font-bold text-slate-900">
+                        <span className="inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-800 border border-slate-200">
                           Primary Domain
                         </span>
                       </div>
@@ -311,7 +311,7 @@ export function CompetitorsManager({
                   </div>
                 </td>
                 <td className="py-3.5">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-slate-50/80 px-2.5 py-0.5 text-[10px] font-bold text-slate-900">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800 border border-emerald-200">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Monitored Active
                   </span>
                 </td>
@@ -319,10 +319,10 @@ export function CompetitorsManager({
                   <div className="space-y-1">
                     <div className="flex justify-between text-[11px]">
                       <span className="font-bold text-slate-900">{yourSoVPct}%</span>
-                      <span className="text-slate-400">Baseline</span>
+                      <span className="text-slate-500 font-medium">Baseline</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-slate-200/80 overflow-hidden">
-                      <div className="h-full rounded-full bg-slate-50" style={{ width: `${Math.max(10, yourSoVPct)}%` }} />
+                      <div className="h-full rounded-full bg-slate-900" style={{ width: `${Math.max(10, yourSoVPct)}%` }} />
                     </div>
                   </div>
                 </td>
@@ -330,7 +330,7 @@ export function CompetitorsManager({
                   {yourMentions}
                 </td>
                 <td className="py-3.5 text-center">
-                  <span className="inline-flex items-center rounded-lg bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-900 border border-slate-200">
+                  <span className="inline-flex items-center rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-800 border border-slate-200">
                     Defending Brand
                   </span>
                 </td>
@@ -338,7 +338,7 @@ export function CompetitorsManager({
                   <Link
                     href={`/report/${domain}`}
                     target="_blank"
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900 hover:text-slate-900 transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900 hover:text-blue-600 transition-colors"
                   >
                     <span>View Report</span>
                     <ExternalLink className="h-3 w-3" />

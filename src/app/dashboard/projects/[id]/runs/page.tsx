@@ -109,7 +109,7 @@ export default async function RunsPage({ params }: { params: { id: string } }) {
 
             {/* Executive Metrics Card */}
             <div className="p-5 rounded-bento bg-slate-900 border border-slate-800 shadow-bento text-white">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-300 block mb-1">
                 API Operating Cost
               </span>
               <p className="font-sans text-3xl font-black text-white">${totalCost.toFixed(4)}</p>
