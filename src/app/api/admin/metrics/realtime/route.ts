@@ -6,6 +6,9 @@ import { getConfigBoolean, getConfigNumber } from '@/lib/config';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+let cachedMetricsResponse: { timestamp: number; data: any } | null = null;
+const CACHE_TTL_MS = 10_000; // 10s cache to absorb rapid frontend polling without burning CPU budget
+
 export interface RealtimeWarning {
   id: string;
   severity: 'critical' | 'warning' | 'info';
@@ -42,6 +45,11 @@ export async function GET(request: NextRequest) {
   const { errorResponse } = await requireAdmin(request);
   if (errorResponse) return errorResponse;
 
+  // Serve from memory cache if fresh to prevent Worker CPU limit exhaustion on rapid polls
+  if (cachedMetricsResponse && Date.now() - cachedMetricsResponse.timestamp < CACHE_TTL_MS) {
+    return NextResponse.json(cachedMetricsResponse.data);
+  }
+
   try {
     const admin = createAdminClient();
     const now = new Date();
@@ -51,18 +59,24 @@ export async function GET(request: NextRequest) {
     const fifteenMinsAgo = new Date(now.getTime() - 15 * 60 * 1000).toISOString();
     const tenMinsAgo = new Date(now.getTime() - 10 * 60 * 1000).toISOString();
 
-    // 1. Fetch Configuration
-    const [dailyCapUsd, emergencyStop] = await Promise.all([
-      getConfigNumber('daily_ai_spend_cap_usd', 25.0),
-      getConfigBoolean('emergency_ai_stop', false),
-    ]);
-
-    // 2. Fetch Usage Data (Past 7 days)
-    const { data: usageData, error: usageErr } = await admin
+    // 1. Fetch Configuration & Usage Data in parallel
+    const usageQuery = admin
       .from('api_usage')
       .select('id, engine, model_name, tokens_in, tokens_out, latency_ms, cost_usd, created_at')
       .gte('created_at', sevenDaysAgo)
       .order('created_at', { ascending: false });
+
+    const usagePromise = typeof (usageQuery as any)?.limit === 'function'
+      ? (usageQuery as any).limit(250)
+      : usageQuery;
+
+    const [[dailyCapUsd, emergencyStop], { data: usageData, error: usageErr }] = await Promise.all([
+      Promise.all([
+        getConfigNumber('daily_ai_spend_cap_usd', 25.0),
+        getConfigBoolean('emergency_ai_stop', false),
+      ]),
+      usagePromise,
+    ]);
 
     if (usageErr) {
       console.warn('Realtime metrics usage query error:', usageErr.message);
@@ -183,56 +197,57 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 6. Check Active Scan Queue & Stuck Jobs
-    const { data: activeRuns } = await admin
-      .from('scan_runs')
-      .select('id, status, started_at, total_queries')
-      .in('status', ['running', 'pending', 'stuck']);
+    // 6. Check Active Scan Queue, Engine Health, & System Status in parallel
+    const [
+      { data: activeRuns },
+      { data: engineHealth },
+      { data: failedWebhooks },
+      { data: failedEmails },
+      { data: errorKeys },
+      { data: misinformation },
+      { count: cachedCount },
+    ] = await Promise.all([
+      admin
+        .from('scan_runs')
+        .select('id, status, started_at, total_queries')
+        .in('status', ['running', 'pending', 'stuck']),
+      admin
+        .from('engine_health_logs')
+        .select('engine_name, status, latency_ms, checked_at')
+        .order('checked_at', { ascending: false })
+        .limit(8),
+      admin
+        .from('webhook_events')
+        .select('id')
+        .eq('status', 'failed'),
+      admin
+        .from('notification_logs')
+        .select('id')
+        .eq('status', 'failed')
+        .limit(10),
+      admin
+        .from('api_keys')
+        .select('id, service, key_name, error_count')
+        .gt('error_count', 0)
+        .eq('is_active', true),
+      admin
+        .from('misinformation_alerts')
+        .select('id, confidence')
+        .eq('reviewed', false)
+        .limit(10),
+      admin
+        .from('public_reports_cache')
+        .select('domain', { count: 'exact', head: true }),
+    ]);
 
     const queueList = activeRuns || [];
     const stuckJobs = queueList.filter((r) => r.status === 'running' && r.started_at < tenMinsAgo);
     const runningJobs = queueList.filter((r) => r.status === 'running' && r.started_at >= tenMinsAgo);
 
-    // 7. Check Engine Health & Errors
-    const { data: engineHealth } = await admin
-      .from('engine_health_logs')
-      .select('engine_name, status, latency_ms, checked_at')
-      .order('checked_at', { ascending: false })
-      .limit(8);
-
-    const { data: failedWebhooks } = await admin
-      .from('webhook_events')
-      .select('id')
-      .eq('status', 'failed');
-
     const failedWebhooksCount = (failedWebhooks || []).length;
-
-    const { data: failedEmails } = await admin
-      .from('notification_logs')
-      .select('id')
-      .eq('status', 'failed')
-      .limit(10);
-
     const failedEmailsCount = (failedEmails || []).length;
-
-    const { data: errorKeys } = await admin
-      .from('api_keys')
-      .select('id, service, key_name, error_count')
-      .gt('error_count', 0)
-      .eq('is_active', true);
-
     const errorKeysCount = (errorKeys || []).length;
-
-    const { data: misinformation } = await admin
-      .from('misinformation_alerts')
-      .select('id, confidence')
-      .eq('reviewed', false)
-      .limit(10);
     const unreviewedMisinformationCount = (misinformation || []).length;
-
-    const { count: cachedCount } = await admin
-      .from('public_reports_cache')
-      .select('domain', { count: 'exact', head: true });
 
     // 8. Dynamic Real-time Warning Heuristic Engine
     const warnings: RealtimeWarning[] = [];
@@ -376,7 +391,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({
+    const responsePayload = {
       success: true,
       timestamp: now.toISOString(),
       serverTime: now.toLocaleTimeString('en-US', { hour12: false }),
@@ -407,7 +422,14 @@ export async function GET(request: NextRequest) {
         activeRuns: queueList.slice(0, 10),
       },
       engineHealth: engineHealth || [],
-    });
+    };
+
+    cachedMetricsResponse = {
+      timestamp: Date.now(),
+      data: responsePayload,
+    };
+
+    return NextResponse.json(responsePayload);
   } catch (err: any) {
     console.error('Realtime telemetry route error:', err);
     return NextResponse.json(

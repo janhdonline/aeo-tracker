@@ -5,11 +5,25 @@ import { getEnv } from '@/lib/env';
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Skip auth callback entirely to avoid interfering with OAuth code exchange
-  if (pathname.startsWith('/auth/')) {
+  // Check if any Supabase session/auth cookies exist before initializing client
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some(
+    (c) => c.name.startsWith('sb-') || c.name.includes('auth-token')
+  );
+
+  // Fast-path: Unauthenticated user trying to access /dashboard -> redirect immediately without Supabase network call
+  if (pathname.startsWith('/dashboard') && !hasAuthCookie) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
+
+  // Fast-path: Unauthenticated user on /login -> render immediately
+  if (pathname === '/login' && !hasAuthCookie) {
     return NextResponse.next();
   }
 
+  // Only if auth cookies exist, verify session with Supabase
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -26,7 +40,6 @@ export async function middleware(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
       '';
 
-    // If Supabase credentials are missing or placeholder, protect dashboard safely without crash
     if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('placeholder')) {
       if (pathname.startsWith('/dashboard')) {
         const url = request.nextUrl.clone();
@@ -87,16 +100,11 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/login';
       return NextResponse.redirect(url);
     }
-    supabaseResponse.headers.set(
-      'Cache-Control',
-      'no-cache, no-store, max-age=0, must-revalidate'
-    );
     return supabaseResponse;
   }
 }
 
+// Only match routes that actually require auth verification to avoid burning Worker CPU budget on public pages
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/dashboard/:path*', '/dashboard', '/login'],
 };

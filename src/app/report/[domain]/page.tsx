@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { Metadata } from 'next';
@@ -49,27 +50,34 @@ export default async function PublicReportPage({ params }: Props) {
     .replace(/^www\./, '')
     .split('/')[0];
 
-  const supabase = await createClient();
+  const cookieStore = cookies();
+  const allCookies = cookieStore.getAll();
+  const hasAuthCookie = allCookies.some(
+    (c) => c.name.startsWith('sb-') || c.name.includes('auth-token')
+  );
 
   // Get current authenticated user if logged in
   let user: any = null;
   let userPlan: string | null = null;
-  try {
-    const authRes = await supabase.auth.getUser();
-    user = authRes?.data?.user || null;
-    if (user?.id) {
-      const { data: prof } = await supabase
-        .from('profiles')
-        .select('plan')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (prof?.plan) {
-        userPlan = prof.plan;
+  if (hasAuthCookie) {
+    try {
+      const supabase = await createClient();
+      const authRes = await supabase.auth.getUser();
+      user = authRes?.data?.user || null;
+      if (user?.id) {
+        const { data: prof } = await supabase
+          .from('profiles')
+          .select('plan')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (prof?.plan) {
+          userPlan = prof.plan;
+        }
       }
+    } catch {
+      user = null;
+      userPlan = null;
     }
-  } catch {
-    user = null;
-    userPlan = null;
   }
 
   // Generate full default baseline data for this domain
@@ -85,26 +93,59 @@ export default async function PublicReportPage({ params }: Props) {
       .eq('domain', cleanDomain)
       .maybeSingle();
 
-    if (cached && cached.summary_metrics) {
+    if (cached) {
+      let metrics = cached.summary_metrics;
+      if (typeof metrics === 'string') {
+        try { metrics = JSON.parse(metrics); } catch {}
+      }
+      let modelAnalyses = cached.model_analyses;
+      if (typeof modelAnalyses === 'string') {
+        try { modelAnalyses = JSON.parse(modelAnalyses); } catch {}
+      }
+      let promptDetails = cached.prompt_details;
+      if (typeof promptDetails === 'string') {
+        try { promptDetails = JSON.parse(promptDetails); } catch {}
+      }
+      let productRankings = cached.product_rankings;
+      if (typeof productRankings === 'string') {
+        try { productRankings = JSON.parse(productRankings); } catch {}
+      }
+      let sources = cached.sources;
+      if (typeof sources === 'string') {
+        try { sources = JSON.parse(sources); } catch {}
+      }
+
       reportData = {
         ...baseDefaults,
+        ...(metrics && typeof metrics === 'object' ? metrics : {}),
         domain: cached.domain || baseDefaults.domain,
         brandName: cached.brand_name || baseDefaults.brandName,
         score: cached.visibility_score ?? baseDefaults.score,
         shareOfVoice: cached.share_of_voice_pct ? `${cached.share_of_voice_pct}%` : `${baseDefaults.score}%`,
-        ...cached.summary_metrics,
-        modelAnalyses: cached.model_analyses && cached.model_analyses.length > 0 ? cached.model_analyses : baseDefaults.aiChatbotsTable,
-        promptDetails: cached.prompt_details && cached.prompt_details.length > 0 ? cached.prompt_details : baseDefaults.prompts,
-        prompts: cached.prompt_details && cached.prompt_details.length > 0 ? cached.prompt_details : baseDefaults.prompts,
-        productRankings: cached.product_rankings && cached.product_rankings.length > 0 ? cached.product_rankings : baseDefaults.productRankings,
-        sources: cached.sources && cached.sources.length > 0 ? cached.sources : [],
-        products: (cached.summary_metrics?.products && cached.summary_metrics.products.length > 0)
-          ? cached.summary_metrics.products
-          : (cached.products && cached.products.length > 0 ? cached.products : baseDefaults.products),
-        productsFoundPct: cached.summary_metrics?.productsFoundPct ?? cached.productsFoundPct ?? baseDefaults.productsFoundPct,
-        yourProductsPct: cached.summary_metrics?.yourProductsPct ?? cached.yourProductsPct ?? baseDefaults.yourProductsPct,
-        competitorProductsPct: cached.summary_metrics?.competitorProductsPct ?? cached.competitorProductsPct ?? baseDefaults.competitorProductsPct,
-        bestProduct: cached.summary_metrics?.bestProduct || cached.bestProduct || baseDefaults.bestProduct,
+        modelAnalyses: Array.isArray(modelAnalyses) && modelAnalyses.length > 0 ? modelAnalyses : baseDefaults.aiChatbotsTable,
+        promptDetails: Array.isArray(promptDetails) && promptDetails.length > 0 ? promptDetails : baseDefaults.prompts,
+        prompts: Array.isArray(promptDetails) && promptDetails.length > 0 ? promptDetails : baseDefaults.prompts,
+        productRankings: Array.isArray(productRankings) && productRankings.length > 0 ? productRankings : baseDefaults.productRankings,
+        sources: Array.isArray(sources) && sources.length > 0 ? sources : [],
+        products: (Array.isArray(metrics?.products) && metrics.products.length > 0)
+          ? metrics.products
+          : (Array.isArray(cached.products) && cached.products.length > 0 ? cached.products : baseDefaults.products),
+        productsFoundPct: metrics?.productsFoundPct ?? cached.productsFoundPct ?? baseDefaults.productsFoundPct,
+        yourProductsPct: metrics?.yourProductsPct ?? cached.yourProductsPct ?? baseDefaults.yourProductsPct,
+        competitorProductsPct: metrics?.competitorProductsPct ?? cached.competitorProductsPct ?? baseDefaults.competitorProductsPct,
+        bestProduct: metrics?.bestProduct || cached.bestProduct || baseDefaults.bestProduct,
+        aiModels: {
+          ...baseDefaults.aiModels,
+          ...(metrics?.aiModels || {}),
+        },
+        strategy: {
+          ...baseDefaults.strategy,
+          ...(metrics?.strategy || {}),
+        },
+        trajectoryPoints: Array.isArray(metrics?.trajectoryPoints) ? metrics.trajectoryPoints : baseDefaults.trajectoryPoints,
+        fanoutOpportunities: Array.isArray(metrics?.fanoutOpportunities) ? metrics.fanoutOpportunities : baseDefaults.fanoutOpportunities,
+        competitorDots: Array.isArray(metrics?.competitorDots) ? metrics.competitorDots : baseDefaults.competitorDots,
+        competitorNames: Array.isArray(metrics?.competitorNames) ? metrics.competitorNames : baseDefaults.competitorNames,
       };
     } else {
       try {
@@ -145,14 +186,14 @@ export default async function PublicReportPage({ params }: Props) {
 
   // If this domain is already tracked in our database with snapshot scores, overlay real score
   try {
-    const { data: project } = await supabase
+    const { data: project } = await admin
       .from('projects')
       .select('id, brand_name, domain')
       .eq('domain', cleanDomain)
       .maybeSingle();
 
     if (project) {
-      const { data: latestScore } = await supabase
+      const { data: latestScore } = await admin
         .from('snapshot_scores')
         .select('*')
         .eq('project_id', project.id)
